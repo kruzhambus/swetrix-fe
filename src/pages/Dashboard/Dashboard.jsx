@@ -22,6 +22,7 @@ import PulsatingCircle from 'ui/icons/PulsatingCircle'
 import routes from 'routes'
 import { isSelfhosted } from 'redux/constants'
 import EventsRunningOutBanner from 'components/EventsRunningOutBanner'
+import Pagination from 'ui/Pagination'
 
 const ProjectCart = ({
   name, url, created, active, overall, t, language, live, isPublic,
@@ -197,6 +198,7 @@ const Dashboard = ({
                 </div>
               )}
             </div>
+            <Pagination count={[0]} />
           </div>
         </div>
         <Modal
