@@ -9,6 +9,7 @@ import _isNumber from 'lodash/isNumber'
 import _replace from 'lodash/replace'
 import _map from 'lodash/map'
 import _filter from 'lodash/filter'
+import _find from 'lodash/find'
 import { useTranslation } from 'react-i18next'
 import { EyeIcon, CalendarIcon } from '@heroicons/react/outline'
 import { ArrowSmUpIcon, ArrowSmDownIcon, XCircleIcon } from '@heroicons/react/solid'
@@ -17,26 +18,51 @@ import Modal from 'ui/Modal'
 import { withAuthentication, auth } from 'hoc/protected'
 import Title from 'components/Title'
 import Loader from 'ui/Loader'
-import { ActivePin, InactivePin } from 'ui/Pin'
+import { ActivePin, InactivePin, WarningPin } from 'ui/Pin'
 import PulsatingCircle from 'ui/icons/PulsatingCircle'
 import routes from 'routes'
 import { isSelfhosted } from 'redux/constants'
 import EventsRunningOutBanner from 'components/EventsRunningOutBanner'
 
+import { acceptShareProject } from 'api'
+
 const ProjectCart = ({
-  name, url, created, active, overall, t, language, live, isPublic,
+  name, created, active, overall, t, language, live, isPublic, confirmed, id, deleteProjectFailed, sharedProjects, setProjectsShareData, setUserShareData, shared,
 }) => {
   const statsDidGrowUp = overall?.percChange >= 0
+  const [showInviteModal, setShowInviteModal] = useState(false)
+
+  const onAccept = async () => {
+    const pid = _find(sharedProjects, item => item.project.id === id).id
+
+    await acceptShareProject(pid)
+      .then((results) => {
+        setProjectsShareData({ confirmed: true }, id)
+        setUserShareData({ confirmed: true }, pid)
+      })
+      .catch((err) => {
+        deleteProjectFailed(err)
+      })
+  }
 
   return (
     <li>
-      <Link to={url} className='block hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-800 dark:border-gray-700'>
+      <div onClick={() => !confirmed && setShowInviteModal(true)} className='block cursor-pointer hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-800 dark:border-gray-700'>
         <div className='px-4 py-4 sm:px-6'>
           <div className='flex items-center justify-between'>
             <p className='text-lg font-medium text-indigo-600 dark:text-gray-50 truncate'>
               {name}
             </p>
             <div className='ml-2 flex-shrink-0 flex'>
+              {
+                shared && (
+                  confirmed ? (
+                    <ActivePin className='mr-2' label={t('dashboard.shared')} />
+                  ) : (
+                    <WarningPin className='mr-2' label={t('common.pending')} />
+                  )
+                )
+              }
               {active ? (
                 <ActivePin label={t('dashboard.active')} />
               ) : (
@@ -107,7 +133,21 @@ const ProjectCart = ({
             </div>
           </div>
         </div>
-      </Link>
+      </div>
+      {
+        !confirmed && (
+          <Modal
+            onClose={() => { setShowInviteModal(false) }}
+            onSubmit={() => { setShowInviteModal(false); onAccept() }}
+            submitText={t('common.accept')}
+            type='confirmed'
+            closeText={t('common.cancel')}
+            title={t('dashboard.invitationFor', { project: name })}
+            message={t('dashboard.invitationDesc', { project: name })}
+            isOpened={showInviteModal}
+          />
+        )
+      }
     </li>
   )
 }
@@ -124,7 +164,7 @@ const NoProjects = ({ t }) => (
 )
 
 const Dashboard = ({
-  projects, isLoading, error, user,
+  projects, isLoading, error, user, deleteProjectFailed, setProjectsShareData, setUserShareData,
 }) => {
   const { t, i18n: { language } } = useTranslation('common')
   const [showActivateEmailModal, setShowActivateEmailModal] = useState(false)
@@ -178,20 +218,46 @@ const Dashboard = ({
                 <div className='shadow overflow-hidden sm:rounded-md mt-10'>
                   <ul className='divide-y divide-gray-200 dark:divide-gray-500'>
                     {_map(_filter(projects, ({ uiHidden }) => !uiHidden), ({
-                      name, id, created, active, overall, live, public: isPublic,
+                      name, id, created, active, overall, live, public: isPublic, confirmed, shared,
                     }) => (
-                      <ProjectCart
-                        key={id}
-                        t={t}
-                        language={language}
-                        name={name}
-                        created={created}
-                        active={active}
-                        isPublic={isPublic}
-                        overall={overall}
-                        live={_isNumber(live) ? live : 'N/A'}
-                        url={_replace(routes.project, ':id', id)}
-                      />
+                      <div key={confirmed ? `${id}-confirmed` : id}>
+                        {
+                        confirmed === false ? (
+                          <ProjectCart
+                            t={t}
+                            id={id}
+                            language={language}
+                            name={name}
+                            created={created}
+                            shared={shared}
+                            active={active}
+                            isPublic={isPublic}
+                            overall={overall}
+                            confirmed={confirmed}
+                            sharedProjects={user.sharedProjects}
+                            setProjectsShareData={setProjectsShareData}
+                            setUserShareData={setUserShareData}
+                            live={_isNumber(live) ? live : 'N/A'}
+                            deleteProjectFailed={deleteProjectFailed}
+                          />
+                        ) : (
+                          <Link to={_replace(routes.project, ':id', id)}>
+                            <ProjectCart
+                              t={t}
+                              language={language}
+                              name={name}
+                              created={created}
+                              shared={shared}
+                              active={active}
+                              isPublic={isPublic}
+                              confirmed={confirmed}
+                              overall={overall}
+                              live={_isNumber(live) ? live : 'N/A'}
+                            />
+                          </Link>
+                        )
+                      }
+                      </div>
                     ))}
                   </ul>
                 </div>
@@ -226,6 +292,9 @@ Dashboard.propTypes = {
   user: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
   error: PropTypes.string,
+  deleteProjectFailed: PropTypes.func.isRequired,
+  setProjectsShareData: PropTypes.func.isRequired,
+  setUserShareData: PropTypes.func.isRequired,
 }
 
 Dashboard.defaultProps = {

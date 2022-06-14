@@ -1,4 +1,7 @@
 import { connect } from 'react-redux'
+import { errorsActions } from 'redux/actions/errors'
+import UIActions from 'redux/actions/ui'
+import { authActions } from 'redux/actions/auth'
 import Dashboard from './Dashboard'
 
 const mapStateToProps = (state) => ({
@@ -8,4 +11,16 @@ const mapStateToProps = (state) => ({
   error: state.ui.projects.error,
 })
 
-export default connect(mapStateToProps)(Dashboard)
+const mapDispatchToProps = (dispatch) => ({
+  deleteProjectFailed: (message) => {
+    dispatch(errorsActions.deleteProjectFailed(message))
+  },
+  setProjectsShareData: (data, id) => {
+    dispatch(UIActions.setProjectsShareData(data, id))
+  },
+  setUserShareData: (data, id) => {
+    dispatch(authActions.setUserShareData(data, id))
+  },
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

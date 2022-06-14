@@ -109,6 +109,22 @@ const setPaddleLastEvent = (event) => ({
   },
 })
 
+const setProjectsShare = (share, id) => ({
+  type: types.SET_PROJECTS_SHARE,
+  payload: {
+    share,
+    id,
+  },
+})
+
+const setProjectsShareData = (data, id) => ({
+  type: types.SET_PROJECTS_SHARE_DATA,
+  payload: {
+    data,
+    id,
+  },
+})
+
 const UIActions = {
   loadProjects,
   setProjects,
@@ -126,6 +142,8 @@ const UIActions = {
   setPaddleLastEvent,
   setTotalMonthlyEvents,
   setShowNoEventsLeftBanner,
+  setProjectsShare,
+  setProjectsShareData,
 }
 
 export default UIActions
