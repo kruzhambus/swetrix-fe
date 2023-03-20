@@ -23,7 +23,6 @@ To selfhost the frontend part of Swetrix, you simply need to set up `.env` varia
 On production, swetrix.com uses Cloudflare Pages to host the frontend part of the application.\
 The minimum supported NodeJS version is v14.
 
-### Docker Setup
 
 Swetrix provides a Docker Image based on Alpine, Nginx and Node.
 To use it you just just pull `swetrix/swetrixfe` from dockerhub.
