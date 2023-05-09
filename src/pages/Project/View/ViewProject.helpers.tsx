@@ -643,6 +643,9 @@ const getSettingsPerf = (
   activeChartMetrics: string,
   rotateXAxias: boolean,
   chartType: string,
+  compareChart?: {
+    [key: string]: string[],
+  },
 ) => {
   const xAxisSize = _size(chart.x)
 
