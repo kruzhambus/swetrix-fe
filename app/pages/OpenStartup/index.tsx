@@ -1,6 +1,5 @@
 /* eslint-disable */
 import React, { useEffect } from 'react'
-import type { LinksFunction } from '@remix-run/node'
 import _map from 'lodash/map'
 import bb, {
   bar, line,
@@ -13,15 +12,9 @@ import { nFormatterSeparated } from 'utils/generic'
 import { StateType } from 'redux/store/index'
 import { LIVE_DEMO_URL } from 'redux/constants'
 
-import Style from 'styles/ProjectViewStyle.css'
-
-export const links: LinksFunction = () => {
-  return [
-    { rel: 'stylesheet', href: Style },
-  ]
-}
-
 // This should be generated on the API side, will be done later.
+// MRR taken from Profitwell dashboard
+// Revenue taken from Paddle dashboard
 const financeData = {
   '2021-08-01': {
     'Technical Expences': -32,
@@ -160,6 +153,24 @@ const financeData = {
     'Business Expences': -300,
     'MRR': 38,
     'Revenue': 22,
+  },
+  '2023-07-01': {
+    'Technical Expences': -23,
+    'Business Expences': -300,
+    'MRR': 63,
+    'Revenue': 63,
+  },
+  '2023-08-01': {
+    'Technical Expences': -23,
+    'Business Expences': 0,
+    'MRR': 64,
+    'Revenue': 49,
+  },
+  '2023-09-01': {
+    'Technical Expences': -23,
+    'Business Expences': 0,
+    'MRR': 58,
+    'Revenue': 86,
   },
 }
 

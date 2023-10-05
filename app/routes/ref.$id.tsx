@@ -1,16 +1,10 @@
-import MainPage from 'pages/MainPage'
 import type { LoaderArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { json, redirect } from '@remix-run/node'
-import type { SitemapFunction } from 'remix-sitemap'
+import ReferralPage from 'pages/ReferralPage'
 
-import { detectTheme, isAuthenticated } from 'utils/server'
 import { isSelfhosted } from 'redux/constants'
-
-export const sitemap: SitemapFunction = () => ({
-  priority: 1,
-  exclude: isSelfhosted,
-})
+import { detectTheme } from 'utils/server'
 
 export async function loader({ request }: LoaderArgs) {
   if (isSelfhosted) {
@@ -18,15 +12,14 @@ export async function loader({ request }: LoaderArgs) {
   }
 
   const [theme] = detectTheme(request)
-  const isAuth = isAuthenticated(request)
 
-  return json({ theme, isAuth })
+  return json({ theme })
 }
 
 export default function Index() {
   const {
-    theme, isAuth,
+    theme,
   } = useLoaderData<typeof loader>()
 
-  return <MainPage ssrTheme={theme} ssrAuthenticated={isAuth} />
+  return <ReferralPage ssrTheme={theme} />
 }

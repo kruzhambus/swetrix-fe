@@ -16,7 +16,6 @@ const routes = Object.freeze({
   captcha_settings: '/captchas/settings/:id',
   project: '/projects/:id',
   captcha: '/captchas/:id',
-  features: '/features',
   billing: '/billing',
   privacy: '/privacy',
   cookiePolicy: '/cookie-policy',
@@ -32,6 +31,7 @@ const routes = Object.freeze({
   socialised: '/socialised',
   project_protected_password: '/projects/:id/password',
   open: '/open',
+  ref: '/ref/:id',
 })
 
 export default routes

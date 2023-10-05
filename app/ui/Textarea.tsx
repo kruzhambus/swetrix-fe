@@ -5,35 +5,30 @@ import PropTypes from 'prop-types'
 import { ExclamationCircleIcon } from '@heroicons/react/24/solid'
 import Beta from 'ui/Beta'
 
-interface IInput {
-  label: string | JSX.Element,
-  hint?: string | JSX.Element,
+interface ITextarea {
+  value: string | number,
+  label?: string,
+  hint?: string,
   placeholder?: string,
-  type?: string,
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void,
   id?: string,
-  name?: string,
+  type?: string,
   className?: string,
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  error?: string | null | boolean,
-  value?: string | number,
+  error?: string | boolean,
+  name?: string,
   disabled?: boolean,
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void,
   isBeta?: boolean,
 }
 
-const Input = ({
-  label, hint, placeholder, type, id, name, className, onChange, error, value, disabled, onKeyDown, isBeta,
-}: IInput): JSX.Element => {
-  const identifier = id || name || type
+const Textarea = ({
+  label, hint, placeholder, type, id, name, className, onChange, error, value, disabled, isBeta,
+}: ITextarea) => {
+  const identifier = `textarea-${id || name || type}`
   const isError = !_isEmpty(error)
 
   return (
     <div className={className}>
-      <div
-        className={cx({
-          'flex justify-between': label && hint,
-        })}
-      >
+      {label && (
         <label htmlFor={identifier} className='flex text-sm font-medium text-gray-700 dark:text-gray-200'>
           {label}
           {isBeta && (
@@ -42,25 +37,19 @@ const Input = ({
             </div>
           )}
         </label>
-      </div>
-      <div
-        className={cx('relative', {
-          'mt-1': label,
-        })}
-      >
-        <input
-          type={type}
-          value={value}
-          name={name}
+      )}
+      <div className='mt-1 relative'>
+        <textarea
+          rows={4}
+          name={identifier}
           id={identifier}
-          onChange={onChange}
-          onKeyDown={onKeyDown}
           className={cx('shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:text-gray-50 dark:placeholder-gray-400 dark:border-slate-800/25 dark:bg-slate-800 rounded-md', {
             'border-red-300 text-red-900 placeholder-red-300': isError,
             'cursor-text': disabled,
           })}
+          value={value}
+          onChange={onChange}
           placeholder={placeholder}
-          aria-describedby={`${identifier}-optional`}
           disabled={disabled}
         />
         {isError && (
@@ -69,14 +58,7 @@ const Input = ({
           </div>
         )}
       </div>
-      {hint && (
-        <p
-          className='mt-2 text-sm text-gray-500 dark:text-gray-300 whitespace-pre-line'
-          id={`${identifier}-optional`}
-        >
-          {hint}
-        </p>
-      )}
+      <p className='mt-2 text-sm text-gray-500 dark:text-gray-300 whitespace-pre-line' id={`${identifier}-optional`}>{hint}</p>
       {isError && (
         <p className='mt-2 text-sm text-red-600 dark:text-red-500' id='email-error'>{error}</p>
       )}
@@ -84,15 +66,14 @@ const Input = ({
   )
 }
 
-Input.propTypes = {
+Textarea.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string, PropTypes.number,
-  ]),
+  ]).isRequired,
   label: PropTypes.string,
   hint: PropTypes.string,
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
-  onKeyDown: PropTypes.func,
   id: PropTypes.string,
   type: PropTypes.string,
   className: PropTypes.string,
@@ -104,13 +85,11 @@ Input.propTypes = {
   isBeta: PropTypes.bool,
 }
 
-Input.defaultProps = {
-  value: null,
+Textarea.defaultProps = {
   label: '',
   hint: '',
   placeholder: '',
   onChange: () => { },
-  onKeyDown: () => { },
   id: '',
   type: '',
   className: '',
@@ -120,4 +99,4 @@ Input.defaultProps = {
   isBeta: false,
 }
 
-export default memo(Input)
+export default memo(Textarea)

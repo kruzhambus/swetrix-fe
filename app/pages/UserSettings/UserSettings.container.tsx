@@ -8,7 +8,8 @@ import { StateType, AppDispatch } from 'redux/store'
 import sagaActions from 'redux/sagas/actions'
 import { IUser } from 'redux/models/IUser'
 import { ISharedProject } from 'redux/models/ISharedProject'
-
+import { removeRefreshToken } from 'utils/refreshToken'
+import { removeAccessToken } from 'utils/accessToken'
 import UserSettings from './UserSettings'
 
 const mapStateToProps = (state: StateType) => {
@@ -18,6 +19,8 @@ const mapStateToProps = (state: StateType) => {
     isPaidTierUsed: state.auth.isPaidTierUsed,
     theme: state.ui.theme.theme,
     loading: state.auth.loading,
+    activeReferrals: state.ui.cache.activeReferrals,
+    referralStatistics: state.ui.cache.referralStatistics,
   }
 }
 
@@ -31,6 +34,7 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   },
   onDelete: (
     t: (key: string) => string,
+    deletionFeedback: string,
     onSuccess: {
       (): void;
     },
@@ -46,6 +50,7 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
           trackCustom('ACCOUNT_DELETED')
           onSuccess()
         },
+        deletionFeedback,
         t,
       ),
     )
@@ -63,6 +68,12 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
         type: 'success',
       }),
     )
+  },
+  setCache: (key: string, value: any) => {
+    dispatch(UIActions.setCache({
+      key,
+      value,
+    }))
   },
   sharedProjectError: (message: string) => {
     dispatch(
@@ -124,7 +135,7 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   updateUserProfileAsync: (
     data: Partial<IUser>,
     successMessage: string,
-    callback = (e: any) => { },
+    callback: (isSuccess: boolean) => void = () => { },
   ) => {
     dispatch(
       sagaActions.updateUserProfileAsync(data, (res: any) => {
@@ -165,6 +176,12 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
     callback: (isSuccess: boolean) => void,
   ) => {
     dispatch(sagaActions.updateShowLiveVisitorsInTitle(show, callback))
+  },
+  // Reset the user in the regex store and remove tokens
+  logoutLocal: () => {
+    dispatch(authActions.logout())
+    removeRefreshToken()
+    removeAccessToken()
   },
   logoutAll: () => {
     dispatch(authActions.logout())
