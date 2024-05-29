@@ -1,23 +1,18 @@
-import React, {
-  useEffect, Suspense, useState,
-} from 'react'
+import React, { useEffect } from 'react'
 import { useLocation, Outlet } from '@remix-run/react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 // @ts-ignore
 import { useAlert } from '@blaumaus/react-alert'
-import cx from 'clsx'
 import _some from 'lodash/some'
 import _includes from 'lodash/includes'
 import _startsWith from 'lodash/startsWith'
-import 'dayjs/locale/ru'
+import _endsWith from 'lodash/endsWith'
 import 'dayjs/locale/uk'
 
 import Header from 'components/Header'
 import Footer from 'components/Footer'
-import Loader from 'ui/Loader'
 
-import ScrollToTop from 'hoc/ScrollToTop'
 import { getAccessToken } from 'utils/accessToken'
 import { authActions } from 'redux/reducers/auth'
 import sagaActions from 'redux/sagas/actions'
@@ -29,65 +24,28 @@ import routesPath from 'routesPath'
 import { getPageMeta } from 'utils/server'
 import { authMe } from './api'
 
-const minimalFooterPages = [
-  '/projects', '/dashboard', '/settings', '/contact',
-]
-
-type FallbackProps = {
-  isMinimalFooter: boolean
-}
-
-const Fallback = ({ isMinimalFooter }: FallbackProps): JSX.Element => {
-  const [showLoader, setShowLoader] = useState(false)
-
-  useEffect(() => {
-    let isMounted = true
-
-    setTimeout(() => {
-      if (isMounted) {
-        setShowLoader(true)
-      }
-    }, 1000)
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
-
-  return (
-    <div className={cx('bg-gray-50 dark:bg-slate-900', { 'min-h-page': !isMinimalFooter, 'min-h-min-footer': isMinimalFooter })}>
-      {showLoader && (
-        <Loader />
-      )}
-    </div>
-  )
-}
+const minimalFooterPages = ['/projects', '/dashboard', '/contact', '/captchas']
 
 interface IApp {
   ssrTheme: 'dark' | 'light'
   ssrAuthenticated: boolean
 }
 
-const TITLE_BLACKLIST = [
-  '/projects/', '/captchas/',
-]
+const TITLE_BLACKLIST = ['/projects/', '/captchas/', '/blog']
 
 const App: React.FC<IApp> = ({ ssrTheme, ssrAuthenticated }) => {
   const dispatch = useAppDispatch()
   const { pathname } = useLocation()
   const { t } = useTranslation('common')
   const alert = useAlert()
-  const {
-    loading,
-  } = useSelector((state: StateType) => state.auth)
+  const { loading } = useSelector((state: StateType) => state.auth)
   const reduxAuthenticated = useSelector((state: StateType) => state.auth.authenticated)
   const { error } = useSelector((state: StateType) => state.errors)
   const { message, type } = useSelector((state: StateType) => state.alerts)
   const accessToken = getAccessToken()
-  const authenticated = isBrowser
-    ? (loading ? !!accessToken : reduxAuthenticated)
-    : ssrAuthenticated
+  const authenticated = isBrowser ? (loading ? !!accessToken : reduxAuthenticated) : ssrAuthenticated
 
+  // prettier-ignore
   useEffect(() => {
     (async () => {
       if (accessToken && !reduxAuthenticated) {
@@ -126,7 +84,7 @@ const App: React.FC<IApp> = ({ ssrTheme, ssrAuthenticated }) => {
   }, [message, type]) // eslint-disable-line
 
   useEffect(() => {
-    if (_some(TITLE_BLACKLIST, (page) => _includes(pathname, page))) {
+    if (_some(TITLE_BLACKLIST, (page) => _startsWith(pathname, page))) {
       return
     }
 
@@ -137,23 +95,23 @@ const App: React.FC<IApp> = ({ ssrTheme, ssrAuthenticated }) => {
   const isMinimalFooter = _some(minimalFooterPages, (page) => _includes(pathname, page))
 
   const isReferralPage = _startsWith(pathname, '/ref/')
+  const isProjectViewPage =
+    _startsWith(pathname, '/projects/') &&
+    !_endsWith(pathname, '/new') &&
+    !_endsWith(pathname, '/subscribers/invite') &&
+    !_endsWith(pathname, '/subscribers/invite') &&
+    !_includes(pathname, '/alerts/') &&
+    !_includes(pathname, '/settings/')
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    <Suspense fallback={<></>}>
-      {pathname !== routesPath.main && !isReferralPage && (
-        <Header ssrTheme={ssrTheme} authenticated={authenticated} />
-      )}
-      {/* @ts-ignore */}
-      <ScrollToTop>
-        <Suspense fallback={<Fallback isMinimalFooter={isMinimalFooter} />}>
-          <Outlet />
-        </Suspense>
-      </ScrollToTop>
-      {!isReferralPage && (
-        <Footer minimal={isMinimalFooter} authenticated={authenticated} />
-      )}
-    </Suspense>
+    <>
+      {!_includes([routesPath.main, routesPath.performance, routesPath.errorTracking], pathname) &&
+        !isReferralPage &&
+        !isProjectViewPage && <Header ssrTheme={ssrTheme} authenticated={authenticated} />}
+      <Outlet />
+      {!isReferralPage && !isProjectViewPage && <Footer minimal={isMinimalFooter} authenticated={authenticated} />}
+    </>
   )
 }
 

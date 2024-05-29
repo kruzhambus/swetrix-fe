@@ -1,6 +1,9 @@
 const routes = Object.freeze({
   signin: '/login',
   signup: '/signup',
+  performance: '/performance',
+  errorTracking: '/error-tracking',
+  confirm_email: '/confirm-email',
   reset_password: '/recovery',
   new_password_form: '/password-reset/:id',
   confirm_share: '/share/:id',
@@ -32,6 +35,8 @@ const routes = Object.freeze({
   project_protected_password: '/projects/:id/password',
   open: '/open',
   ref: '/ref/:id',
+  blog: '/blog',
+  imprint: '/imprint',
 })
 
 export default routes

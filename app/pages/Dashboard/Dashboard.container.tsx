@@ -24,42 +24,53 @@ const mapStateToProps = (state: StateType) => ({
   dashboardPaginationPageCaptcha: state.ui.projects.dashboardPaginationPageCaptcha,
   dashboardTabs: state.ui.projects.dashboardTabs,
   liveStats: state.ui.projects.liveStats,
+  birdseye: state.ui.projects.birdseye,
 })
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
   deleteProjectFailed: (message: string) => {
-    dispatch(errorsActions.deleteProjectFailed({
-      message,
-    }))
+    dispatch(
+      errorsActions.deleteProjectFailed({
+        message,
+      }),
+    )
   },
   setProjectsShareData: (data: IProject | ISharedProject, id: string, shared?: boolean) => {
-    dispatch(UIActions.setProjectsShareData({
-      data,
-      id,
-      shared,
-    }))
+    dispatch(
+      UIActions.setProjectsShareData({
+        data,
+        id,
+        shared,
+      }),
+    )
   },
   setUserShareData: (data: ISharedProject, id: string) => {
-    dispatch(authActions.setUserShareData({
-      data,
-      id,
-    }))
+    dispatch(
+      authActions.setUserShareData({
+        data,
+        id,
+      }),
+    )
   },
   userSharedUpdate: (message: string) => {
-    dispatch(alertsActions.userSharedUpdate({
-      message,
-    }))
+    dispatch(
+      alertsActions.userSharedUpdate({
+        message,
+      }),
+    )
   },
   sharedProjectError: (message: string) => {
-    dispatch(errorsActions.sharedProjectFailed({
-      message,
-    }))
+    dispatch(
+      errorsActions.sharedProjectFailed({
+        message,
+      }),
+    )
   },
-  loadProjects: (take: number, skip: number) => {
-    dispatch(sagaActions.loadProjects(take, skip))
+  loadProjects: (take: number, skip: number, search: string) => {
+    dispatch(sagaActions.loadProjects(take, skip, search))
   },
-  loadSharedProjects: (take: number, skip: number) => {
-    dispatch(sagaActions.loadSharedProjects(take, skip))
+  loadSharedProjects: (take: number, skip: number, search: string) => {
+    dispatch(sagaActions.loadSharedProjects(take, skip, search))
   },
   setDashboardPaginationPage: (page: number) => {
     dispatch(UIActions.setDashboardPaginationPage(page))
@@ -70,8 +81,8 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   setDashboardTabs: (tab: string) => {
     dispatch(UIActions.setDashboardTabs(tab))
   },
-  loadProjectsCaptcha: (take: number, skip: number) => {
-    dispatch(sagaActions.loadProjectsCaptcha(take, skip))
+  loadProjectsCaptcha: (take: number, skip: number, search: string) => {
+    dispatch(sagaActions.loadProjectsCaptcha(take, skip, search))
   },
   setDashboardPaginationPageCaptcha: (page: number) => {
     dispatch(UIActions.setDashboardPaginationPageCaptcha(page))

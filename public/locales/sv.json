@@ -16,6 +16,7 @@
     "userRemoved": "The user has been removed from your project",
     "userRemoveError": "Error occurred while removing the user from your project",
     "quitProjectError": "Error occurred while quitting the project",
+    "payoutInfoError": "Something went wrong whilst requesting payouts information",
     "quitProject": "You have quit the project",
     "acceptInvitationError": "Error occurred while accepting the project invitation",
     "acceptInvitation": "The project invitation has been accepted",
@@ -34,7 +35,10 @@
     "socialAccountLinked": "The Swetrix account has been linked with your selected provider",
     "socialAccountUninked": "The Swetrix account has been unlinked from the selected provider",
     "enterPassword": "Please enter the password",
-    "incorrectPassword": "Incorrect password, please try again."
+    "incorrectPassword": "Incorrect password, please try again.",
+    "funnelCreated": "The funnel has been created",
+    "funnelUpdated": "The funnel has been updated",
+    "funnelDeleted": "The funnel has been deleted"
   },
   "common": {
     "features": "Funktioner",
@@ -44,7 +48,6 @@
     "pricing": "Prissättning",
     "faqs": "Vanliga frågor",
     "accountSettings": "Account settings",
-    "explore": "Utforska",
     "liveDemo": "Live-demo",
     "dashboard": "Översikt",
     "logout": "Logga ut",
@@ -53,6 +56,8 @@
     "confirm": "Confirm",
     "amount": "Amount",
     "date": "Date",
+    "success": "Success",
+    "info": "Info",
     "error": "Fel",
     "close": "Stänga",
     "cancel": "Avbryta",
@@ -80,29 +85,54 @@
     "new": "Nytt",
     "loading": "Laddar..",
     "edit": "Redigera",
-    "account": "Account",
+    "account": "Konto",
     "transferring": "Transferring",
     "link": "Link",
-    "unlink": "Unlink"
+    "unlink": "Unlink",
+    "nothingFound": "Nothing found",
+    "oneMember": "1 medlem",
+    "xMembers": "{{number}} Medlemmar",
+    "general": "General"
+  },
+  "performance": {
+    "slogan": "End user <span>performance monitoring</span> to deliver fast websites.",
+    "description": "Deliver a flawless experience to your users, and we will let you know if your site is fast enough.",
+    "fast": {
+      "title": "Everyone loves a fast website",
+      "desc": "People love fast websites, so in addition to <indexUrl>traffic analytics</indexUrl>, Swetrix allows you to analyse your website speed and monitor other performance metrics based on real traffic from your users.\nUsers are more likely to <wpostatsUrl>abandon your website</wpostatsUrl> if it takes too long to load, stay ahead of these problems and measure insights from real interactions.",
+      "list": [
+        "Measure which pages are taking too long to load",
+        "Aggregate performance data by geolocation, browser, device type, page and other metrics",
+        "Compare site speed to previous periods to analyse potential problems or improvements"
+      ]
+    },
+    "metrics": {
+      "title": "Analyse all key metrics in one tool",
+      "desc": "With Swetrix you can measure key metrics such as overall page load time, detailed breakdowns by TTFB, DNS, TLS resolution time and other metrics. Split the data into different percentiles to see how well your site performs for people with fast and slow internet connections."
+    },
+    "privacy": {
+      "title": "Privacy-first, easy to use",
+      "desc": "Swetrix is built with a privacy-first and transparent approach. We do not use cookies or collect personal information from our users. There's no cross-site or cross-device tracking. No data is ever sold to advertisers or anyone else.\nThe Swetrix dashboard is very intuitive to use, giving you real-time data and a clear view of your website. There are no layers of menus, no need to export your data into custom reports to understand it properly."
+    }
   },
   "main": {
     "ukrSupport": "Stöd den ukrainska armén att bekämpa den ryska invasionen.",
-    "slogan": "<span>Ultimate open-source analytics</span> to satisfy all your needs.",
-    "trackEveryMetric": "Spåra alla statistik du behöver utan att invadera användarnas integritet.",
-    "description": "Swetrix erbjuder en avancerad och anpassningsbar analystjänst för dina webbapplikationer.",
+    "slogan": "<span>Ultimate open-source web analytics</span> to satisfy all your needs.",
+    "trackEveryMetric": "This is the way analytics should be: GDPR compliant, lightweight and easy to use.",
+    "description": "Swetrix is a cookieless Google Analytics alternative that does not invade your users' privacy.",
     "start": "Start for free",
     "signup": "Registrera dig, det är gratis!",
     "signupTerms": "Genom att registrera dig godkänner du våra <tos>villkor</tos> och <pp>sekretesspolicy</pp>.",
     "techDetails": "Vill du veta mer tekniska detaljer?",
     "lookAtDocs": "Titta på dokumentationen och live demonstrationssidor.",
     "readyToStart": "Redo att komma igång?",
-    "exploreService": "Utforska vår tjänst eller skapa ett konto.",
+    "metric": "Metric",
     "coreFeatures": {
       "title": "Core Analytics Features",
       "desc": "Powerful and easy analytics to display all the metrics you need. Cookieless. No need to be a data scientist to understand our analytics."
     },
     "marketplace": {
-      "title": "Marketplace & build-in Extensions",
+      "title": "Marketplace & built-in Extensions",
       "desc1": "Need additional features? Connect extensions or write your own! Now you do not need to use many sources from different systems - expand and supplement everything in one!",
       "desc2": "Install extensions and sell your own. Came up with a great extension for your company? Great! Publish it on the marketplace and share your insights with the whole community."
     },
@@ -204,11 +234,12 @@
       }
     ],
     "supports": "Supports all popular platforms",
-    "becomeDev": "Become a developer",
-    "becomeDevDesc": "Write your extensions, follow the news and join our developer community.",
+    "peopleLoveSwetrix": "People 🥰 Swetrix",
+    "whyPeopleLoveSwetrix": "Swetrix is an ethical and powerful service. Hundreds of people have already made the switch from Google Analytics and other alternatives.",
     "marketplaceBlock": "Marketplace and extension features",
     "coreFeaturesBlock": "Core features",
     "testimonials": "Testimonials",
+    "peopleUseSwetrix": "Hundreds of people already use Swetrix as their web analytics solution",
     "lTestimonials": [
       {
         "name": "Alex",
@@ -238,7 +269,8 @@
         "desc": "Your data is protected, all the features and fixes are implemented in a matter of days by our developers."
       }
     ],
-    "os": "<gradi>Open source</gradi> analytics - a powerful and simple tool.",
+    "timeToDitchGoogleAnalytics": "It's time <colour>to ditch</colour> Google Analytics.",
+    "whyDitch": "Tired of the frustration, complexity and privacy issues of Google Analytics? We were too. That's why we built Swetrix - the ethical, open source and fully cookieless alternative.",
     "custSupport": "Could not find the answer you're looking for? Reach out to our <mail>customer support</mail> team.",
     "whyUs": "Varför oss",
     "ourStats": "Vår statistik",
@@ -252,14 +284,21 @@
       "ext": "Custom extensions",
       "gdpr": "GDPR-compatible",
       "usfl": "User flow",
+      "funnels": "Funnels",
+      "sessionAnalysis": "Session analysis",
       "alrt": "Custom alerts",
       "pbld": "Public dashboards",
       "shad": "Dashboard sharing",
-      "open": "Open source",
+      "open": "Öppen källkod",
       "ckfree": "Cookie free analytics",
-      "api": "Developer API",
+      "api": "API för utvecklare",
       "2fa": "Two-factor authentication"
     }
+  },
+  "referral": {
+    "desc": "Swetrix is an ethical, open source and completely cookie-less alternative to Google Analytics. It allows you to understand your users' behaviour, monitor your website performance, track your marketing campaigns and much more. All without invading your users' privacy!",
+    "cookieDetails": "If you click on the buttons above, a cookie will be stored for {{days}} days to reward the person who referred you and give you {{discount}}% off your first bill.",
+    "buttons": "Click on these buttons to receive {{discount}}% off your first bill!"
   },
   "auth": {
     "recovery": {
@@ -279,7 +318,8 @@
       "2fa": "Two-factor authentication",
       "2faDesc": "Open the two-factor authentication app on your device to view your authentication code and verify your identity.\nYou can also use your backup code.",
       "2faUnavailable": "Don't have access to 2FA?\n<ctl>Contact support</ctl>.",
-      "6digitCode": "6-digit authentication code"
+      "6digitCode": "6-digit authentication code",
+      "notAMember": "Not a member? <url>Start a {{amount}} day free trial</url>"
     },
     "signup": {
       "button": "Registrera dig",
@@ -287,13 +327,23 @@
       "email": "E-postadress",
       "create": "Skapa ditt konto",
       "trial": "Start your free {{amount}} day trial",
-      "noCC": "No credit card required."
+      "noCC": "No credit card required.",
+      "alreadyAMember": "Already a member? <url>Sign in</url>"
+    },
+    "confirm": {
+      "title": "Check your inbox",
+      "linkSent": "We've sent an account confirmation link to {{email}}, please click the link to confirm your email address.",
+      "spam": "Can't see the email? Please check your spam folder.",
+      "wrongEmail": "Wrong email? <url>Create a new account.</url>"
     },
     "verification": {
       "success": "Din e-postadress har verifierats framgångsrikt!"
     },
     "socialisation": {
-      "success": "Socialisation successful",
+      "authSuccess": "Authentication successful",
+      "failed": "Authentication failed",
+      "failedDesc": "An error has occurred while authenticating through a third party service, please try again or contact support.",
+      "successDesc": "You are now authenticated through a 3rd party service and can safely close this page if it didn't close automatically.",
       "orSingUpWith": "or sign up with"
     },
     "common": {
@@ -315,69 +365,15 @@
       "checkLeakedPasswordDesc": "När aktiverad kontrollerar vi ditt lösenord med <db>{{database}}</db>databasen. Vi skickar inte ditt lösenord till tjänsten. Först hashar vi ditt lösenord ( med SHA1) och skickar endast de första fem tecknen i hashen till tjänsten. Tjänsten returnerar alla läckta lösenord som börjar med dessa 5 tecken. I vår del kontrollerar vi om något av dessa tecken stämmer överens med ditt lösenord. Vi visar dig en varning om det har läckt ut tidigare. Vi lagrar aldrig ditt lösenord i klartext.",
       "addedOn": "Added on",
       "continueWithGoogle": "Continue with Google",
-      "continueWithGithub": "Continue with Github"
+      "continueWithGithub": "Continue with Github",
+      "google": "Google",
+      "github": "Github",
+      "orContinueWith": "Or continue with"
     }
-  },
-  "features": {
-    "feature1Name": "Transparens",
-    "feature1Content": "På Swetrix anser vi att alla har rätt till integritet och transparens, särskilt när det gäller analyser.\nVi samlar inte in mer information än vad vi <docs>begär</docs>, all data lagras på servrar som är fysiskt placerade i Europeiska unionen och vårt analysskript är offentligt tillgängligt och åtkomligt för alla på vår <gh>Github</gh>.",
-    "feature2Name": "Webbläsare tillägg",
-    "feature2Content": "Behöver du snabbt se statistik för din webbplats?\nVi har utvecklat <chrome>Chrome</chrome> och <firefox>Firefox</firefox> tillägg för detta ändamål.\nMed hjälp av dessa kan du omedelbart visa de viktigaste insikterna, få meddelanden om trafikspikar och mycket mer!",
-    "ready": "Redo att lära känna dina användare?",
-    "start": "Börja använda Swetrix idag.",
-    "list": [
-      {
-        "name": "Performance monitoring",
-        "content": "With Swetrix you can stop guessing how fast does your website load across the globe.\nWe offer a wide range of metrics, such as page load time, DNS lookup time, TTFB and more.\nYou can see data breakdowns by time spent on frontend, backend or network, view this data for the specific countries, browsers, devices.\nAll of this is available in real-time, so you can see how your website performs at any given moment."
-      },
-      {
-        "name": "Custom alerts",
-        "content": "Do you want to track traffic spikes? Or maybe the pageviews for a specific time period? All this is available with custom alerts.\nYou can set up alerts for a wide range of metrics and receive notifications via messengers like Telegram when they get triggered."
-      },
-      {
-        "name": "Extensions & Extension Marketplace",
-        "content": "Is there some feature missing or you want to modify the Dashboard specifically for your needs? All of this is possible with Swetrix Extensions: we offer a customisable SDK which will allow you to modify the dashboard in any way you want, you can also publish your extension for other people to use or install addons people created from our Extension Marketplace."
-      },
-      {
-        "name": "AI forecasting",
-        "content": "You can forecast your website traffic with our AI-powered forecasting tool."
-      },
-      {
-        "name": "Public & Shared Dashboards",
-        "content": "With Swetrix you can make your dashboard available for other people to view.\nYou can also invite other Swetrix users to your projects, assign different roles to them."
-      },
-      {
-        "name": "Enkelhet",
-        "content": "När vi skapade vår tjänst försökte vi göra den så enkel och flexibel som möjligt.\nInga fler förvirrande mått och komplicerade instrumentpaneler - med oss kan du ha kontroll över alla dina projekt och data på ett enkelt och okomplicerat sätt."
-      },
-      {
-        "name": "Spårning av sidvisningar",
-        "content": "Swetrix erbjuder möjligheten att spåra sidvisningar, inklusive unika visningar och användarflöden.\nAlla visningar innehåller ett stort antal data, t. ex. användarens land, lokalitet, enhetstyp, sidladdningstid och mycket mer.\nVi använder inte cookies eller någon annan typ av användarprofilering för att samla in data. Alla inkommande uppgifter anonymiseras, vilket säkerställer att användarna inte kan spåras på något sätt baserat på detta."
-      },
-      {
-        "name": "Anpassad händelsespårning",
-        "content": "Förutom att spåra sidvisningar erbjuder vi också möjligheten att spåra anpassade händelser.\nDu kan spåra vilken händelse som helst, t. ex. knapp klickar, registreringar eller auktoriseringar.\nAllt detta är också helt privat för användaren, eftersom vi inte lagrar någon annan information om dem tillsammans med händelserna.\nDu kan läsa mer om anpassade händelser i vår dokumentation."
-      },
-      {
-        "name": "API för utvecklare",
-        "content": "We offer a developer API, which allows you to integrate Swetrix into your own applications.\nYou can use our API to create custom dashboards, or to integrate Swetrix into your own applications."
-      },
-      {
-        "name": "Bekvämlighet",
-        "content": "Besides the big features we try to focus on small things that make any project better.\nYou can customise Swetrix for your needs, for example use your native language or your favourite theme, set up 2FA, use a timezone or a time notation you prefer."
-      },
-      {
-        "name": "Hastighet",
-        "content": "Vi är snabba. Vårt analysskript är så optimerat som möjligt och använder CDNs för sin leverans, vilket garanterar att skriptet inte saktar ner dina webbplatser."
-      },
-      {
-        "name": "Förtroende",
-        "content": "Vi är ett litet företag inte ett stort företag.\nVi är intresserade av att skapa en bra och högkvalitativ produkt som kommer att användas av nöjda kunder, inte av att pressa ut så mycket pengar som möjligt från våra användare eller sälja dina personlig data."
-      }
-    ]
   },
   "profileSettings": {
     "logoutAll": "Log out from all devices",
+    "account": "Konto",
     "general": "Allmänna inställningar",
     "update": "Uppdatera profil",
     "email": "E-postrapporter",
@@ -438,7 +434,7 @@
     "apiKeyDeleteConf": "Are you sure you want to delete your API key?\nAll API access via this key will be disabled.",
     "theme": "Theme",
     "selectTheme": "Select theme",
-    "integrations": "Integrations",
+    "integrations": "Integrationer",
     "integrationsDesc": "Integrations can be used to connect your favourite messengers to Swetrix and receive updates such as notifications, reports or alerts directly.",
     "integrationsList": {
       "telegram": "Receive notifications directly into a Telegram bot.",
@@ -463,15 +459,56 @@
     "regenerateSecretKeyMessage": "Are you sure you want to regenerate your secret key?\nAll the existing CAPTCHA widgets will stop working and you will need to update them with the new secret key.",
     "captchaSecretKeyHint": "This is your secret key, it is used to verify the CAPTCHA response on your server. Keep it secret and do not share it with anyone.",
     "showVisitorsInTitle": "Show live visitors in the page title",
-    "uiSettings": "UI Settings"
+    "uiSettings": "UI Settings",
+    "passwordChangeWarningModal": {
+      "title": "You're about to change your password",
+      "body": "You're about to change your password, this will log you out from all devices (including this one) and you will need to log in again with your new password."
+    },
+    "referral": {
+      "title": "Referral program",
+      "desc": "Referral program allows you to earn money by inviting new users to Swetrix.\nYou will receive a part of the subscription fee paid by the invited user and will be able to withdraw it to your PayPal account. Learn more about the referral program at <url>Swetrix Referral Program</url> documentation page.",
+      "referralLink": "Referral link",
+      "payoutEmail": "Referral payout email address",
+      "payoutEmailDesc": "We will send your referral payouts via PayPal to this email address each month. Double check that it is correct.",
+      "payoutEmailUpdated": "Payout email address has been updated",
+      "yourReferralLink": "Your referral link",
+      "referralLinkDesc": "This is your referral link, you can share it with your friends and earn money for each user that signs up and buys a paid plan using it.",
+      "generateRefLink": "Generate referral link",
+      "referralStats": "Referral statistics",
+      "activeReferrals": "Active referrals",
+      "trial": "Trial referrals",
+      "trialDesc": "Trial users referred by you",
+      "active": "Active referrals",
+      "activeDesc": "Paid subsribers referred by you",
+      "paid": "Paid",
+      "paidDesc": "Total amount paid to you",
+      "nextPayout": "Next payout",
+      "nextPayoutDesc": "How much you will get paid next time",
+      "pending": "Väntande",
+      "pendingDesc": "Amount of money pending to be paid to you. It takes {{days}} days for the funds to become available.",
+      "activeReferralsTable": {
+        "plan": "Referral tier",
+        "yourCut": "Your cut",
+        "yourCutDesc": "You will receive {{amount}}% of the subscription fee paid by the user after all fees. Currently our merchant provider charges us {{fee}} per transaction.",
+        "registrationDate": "Registration date"
+      }
+    }
+  },
+  "alertsSettings": {
+    "alertCreated": "The alert has been created",
+    "alertUpdated": "The alert has been updated",
+    "alertDeleted": "The alert has been deleted"
   },
   "dashboard": {
     "newProject": "Nytt projekt",
+    "newFunnel": "New funnel",
     "newCaptchaProject": "New CAPTCHA project",
     "verifyEmailTitle": "Vänligen verifiera e-postadressen först",
     "verifyEmailDesc": "För att börja använda vår tjänst och skapa dina projekt måste du först bekräfta din e-postadress.\n\nEn länk för att bekräfta ditt konto har skickats till den e-postadress som du angav vid din registrering. Om länken inte levererades kan du begära den igen i dina kontoinställningar.",
     "lowEventsTitle": "Du håller på att få slut på händelser!",
     "lowEventsDesc": "You have used more than 85% of the available events per your tier for this month.\nThat means that in case you use 100% of the available events until the end of the month, all the subsequent traffic will not be saved.\nTo avoid this we recommend that you update your tier on the Billing page.",
+    "accountLocked": "Your account has been temporarily suspended due to a billing issue.",
+    "accountLockedTitle": "Account temporarily suspended",
     "eventsXPercUsed": "Du har använt mer än {{amount}}% av de tillgängliga evenemangen per din nivå för denna månad.",
     "noProjects": "Du har ännu inte skapat några projekt",
     "createProject": "Skapa ett nytt projekt här för att börja använda vår tjänst",
@@ -480,11 +517,13 @@
     "shared": "Shared",
     "disabled": "Inaktiverat",
     "pageviews": "Sidvisningar",
+    "captchaEvents": "CAPTCHA events",
     "unique": "Unika vyer",
     "createdAt": "Skapad på",
     "inc": "Ökad med",
     "dec": "Minskat med",
     "liveVisitors": "Live-besökare",
+    "xLiveVisitors": "{{amount}} live visitors",
     "live": "Live",
     "bounceRate": "Studsfrekvens",
     "viewsPerUnique": "Views per session",
@@ -492,15 +531,20 @@
     "invitationFor": "Invitation for {{project}}",
     "invitationDesc": "You have been invited to join the project {{project}}.\nYou can either accept the invitation here or reject it in your account settings.",
     "sessionDuration": "Session duration",
+    "cumulativeMode": "Cumulative mode",
     "traffic": "Trafik",
     "performance": "Performance",
+    "funnels": "Funnels",
+    "sessions": "Sessions",
     "alerts": "Alerts",
-    "alertsDesc": "Automated alerts are a powerful tool that allow you to run automated tasks when specific events occur.\nWe can automatically monitor your project for traffic spikes and notify you via Telegram.",
+    "alertsDesc": "Automated alerts is a powerful tool that allows you to run automated tasks when specific events occur.\nWe can automatically monitor your project for traffic spikes and notify you via Telegram.",
+    "funnelsDesc": "Funnels is a powerful tool that allows you to track the conversion rate of your users through a series of steps.\nThe analysis provided by the marketing funnel gives you the ability to discover potential problems, improve your website, and boost your conversion rate.",
     "frontend": "Frontend",
     "backend": "Backend",
     "network": "Network",
     "timing": "Timing breakdown",
     "timingFull": "Timing breakdown (full)",
+    "allocation": "Load time allocation",
     "dns": "DNS",
     "conn": "Connection",
     "tls": "TLS Setup",
@@ -508,10 +552,14 @@
     "domLoad": "DOM Content Load",
     "pageLoad": "Page load time",
     "render": "Browser render",
-    "response": "Response Time"
+    "response": "Response Time",
+    "average": "Average",
+    "median": "Median",
+    "xPercentile": "{{x}}th percentile"
   },
   "alert": {
     "create": "Create an alert",
+    "customEvent": "Custom event name",
     "add": "Add Alert",
     "delete": "Delete alert",
     "noNameError": "Please enter a name for the alert.",
@@ -519,7 +567,7 @@
     "noIntegration": "You have not configured an integration yet. Create one in your <url>account settings</url>.",
     "noNotification": "No notification channels set",
     "lastTriggered": "Last Triggered",
-    "never": "Never",
+    "never": "Aldrig",
     "qDelete": "Delete the alert?",
     "settingsOf": "Settings of {{name}}",
     "deleteHint": "This action is irreversible.\nThe alert and all the data related to it will be deleted from our servers.",
@@ -542,7 +590,8 @@
     "metrics": {
       "page_views": "Page views",
       "unique_page_views": "Unique sessions",
-      "online_users": "Online users"
+      "online_users": "Online users",
+      "custom_events": "Anpassade händelser"
     }
   },
   "notFoundPage": {
@@ -553,20 +602,49 @@
   },
   "project": {
     "search": "Search",
+    "loadMore": "Load more",
+    "unknownCountry": "Unknown country",
+    "selectCategory": "Select category to filter",
+    "currentFilters": "Currently applied filters",
+    "newFilters": "New filters",
     "advancedFilters": "Advanced filters",
     "applyFilters": "Apply filters",
+    "lookingForMore": "Looking for more?",
     "overrideCurrentlyFilters": "Override currently applied filters",
-    "ad": "Vill du ha denna statistik för din webbplats?",
     "noExist": "Det valda projektet finns inte",
     "geo": "Geolocation",
+    "campaigns": "Campaigns",
+    "pageviewX": "Pageview <value>{{x}}</value>",
+    "eventX": "Event <value>{{x}}</value>",
     "exportData": "Exportera",
-    "asImage": "Som bild",
     "asCSV": "Som CSV",
     "noEvTitle": "Inga händelser ännu",
     "showAll": "Visa alla händelser",
     "trendlineUnique": "Unique visitors trendline",
+    "backToFunnels": "Back to funnels list",
+    "backToSessions": "Back to sessions list",
+    "visitPage": "Visit {{page}}",
+    "visitors": "Visitors",
+    "events": "Events",
+    "dropoff": "Dropoff",
+    "neverEnteredTheFunnel": "Never entered the funnel",
+    "locked": {
+      "title": "Dashboard locked",
+      "descExceedingTier": "This dashboard is locked because your traffic has exceeded your subscription plan.\nIn order to continue using Swetrix and have access to your stats, you need to upgrade your subscription plan to reflect your usage.",
+      "descTialEnded": "This dashboard is locked because your trial ended.\nIn order to continue using Swetrix and have access to your stats, you need to subscribe to one of our tiers.",
+      "descPaymentFailed": "This dashboard is locked because there was a problem with your last Swetrix subscription payment.\nIn order to continue using Swetrix and have access to your stats, you need to update / confirm your payment details.",
+      "descSharedProject": "This dashboard is locked due to a billing issue of the project owner.\nIn order to continue using Swetrix and have access to the stats, the billing issue must be resolved first.",
+      "descGenericIssue": "This dashboard has been locked and is currently unavailable, please come back later or contact the project owner to resolve the issue.",
+      "descSubCancelled": "This dashboard has been locked because you've cancelled your subscription.\nIn order to continue using Swetrix and have access to your stats, you need to have an active subscription.",
+      "resolve": "We're still counting your stats and we haven't deleted any of your data. Once you have updated your payment information, your dashboard access will be restored immediately.",
+      "manageSubscription": "Manage subscription"
+    },
+    "waiting": {
+      "title": "Waiting for your first pageview",
+      "desc": "We're waiting for your first pageview! If your integration is set up correctly, you should see it within 1 minute.\n<snippet>Click here</snippet> to view your JavaScript tracking code.\nStill not working? Try <turl>troubleshooting</turl> your integration or <curl>contact us</curl> for help with your setup."
+    },
     "trendlineTotal": "Pageviews trendline",
-    "noEvContent": "Inga händelser har registrerats under den angivna tidsramen.\nOm du inte har spårat några händelser ännu kan du kolla in våra <url>Docs</url> för att enkelt integrera spårning i din app.",
+    "noEvContent": "No events have been recorded for the specified period, please try a different period.",
     "noCaptchaEv": "No events have been captured for the specified timeframe.\nIf you haven't set up CAPTCHA yet, you can check out our <url>Docs</url> to easily integrate it into your app.",
     "mapping": {
       "cc": "Land",
@@ -577,13 +655,18 @@
       "ref": "Hänvisare",
       "dv": "Enhetstyp",
       "br": "Webbläsare",
-      "os": "OS-namn"
+      "os": "OS-namn",
+      "so": "UTM Source",
+      "me": "UTM Medium",
+      "ca": "UTM Campaign"
     },
     "redactedPage": "Redacted page",
+    "noData": "No data to display",
     "overview": "Översikt",
     "weeklyStats": "Veckovis statistik",
     "statsFor": "Statistik för",
     "event": "Händelse",
+    "value": "Value",
     "quantity": "Kvantitet",
     "conversion": "Konversion",
     "ratio": "Förhållande",
@@ -627,6 +710,8 @@
       "create": "Skapa ett nytt projekt",
       "settings": "Inställningar av",
       "name": "Projektnamn",
+      "sharableLink": "Sharable link",
+      "sharableDesc": "Used to share your dashboard with others, only available if you make your dashboard public or password protected.",
       "pid": "Projekt Id",
       "origins": "Tillåtna ursprung",
       "originsHint": "En lista över ursprung (domäner) som får använda skript med ditt ProjectID, separerade med kommatecken.\nLämna den tom om du vill tillåta alla ursprung (standardinställning).\nExempel: cornell.edu, app.example.com, *.gov.ua",
@@ -654,7 +739,7 @@
       "inviteTo": "Invite a user to {{project}}",
       "inviteDesc": "Enter an email address and a role of the person you want to share your project with.\nWe shall contact them over email to offer the access to the project.",
       "inviteExpity": "The invitation will expire in {{amount}} hours.",
-      "role": "Role",
+      "role": "Roll",
       "roles": {
         "admin": {
           "name": "Administrator",
@@ -692,7 +777,7 @@
     },
     "captcha": {
       "settings": {
-        "general": "General settings",
+        "general": "Allmänna inställningar",
         "inheritance": "Inheritance",
         "name": "CAPTCHA project name",
         "pid": "CAPTCHA project ID",
@@ -701,12 +786,12 @@
       }
     },
     "emails": {
-      "title": "Email reports",
+      "title": "E-postrapporter",
       "description": "Send regular email reports to as many recipients as you want",
       "add": "Add a recipient",
       "reportFrequency": "Report frequency"
     },
-    "page": "Page",
+    "page": "Sida",
     "reverse": "Reverse",
     "userFlow": {
       "noData": "User flow is not available yet due to lack of data, or you disabled this feature in the tracking script parameters"
@@ -720,9 +805,10 @@
   "billing": {
     "title": "Fakturering och planer",
     "desc": "Det är gratis att komma igång och använda våra tjänster.\nOm du behöver hantera mer trafik behöver du förmodligen uppgradera din plan.\nNedan finns en förteckning över tillgängliga planer. Inga dolda avgifter eller annat BS, allt är tydligt och transparent!",
-    "contact": "Need to track more than {{amount}} million events per month?\nContact us at <mail>{{email}}</mail> to discuss your needs.",
+    "contact": "Do you have more than {{amount}} million events per month? <url>Get in touch</url> to discuss your needs!",
     "update": "Uppdatera betalningsuppgifter",
     "nextBillDate": "Next bill date:",
+    "nextBillDateIs": "Your next bill date is {{date}}",
     "trialEnds": "Trial ends {{date}}",
     "cancelSub": "Cancel subscription",
     "noSubWarning": "You don't have an active subscription.\nNo new analytics data will be stored into our database. You can still view the data that was collected before the subscription was cancelled.",
@@ -740,35 +826,62 @@
     "dueNow": "Due now",
     "dueNowDescription": "You will be charged pro-rated amount for the remaining days of the current billing period.",
     "negativePayment": "Negative 'Amount' means that you will have a credit balance of {{currency}}{{dueNowAmount}}. You will be billed {{currency}}0.00 on {{dueNowDate}}. Once the credit balance is used up, your recurring billing amount will be {{currency}}{{nextPaymentAmount}} every billing cycle of your subscription plan.",
-    "nextPayment": "Next payment"
+    "nextPayment": "Next payment",
+    "subscription": "Subscription",
+    "planUsageDesc": "The plan usage shows the number of events (page views, custom events, CAPTCHA completions) that you have used for the current month.",
+    "xofy": "{{x}} of {{y}}",
+    "resetDate": "The plan usage resets on the first day of each month.",
+    "selectPlan": "Select a subscription plan to unveil full Swetrix potential.",
+    "changePlan": "You can change or cancel your subscription plan at any time here.",
+    "membersNotification": "Pageviews, custom events and CAPTCHA completions are counted towards the limit of the subscription of the account owner. People you invite into your projects don't need a subscription.",
+    "xMonthsFree": "{{amount}} months free"
   },
   "modals": {
     "paidFeature": {
       "title": "Upgrade your plan to use this feature",
       "desc": "We apologise for the inconvenience, but you must subscribe to a paid plan to use this feature.\n\nWe realise that you might not be ready to buy a paid subscription yet, but buying it will give you not only access to this feature, but also many other great perks, such as access to all the other paid features, higher limits on visits per month and number of websites available, and you will support the growth of a small business :)"
     },
+    "trackingSnippet": {
+      "title": "Add a Swetrix tracking code to your website",
+      "add": "Add the following snippet into the <bsect></bsect> section of your site.",
+      "docs": "Check our <pdocs>our documentation</pdocs> for details and more integration guides."
+    },
     "forecast": {
       "title": "Traffic forecast",
       "desc": "This is a rough estimate of how much traffic you can expect to get on your website, based on Swetrix AI models.",
       "input": "The quantity of '{{frequency}}' you want to forecast"
+    },
+    "funnels": {
+      "addTitle": "Add funnel",
+      "editTitle": "Edit funnel",
+      "name": "Funnel name",
+      "steps": "Funnel steps",
+      "addStep": "Add one more step"
+    },
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "timebuckets": "Timebuckets selection",
+      "tabs": "Tabs switching"
     }
   },
   "pricing": {
-    "title": "Prisplaner",
-    "adv": "Börja gratis, inget kreditkort behövs.\nNär ditt företag växer kan du uppgradera din plan när som helst.",
+    "title": "Simple, traffic-based pricing",
+    "adv": "Try Swetrix on your website for {{amount}} days - completely free of charge.\nNo credit card required. No strings attached.",
     "currentPlan": "Nuvarande plan",
-    "mostPopular": "Mest populär",
     "free": "Gratis",
     "legacy": "Legacy",
     "perMonth": "må",
     "perYear": "yr",
     "yourPlan": "Din plan",
     "downgrade": "Nedgradera",
+    "selectPlan": "Select plan:",
     "upgrade": "Uppgradera",
     "whatIncl": "Vad ingår",
-    "monthlyBilling": "Monthly billing",
-    "yearlyBilling": "Yearly billing",
+    "monthlyBilling": "Månadsvis",
+    "yearlyBilling": "Yearly",
     "switchToMonthly": "Switch to monthly billing",
+    "frequency": "Payment frequency",
+    "eventPerMonth": "Events per month",
     "switchToYearly": "Switch to yearly billing",
     "xTrialDaysLeft": "{{amount}} trial days left",
     "trialEnded": "Trial ended",
@@ -780,21 +893,21 @@
       "startup": "Startup",
       "enterprise": "Företag",
       "trial": "Free trial",
-      "upToXEVMo": "Up to {{amount}} events per month",
-      "xEvMo": "{{amount}} events per month",
+      "upToXEVMo": "Upp till {{amount}} händelser per månad",
+      "xEvMo": "{{amount}} händelser per månad",
       "upToXVMo": "Up to {{amount}} visits per month",
       "xVMo": "{{amount}} visits per month",
       "xAlertsSingular": "{{amount}} alerting rule",
       "xAlertsPlural": "{{amount}} alerting rules",
-      "upToXProjects": "Create up to {{amount}} projects",
+      "upToXProjects": "Skapa upp till {{amount}} projekt",
       "upToXWebsites": "Add up to {{amount}} websites",
-      "xMoDataRetention": "{{amount}} months of data retention",
-      "evXPlanIncl": "Everything {{plan}} plan includes",
+      "xMoDataRetention": "{{amount}} månaders lagring av data",
+      "evXPlanIncl": "Allt {{plan}} plan inkluderar",
       "smallBusiSupport": "By buying this you are supporting a small business",
       "dataExports": "Unlimited data exports",
       "dataOwnership": "100% data ownership",
       "dashboards": "Shared & Public Dashboards",
-      "reports": "Email reports",
+      "reports": "E-postrapporter",
       "userFlowAnalysis": "User flow analysis"
     },
     "downgradeTitle": "Är du säker på att du vill nedgradera?",
@@ -807,8 +920,7 @@
     "ways": {
       "email": "You can drop us an email at <mail>{{email}}</mail>",
       "twitter": "Tweet or message us at <url>{{twitter}}</url>",
-      "discord": "Join our Discord server by following <url>this link</url>",
-      "chat": "Use a chatbox located on the bottom right of this page"
+      "discord": "Join our Discord server by following <url>this link</url>"
     }
   },
   "beta": {
@@ -846,17 +958,18 @@
     "verification": "E-postverifiering",
     "invitation": "Shared project invitation",
     "profileSettings": "Profilinställningar",
-    "features": "Funktioner",
     "dashboard": "Instrumentbräda",
     "docs": "Dokumentation",
     "billing": "Fakturering",
     "contact": "Kontakt",
     "changelog": "Changelog",
-    "main": "Ultimate open-source analytics to satisfy all your needs",
+    "main": "Ultimate open-source web analytics to satisfy all your needs",
     "press": "Media & Press",
     "socialisation": "Socialisation",
     "open": "Open startup",
-    "passwordProtected": "This project is password protected"
+    "passwordProtected": "This project is password protected",
+    "confirm": "Check your inbox",
+    "performance": "End user performance monitoring to deliver fast websites"
   },
   "header": {
     "switchTheme": "Switch theme",
@@ -894,6 +1007,7 @@
     "press": "Media & Press",
     "open": "Open startup",
     "about": "About us",
-    "features": "Features"
+    "features": "Funktioner",
+    "imprint": "Imprint"
   }
 }

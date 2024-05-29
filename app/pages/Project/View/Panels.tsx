@@ -1,16 +1,18 @@
-import React, {
-  memo, useState, useEffect, useMemo, Fragment,
-} from 'react'
+import React, { memo, useState, useEffect, useMemo, Fragment } from 'react'
+import type i18next from 'i18next'
 import InnerHTML from 'dangerously-set-html-content'
-import {
-  ArrowLongRightIcon, ArrowLongLeftIcon,
-} from '@heroicons/react/24/solid'
+import { ArrowLongRightIcon, ArrowLongLeftIcon } from '@heroicons/react/24/solid'
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
 import {
-  FunnelIcon, MapIcon, Bars4Icon, ArrowsPointingOutIcon, ChartPieIcon, PuzzlePieceIcon, RectangleGroupIcon,
+  FunnelIcon,
+  MapIcon,
+  Bars4Icon,
+  ArrowsPointingOutIcon,
+  ChartPieIcon,
+  PuzzlePieceIcon,
+  RectangleGroupIcon,
 } from '@heroicons/react/24/outline'
 import cx from 'clsx'
-import PropTypes from 'prop-types'
 import { pie } from 'billboard.js'
 import _keys from 'lodash/keys'
 import _values from 'lodash/values'
@@ -31,18 +33,16 @@ import _sortBy from 'lodash/sortBy'
 import _fromPairs from 'lodash/fromPairs'
 import _toPairs from 'lodash/toPairs'
 import _reverse from 'lodash/reverse'
-import { nFormatter } from 'utils/generic'
 
+import { nFormatter } from 'utils/generic'
 import Progress from 'ui/Progress'
-import PulsatingCircle from 'ui/icons/PulsatingCircle'
 import Sort from 'ui/icons/Sort'
 import Modal from 'ui/Modal'
 import Button from 'ui/Button'
 import Chart from 'ui/Chart'
-
+import Loader from 'ui/Loader'
 import { PROJECT_TABS } from 'redux/constants'
 import { IEntry } from 'redux/models/IEntry'
-import LiveVisitorsDropdown from './components/LiveVisitorsDropdown'
 import InteractiveMap from './components/InteractiveMap'
 import UserFlow from './components/UserFlow'
 import { iconClassName } from './ViewProject.helpers'
@@ -96,31 +96,44 @@ const removeDuplicates = (arr: any[], keys: string[]) => {
 }
 
 interface IPanelContainer {
-  name: string | JSX.Element,
-  children?: React.ReactNode,
-  noSwitch?: boolean,
-  icon?: React.ReactNode,
-  type: string,
-  openModal?: () => void,
-  activeFragment: number | string,
-  setActiveFragment: (arg: number) => void,
-  customTabs?: any,
-  activeTab?: string,
+  name: string | JSX.Element
+  children?: React.ReactNode
+  noSwitch?: boolean
+  icon?: React.ReactNode
+  type: string
+  onExpandClick?: () => void
+  activeFragment: number | string
+  setActiveFragment: (arg: number) => void
+  customTabs?: any
+  activeTab?: string
   isCustomContent?: boolean
 }
 
 // noSwitch - 'previous' and 'next' buttons
 const PanelContainer = ({
-  name, children, noSwitch, icon, type, openModal, activeFragment, setActiveFragment, customTabs, activeTab, isCustomContent,
+  name,
+  children,
+  noSwitch,
+  icon,
+  type,
+  activeFragment = 0,
+  setActiveFragment = () => {},
+  customTabs = [],
+  activeTab,
+  isCustomContent,
+  onExpandClick = () => {},
 }: IPanelContainer): JSX.Element => (
   <div
-    className={cx('relative bg-white dark:bg-slate-800/25 dark:border dark:border-slate-800/50 pt-5 px-4 min-h-72 max-h-96 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden', {
-      'pb-12': !noSwitch,
-      'pb-5': noSwitch,
-    })}
+    className={cx(
+      'relative max-h-96 min-h-72 overflow-hidden rounded-lg bg-white px-4 pt-5 shadow dark:border dark:border-slate-800/50 dark:bg-slate-800/25 sm:px-6 sm:pt-6',
+      {
+        'pb-12': !noSwitch,
+        'pb-5': noSwitch,
+      },
+    )}
   >
-    <div className='flex items-center justify-between mb-2'>
-      <h3 className='flex items-center text-lg leading-6 font-semibold text-gray-900 dark:text-gray-50'>
+    <div className='mb-2 flex items-center justify-between'>
+      <h3 className='flex items-center text-lg font-semibold leading-6 text-gray-900 dark:text-gray-50'>
         {icon && (
           <>
             {icon}
@@ -154,12 +167,12 @@ const PanelContainer = ({
               className={cx(iconClassName, 'ml-2 cursor-pointer text-slate-400 dark:text-slate-500', {
                 hidden: activeFragment === 0,
               })}
-              onClick={openModal}
+              onClick={onExpandClick}
             />
           </>
         )}
 
-        {(type === 'pg' && activeTab !== PROJECT_TABS.performance) && (
+        {type === 'pg' && activeTab !== PROJECT_TABS.performance && activeTab !== PROJECT_TABS.errors && (
           <>
             <RectangleGroupIcon
               className={cx(iconClassName, 'ml-2 cursor-pointer', {
@@ -172,7 +185,7 @@ const PanelContainer = ({
               className={cx(iconClassName, 'ml-2 cursor-pointer text-slate-400 dark:text-slate-500', {
                 hidden: activeFragment === 0,
               })}
-              onClick={openModal}
+              onClick={onExpandClick}
             />
           </>
         )}
@@ -187,6 +200,17 @@ const PanelContainer = ({
             onClick={() => setActiveFragment(1)}
           />
         )}
+
+        {/* if it is a 'Custom events' tab  */}
+        {type === 'ce' && (
+          <>
+            <ArrowsPointingOutIcon
+              className={cx(iconClassName, 'ml-2 cursor-pointer text-slate-400 dark:text-slate-500')}
+              onClick={onExpandClick}
+            />
+          </>
+        )}
+
         {checkCustomTabs(type, customTabs) && (
           <>
             {/* This is a temp fix to prevent multiple tabs of the same extensionID be displayed */}
@@ -217,260 +241,21 @@ const PanelContainer = ({
       </div>
     </div>
     {/* for other tabs */}
-    <div className={cx('flex flex-col h-full scroll-auto', {
-      'overflow-auto': !(type === 'pg' && activeTab !== PROJECT_TABS.performance && activeFragment === 1),
-      relative: isCustomContent,
-    })}
+    <div
+      className={cx('flex h-full flex-col scroll-auto', {
+        'overflow-auto': !(
+          type === 'pg' &&
+          activeTab !== PROJECT_TABS.performance &&
+          activeTab !== PROJECT_TABS.errors &&
+          activeFragment === 1
+        ),
+        relative: isCustomContent,
+      })}
     >
       {children}
     </div>
   </div>
 )
-
-PanelContainer.propTypes = {
-  name: PropTypes.oneOfType([
-    PropTypes.string, PropTypes.node,
-  ]).isRequired,
-  children: PropTypes.node.isRequired,
-  noSwitch: PropTypes.bool,
-  activeFragment: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  setActiveFragment: PropTypes.func,
-  icon: PropTypes.node,
-}
-
-PanelContainer.defaultProps = {
-  icon: null,
-  noSwitch: false,
-  activeFragment: 0,
-  setActiveFragment: () => { },
-  openModal: () => { },
-  customTabs: [],
-  activeTab: '',
-  isCustomContent: false,
-}
-
-// First tab with stats
-const Overview = ({
-  overall, chartData, activePeriod, t, live, sessionDurationAVG, projectId, sessionDurationAVGCompare, isActiveCompare, dataChartCompare, activeDropdownLabelCompare, projectPassword,
-}: {
-  overall: any
-  chartData: any
-  activePeriod: any
-  t: (arg: string) => string
-  live: number | string
-  sessionDurationAVG: number
-  sessionDurationAVGCompare: number
-  isActiveCompare: boolean
-  activeDropdownLabelCompare: string | undefined
-  dataChartCompare: any
-  projectId: string
-  projectPassword: string | undefined
-}) => {
-  const pageviewsDidGrowUp = overall.percChange >= 0
-  const uniqueDidGrowUp = overall.percChangeUnique >= 0
-  const pageviews = _sum(chartData?.visits) || 0
-  const pageViewsCompare = _sum(dataChartCompare?.visits) || 0
-  const uniques = _sum(chartData?.uniques) || 0
-  const uniquesCompare = _sum(dataChartCompare?.uniques) || 0
-  let bounceRate = 0
-  let bounceRateCompare = 0
-
-  if (pageviews > 0) {
-    bounceRate = _round((uniques * 100) / pageviews, 1)
-  }
-
-  if (pageViewsCompare > 0) {
-    bounceRateCompare = _round((uniquesCompare * 100) / pageViewsCompare, 1)
-  }
-
-  return (
-    <PanelContainer name={t('project.overview')} noSwitch type='' openModal={() => {}}>
-      <div className='flex text-lg justify-between'>
-        <div className='flex items-center dark:text-gray-50'>
-          <PulsatingCircle className='mr-1.5' type='big' />
-          {t('dashboard.liveVisitors')}
-          :
-        </div>
-        <LiveVisitorsDropdown projectId={projectId} live={live} projectPassword={projectPassword} />
-      </div>
-      {!_isEmpty(chartData) && (
-        <>
-          <p className='text-lg font-semibold dark:text-gray-50'>
-            {t('project.statsFor')}
-            <span className='lowercase'>
-              &nbsp;
-              {activePeriod.label}
-            </span>
-            {isActiveCompare && (
-            // return vs activeDropdownLabelCompare
-            <span className='text-sm text-gray-500 dark:text-gray-400'>
-                &nbsp;(
-              {activeDropdownLabelCompare}
-              )
-            </span>
-            )}
-          </p>
-
-          <div className='flex justify-between'>
-            <p className='text-lg dark:text-gray-50'>
-              {t('dashboard.pageviews')}
-              :
-            </p>
-            <p title={String(pageviews)} className='h-5 mr-2 text-gray-900 dark:text-gray-50 text-xl'>
-              {nFormatter(pageviews, 1)}
-              {isActiveCompare && (
-                <span
-                  title={`${pageViewsCompare > pageviews ? '+' : ''}${pageViewsCompare - pageviews}`}
-                  className={cx('ml-1.5 text-sm', {
-                    'text-green-500': pageViewsCompare > pageviews,
-                    'text-red-500': pageViewsCompare < pageviews,
-                  })}
-                >
-                  {pageViewsCompare > pageviews ? '+' : ''}
-                  {nFormatter(pageViewsCompare - pageviews, 1)}
-                </span>
-              )}
-            </p>
-          </div>
-
-          <div className='flex justify-between'>
-            <p className='text-lg dark:text-gray-50'>
-              {t('dashboard.unique')}
-              :
-            </p>
-            <p title={String(uniques)} className='h-5 mr-2 text-gray-900 dark:text-gray-50 text-xl'>
-              {nFormatter(uniques, 1)}
-              {isActiveCompare && (
-                <span
-                  title={`${uniquesCompare > uniques ? '+' : ''}${uniquesCompare - uniques}`}
-                  className={cx('ml-1.5 text-sm', {
-                    'text-green-500': uniquesCompare > uniques,
-                    'text-red-500': uniquesCompare < uniques,
-                  })}
-                >
-                  {uniquesCompare > uniques ? '+' : ''}
-                  {nFormatter(uniquesCompare - uniques, 1)}
-                </span>
-              )}
-            </p>
-          </div>
-
-          <div className='flex justify-between'>
-            <p className='text-lg dark:text-gray-50'>
-              {t('dashboard.bounceRate')}
-              :
-            </p>
-            <p className='h-5 mr-2 text-gray-900 dark:text-gray-50 text-xl'>
-              {bounceRate}
-              %
-              {isActiveCompare && (
-                <span className={cx('ml-1.5 text-sm', {
-                  'text-green-500': bounceRateCompare > bounceRate,
-                  'text-red-500': bounceRateCompare < bounceRate,
-                })}
-                >
-                  {bounceRateCompare > bounceRate ? '+' : ''}
-                  {_round(bounceRateCompare - bounceRate, 1)}
-                  %
-                </span>
-              )}
-            </p>
-          </div>
-          <div className='flex justify-between'>
-            <p className='text-lg dark:text-gray-50'>
-              {t('dashboard.sessionDuration')}
-              :
-            </p>
-            <p className='h-5 mr-2 text-gray-900 dark:text-gray-50 text-xl'>
-              {sessionDurationAVG}
-              {isActiveCompare && (
-                <span className='text-sm text-gray-500 dark:text-gray-400'>
-                  &nbsp;(
-                  {sessionDurationAVGCompare}
-                  )
-                </span>
-              )}
-            </p>
-          </div>
-          <hr className='my-2 border-gray-200 dark:border-gray-600' />
-        </>
-      )}
-      <p className='text-lg font-semibold dark:text-gray-50'>
-        {t('project.weeklyStats')}
-      </p>
-      <dl className='flex justify-between'>
-        <dt className='text-lg dark:text-gray-50'>
-          {t('dashboard.pageviews')}
-          :
-        </dt>
-        <dd className='flex items-baseline'>
-          <p className='h-5 mr-2 text-gray-900 dark:text-gray-50 text-lg'>
-            {overall.thisWeek}
-          </p>
-          <p
-            className={cx('flex text-sm -ml-1 items-baseline', {
-              'text-green-600': pageviewsDidGrowUp,
-              'text-red-600': !pageviewsDidGrowUp,
-            })}
-          >
-            {pageviewsDidGrowUp ? (
-              <>
-                <ChevronUpIcon className='self-center flex-shrink-0 h-4 w-4 text-green-500' />
-                <span className='sr-only'>
-                  {t('dashboard.inc')}
-                </span>
-              </>
-            ) : (
-              <>
-                <ChevronDownIcon className='self-center flex-shrink-0 h-4 w-4 text-red-500' />
-                <span className='sr-only'>
-                  {t('dashboard.dec')}
-                </span>
-              </>
-            )}
-            {overall.percChange}
-            %
-          </p>
-        </dd>
-      </dl>
-      <dl className='flex justify-between'>
-        <dt className='text-lg dark:text-gray-50'>
-          {t('dashboard.unique')}
-          :
-        </dt>
-        <dd className='flex items-baseline'>
-          <p className='h-5 mr-2 text-gray-900 dark:text-gray-50 text-lg'>
-            {overall.thisWeekUnique}
-          </p>
-          <p
-            className={cx('flex text-sm -ml-1 items-baseline', {
-              'text-green-600': uniqueDidGrowUp,
-              'text-red-600': !uniqueDidGrowUp,
-            })}
-          >
-            {uniqueDidGrowUp ? (
-              <>
-                <ChevronUpIcon className='self-center flex-shrink-0 h-4 w-4 text-green-500' />
-                <span className='sr-only'>
-                  {t('dashboard.inc')}
-                </span>
-              </>
-            ) : (
-              <>
-                <ChevronDownIcon className='self-center flex-shrink-0 h-4 w-4 text-red-500' />
-                <span className='sr-only'>
-                  {t('dashboard.dec')}
-                </span>
-              </>
-            )}
-            {overall.percChangeUnique}
-            %
-          </p>
-        </dd>
-      </dl>
-    </PanelContainer>
-  )
-}
 
 // Options for circle chart showing the stats of data
 const getPieOptions = (customs: any, uniques: number, t: any) => {
@@ -518,7 +303,8 @@ interface ICustomEvents {
   customs: any
   chartData: any
   onFilter: any
-  t: (arg0: string) => string
+  t: typeof i18next.t
+  getCustomEventMetadata: (event: string) => any
   customTabs: any
 }
 
@@ -528,15 +314,94 @@ interface ISortRows {
   sortByDescend: boolean
 }
 
+interface IKVTable {
+  data: any
+  t: any
+  uniques: number
+  loading: boolean
+}
+
+const KVTable = ({ data, t, uniques, loading }: IKVTable) => {
+  // @ts-ignore
+  const processed: any[] = useMemo(() => {
+    return _reduce(
+      data,
+      (acc: any, curr: any) => {
+        if (!acc[curr.key]) {
+          acc[curr.key] = []
+        }
+
+        acc[curr.key].push({
+          value: curr.value,
+          count: curr.count,
+        })
+
+        return acc
+      },
+      {},
+    )
+  }, [data])
+
+  if (loading) {
+    return (
+      <div className='flex w-full items-center justify-center pb-10 pt-5'>
+        <Loader />
+      </div>
+    )
+  }
+
+  if (_isEmpty(data)) {
+    return <p className='mb-2 text-gray-600 dark:text-gray-200'>{t('project.noData')}</p>
+  }
+
+  return _map(processed, (value, key) => {
+    return (
+      <table key={key} className='mb-2 w-full table-fixed'>
+        <thead>
+          <tr className='text-gray-600 dark:text-gray-200'>
+            <th className='flex w-2/5 items-center text-left sm:w-4/6'>{key}</th>
+            <th className='w-[30%] sm:w-1/6'>
+              <p className='flex items-center justify-end'>{t('project.quantity')}</p>
+            </th>
+            <th className='w-[30%] sm:w-1/6'>
+              <p className='flex items-center justify-end'>{t('project.conversion')}</p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {_map(value, ({ value: nestedValue, count }) => (
+            <tr
+              key={nestedValue}
+              className='group py-3 text-gray-900 hover:bg-gray-100 dark:text-gray-50 hover:dark:bg-slate-700'
+            >
+              <td className='flex items-center text-left'>{nestedValue}</td>
+              <td className='text-right'>
+                {count}
+                &nbsp;&nbsp;
+              </td>
+              <td className='text-right'>{uniques === 0 ? 100 : _round((count / uniques) * 100, 2)}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  })
+}
+
 // Tabs with custom events like submit form, press button, go to the link rate etc.
-const CustomEvents = ({
-  customs, chartData, onFilter, t, customTabs,
-}: ICustomEvents) => {
+const CustomEvents = ({ customs, chartData, onFilter, t, customTabs = [], getCustomEventMetadata }: ICustomEvents) => {
   const [page, setPage] = useState(0)
+  const [modal, setModal] = useState(false)
+  const [activeEvents, setActiveEvents] = useState<any>({})
+  const [loadingEvents, setLoadingEvents] = useState<any>({})
+  const [eventsMetadata, setEventsMetadata] = useState<any>({})
   const [customsEventsData, setCustomsEventsData] = useState<any>(customs)
   const currentIndex = page * ENTRIES_PER_CUSTOM_EVENTS_PANEL
   const keys = _keys(customsEventsData)
-  const keysToDisplay = useMemo(() => _slice(keys, currentIndex, currentIndex + ENTRIES_PER_CUSTOM_EVENTS_PANEL), [keys, currentIndex])
+  const keysToDisplay = useMemo(
+    () => _slice(keys, currentIndex, currentIndex + ENTRIES_PER_CUSTOM_EVENTS_PANEL),
+    [keys, currentIndex],
+  )
   const uniques = _sum(chartData.uniques)
   const [chartOptions, setChartOptions] = useState<any>({})
   const [activeFragment, setActiveFragment] = useState<number>(0)
@@ -587,9 +452,11 @@ const CustomEvents = ({
       return _fromPairs(_sortBy(_toPairs(obj), (pair) => pair[0]))
     }
 
-    return _fromPairs(_toPairs(obj).sort((a: any, b: any) => {
-      return b[1] - a[1]
-    }))
+    return _fromPairs(
+      _toPairs(obj).sort((a: any, b: any) => {
+        return b[1] - a[1]
+      }),
+    )
   }
 
   const sortedDesc = (obj: any, sortByKeys?: boolean) => {
@@ -597,9 +464,52 @@ const CustomEvents = ({
       return _fromPairs(_reverse(_sortBy(_toPairs(obj), (pair) => pair[0])))
     }
 
-    return _fromPairs(_toPairs(obj).sort((a: any, b: any) => {
-      return a[1] - b[1]
+    return _fromPairs(
+      _toPairs(obj).sort((a: any, b: any) => {
+        return a[1] - b[1]
+      }),
+    )
+  }
+
+  const toggleEventMetadata = (ev: string) => async (e: any) => {
+    e.stopPropagation()
+
+    setActiveEvents((events: any) => ({
+      ...events,
+      [ev]: !events[ev],
     }))
+
+    if (!eventsMetadata[ev]) {
+      setLoadingEvents((events: any) => ({
+        ...events,
+        [ev]: true,
+      }))
+
+      try {
+        const data = await getCustomEventMetadata(ev)
+        setEventsMetadata((metadata: any) => ({
+          ...metadata,
+          [ev]: data,
+        }))
+      } catch (reason) {
+        console.error(`[ERROR](toggleEventMetadata) Failed to get metadata for event ${ev}`, reason)
+        setEventsMetadata((metadata: any) => ({
+          ...metadata,
+          [ev]: [],
+        }))
+      }
+
+      setLoadingEvents((events: any) => ({
+        ...events,
+        [ev]: false,
+      }))
+    }
+  }
+
+  const onModalClose = () => {
+    setModal(false)
+    setActiveEvents({})
+    setEventsMetadata({})
   }
 
   const onSortBy = (label: string) => {
@@ -654,17 +564,98 @@ const CustomEvents = ({
         type='ce'
         setActiveFragment={setActiveFragment}
         activeFragment={activeFragment}
+        onExpandClick={() => setModal(true)}
       >
         {_isEmpty(chartData) ? (
-          <p className='mt-1 text-base text-gray-700 dark:text-gray-300'>
-            {t('project.noParamData')}
-          </p>
+          <p className='mt-1 text-base text-gray-700 dark:text-gray-300'>{t('project.noParamData')}</p>
         ) : (
-          <Chart
-            options={chartOptions}
-            current='panels-ce'
-          />
+          <Chart options={chartOptions} current='panels-ce' />
         )}
+        <Modal
+          onClose={onModalClose}
+          isOpened={modal}
+          title={t('project.customEv')}
+          message={
+            <table className='w-full table-fixed'>
+              <thead>
+                <tr className='text-base text-gray-900 dark:text-gray-50'>
+                  <th
+                    className='flex w-2/5 cursor-pointer items-center text-left hover:opacity-90 sm:w-4/6'
+                    onClick={() => onSortBy('event')}
+                  >
+                    {t('project.event')}
+                    <Sort
+                      className='ml-1'
+                      sortByAscend={sort.label === 'event' && sort.sortByAscend}
+                      sortByDescend={sort.label === 'event' && sort.sortByDescend}
+                    />
+                  </th>
+                  <th className='w-[30%] sm:w-1/6'>
+                    <p
+                      className='flex cursor-pointer items-center justify-end hover:opacity-90'
+                      onClick={() => onSortBy('quantity')}
+                    >
+                      {t('project.quantity')}
+                      <Sort
+                        className='ml-1'
+                        sortByAscend={sort.label === 'quantity' && sort.sortByAscend}
+                        sortByDescend={sort.label === 'quantity' && sort.sortByDescend}
+                      />
+                      &nbsp;&nbsp;
+                    </p>
+                  </th>
+                  <th className='w-[30%] sm:w-1/6'>
+                    <p
+                      className='flex cursor-pointer items-center justify-end hover:opacity-90'
+                      onClick={() => onSortBy('conversion')}
+                    >
+                      {t('project.conversion')}
+                      <Sort
+                        className='ml-1'
+                        sortByAscend={sort.label === 'conversion' && sort.sortByAscend}
+                        sortByDescend={sort.label === 'conversion' && sort.sortByDescend}
+                      />
+                    </p>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {_map(keysToDisplay, (ev) => (
+                  <Fragment key={ev}>
+                    <tr
+                      className='group cursor-pointer py-1 text-base text-gray-900 hover:bg-gray-100 dark:text-gray-50 hover:dark:bg-slate-700'
+                      onClick={toggleEventMetadata(ev)}
+                    >
+                      <td className='flex items-center text-left'>
+                        {activeEvents[ev] ? (
+                          <ChevronUpIcon className='h-5 w-auto px-2 text-gray-500 hover:opacity-80 dark:text-gray-300' />
+                        ) : (
+                          <ChevronDownIcon className='h-5 w-auto px-2 text-gray-500 hover:opacity-80 dark:text-gray-300' />
+                        )}
+                        {ev}
+                      </td>
+                      <td className='text-right'>
+                        {customsEventsData[ev]}
+                        &nbsp;&nbsp;
+                      </td>
+                      <td className='text-right'>
+                        {uniques === 0 ? 100 : _round((customsEventsData[ev] / uniques) * 100, 2)}%
+                      </td>
+                    </tr>
+                    {activeEvents[ev] && (
+                      <tr>
+                        <td className='pl-9' colSpan={3}>
+                          <KVTable data={eventsMetadata[ev]} t={t} uniques={uniques} loading={loadingEvents[ev]} />
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
+          }
+          size='large'
+        />
       </PanelContainer>
     )
   }
@@ -672,9 +663,7 @@ const CustomEvents = ({
   // Showing custom tabs (Extensions Marketplace)
   // todo: check activeFragment for being equal to customTabs -> extensionID + panelID
   if (!_isEmpty(customTabs) && typeof activeFragment === 'string') {
-    const {
-      tabContent,
-    } = _find(customTabs, (tab) => tab.extensionID === activeFragment)
+    const { tabContent } = _find(customTabs, (tab) => tab.extensionID === activeFragment)
 
     return (
       <PanelContainer
@@ -683,22 +672,31 @@ const CustomEvents = ({
         activeFragment={activeFragment}
         setActiveFragment={setActiveFragment}
         customTabs={customTabs}
+        onExpandClick={() => {}}
         isCustomContent
       >
         {/* Using this instead of dangerouslySetInnerHTML to support script tags */}
-        {tabContent && (
-          <InnerHTML className='absolute overflow-auto' html={tabContent} />
-        )}
+        {tabContent && <InnerHTML className='absolute overflow-auto' html={tabContent} />}
       </PanelContainer>
     )
   }
 
   return (
-    <PanelContainer customTabs={customTabs} name={t('project.customEv')} type='ce' setActiveFragment={setActiveFragment} activeFragment={activeFragment}>
+    <PanelContainer
+      customTabs={customTabs}
+      name={t('project.customEv')}
+      type='ce'
+      setActiveFragment={setActiveFragment}
+      activeFragment={activeFragment}
+      onExpandClick={() => setModal(true)}
+    >
       <table className='table-fixed'>
         <thead>
           <tr className='text-gray-900 dark:text-gray-50'>
-            <th className='w-4/6 text-left flex items-center cursor-pointer hover:opacity-90' onClick={() => onSortBy('event')}>
+            <th
+              className='flex w-4/6 cursor-pointer items-center text-left hover:opacity-90'
+              onClick={() => onSortBy('event')}
+            >
               {t('project.event')}
               <Sort
                 className='ml-1'
@@ -707,7 +705,7 @@ const CustomEvents = ({
               />
             </th>
             <th className='w-1/6 text-right'>
-              <p className='flex items-center cursor-pointer hover:opacity-90' onClick={() => onSortBy('quantity')}>
+              <p className='flex cursor-pointer items-center hover:opacity-90' onClick={() => onSortBy('quantity')}>
                 {t('project.quantity')}
                 <Sort
                   className='ml-1'
@@ -718,7 +716,7 @@ const CustomEvents = ({
               </p>
             </th>
             <th className='w-1/6 text-right'>
-              <p className='flex items-center cursor-pointer hover:opacity-90' onClick={() => onSortBy('conversion')}>
+              <p className='flex cursor-pointer items-center hover:opacity-90' onClick={() => onSortBy('conversion')}>
                 {t('project.conversion')}
                 <Sort
                   className='ml-1'
@@ -733,12 +731,12 @@ const CustomEvents = ({
           {_map(keysToDisplay, (ev) => (
             <tr
               key={ev}
-              className='text-gray-900 dark:text-gray-50 group hover:bg-gray-100 hover:dark:bg-slate-700 cursor-pointer'
+              className='group cursor-pointer text-gray-900 hover:bg-gray-100 dark:text-gray-50 hover:dark:bg-slate-700'
               onClick={() => onFilter('ev', ev)}
             >
-              <td className='text-left flex items-center'>
+              <td className='flex items-center text-left'>
                 {ev}
-                <FunnelIcon className='ml-2 w-4 h-4 text-gray-500 hidden group-hover:block dark:text-gray-300' />
+                <FunnelIcon className='ml-2 hidden h-4 w-4 text-gray-500 group-hover:block dark:text-gray-300' />
               </td>
               <td className='text-right'>
                 {customsEventsData[ev]}
@@ -749,8 +747,7 @@ const CustomEvents = ({
                   Added a uniques === 0 check because uniques value may be zero and dividing by zero will cause an
                   Infinity% value to be displayed.
                 */}
-                {uniques === 0 ? 100 : _round((customsEventsData[ev] / uniques) * 100, 2)}
-                %
+                {uniques === 0 ? 100 : _round((customsEventsData[ev] / uniques) * 100, 2)}%
               </td>
             </tr>
           ))}
@@ -758,84 +755,151 @@ const CustomEvents = ({
       </table>
       {/* for pagination in tabs */}
       {_size(keys) > ENTRIES_PER_CUSTOM_EVENTS_PANEL && (
-        <div className='absolute bottom-0 w-card-toggle-sm sm:!w-card-toggle'>
-          <div className='flex justify-between select-none mb-2'>
+        <div className='w-card-toggle-sm absolute bottom-0 sm:!w-card-toggle'>
+          <div className='mb-2 flex select-none justify-between'>
             <div>
-              <span className='text-gray-500 dark:text-gray-200 font-light lowercase text-xs'>
-                {_size(keys)}
-                {' '}
-                {t('project.results')}
+              <span className='text-xs font-light lowercase text-gray-500 dark:text-gray-200'>
+                {_size(keys)} {t('project.results')}
               </span>
-              <span className='text-gray-500 dark:text-gray-200 font-light text-xs'>
-                .
-                {' '}
-                {t('project.page')}
-                {' '}
-                {page + 1}
-                {' '}
-                /
-                {' '}
-                {totalPages}
+              <span className='text-xs font-light text-gray-500 dark:text-gray-200'>
+                . {t('project.page')} {page + 1} / {totalPages}
               </span>
             </div>
-            <div className='flex justify-between w-[4.5rem]'>
+            <div className='flex w-[4.5rem] justify-between'>
               <Button
-                className={cx('text-gray-500 dark:text-gray-200 font-light shadow bg-gray-100 dark:bg-slate-800 border-none px-1.5 py-0.5', {
-                  'opacity-50 cursor-not-allowed': !canGoPrev(),
-                  'hover:bg-gray-200 hover:dark:bg-slate-700': canGoPrev(),
-                })}
+                className={cx(
+                  'border-none bg-gray-100 px-1.5 py-0.5 font-light text-gray-500 shadow dark:bg-slate-800 dark:text-gray-200',
+                  {
+                    'cursor-not-allowed opacity-50': !canGoPrev(),
+                    'hover:bg-gray-200 hover:dark:bg-slate-700': canGoPrev(),
+                  },
+                )}
                 type='button'
                 onClick={onPrevious}
                 disabled={!canGoPrev()}
                 focus={false}
               >
-                <ArrowLongLeftIcon className='w-5 h-5' />
+                <ArrowLongLeftIcon className='h-5 w-5' />
               </Button>
               <Button
-                className={cx('text-gray-500 dark:text-gray-200 font-light shadow bg-gray-100 dark:bg-slate-800 border-none px-1.5 py-0.5', {
-                  'opacity-50 cursor-not-allowed': !canGoNext(),
-                  'hover:bg-gray-200 hover:dark:bg-slate-700': canGoNext(),
-                })}
+                className={cx(
+                  'border-none bg-gray-100 px-1.5 py-0.5 font-light text-gray-500 shadow dark:bg-slate-800 dark:text-gray-200',
+                  {
+                    'cursor-not-allowed opacity-50': !canGoNext(),
+                    'hover:bg-gray-200 hover:dark:bg-slate-700': canGoNext(),
+                  },
+                )}
                 onClick={onNext}
                 disabled={!canGoNext()}
                 type='button'
                 focus={false}
               >
-                <ArrowLongRightIcon className='w-5 h-5' />
+                <ArrowLongRightIcon className='h-5 w-5' />
               </Button>
             </div>
           </div>
         </div>
       )}
+      <Modal
+        onClose={onModalClose}
+        isOpened={modal}
+        title={t('project.customEv')}
+        message={
+          <table className='w-full table-fixed'>
+            <thead>
+              <tr className='text-base text-gray-900 dark:text-gray-50'>
+                <th
+                  className='flex w-2/5 cursor-pointer items-center text-left hover:opacity-90 sm:w-4/6'
+                  onClick={() => onSortBy('event')}
+                >
+                  {t('project.event')}
+                  <Sort
+                    className='ml-1'
+                    sortByAscend={sort.label === 'event' && sort.sortByAscend}
+                    sortByDescend={sort.label === 'event' && sort.sortByDescend}
+                  />
+                </th>
+                <th className='w-[30%] sm:w-1/6'>
+                  <p
+                    className='flex cursor-pointer items-center justify-end hover:opacity-90'
+                    onClick={() => onSortBy('quantity')}
+                  >
+                    {t('project.quantity')}
+                    <Sort
+                      className='ml-1'
+                      sortByAscend={sort.label === 'quantity' && sort.sortByAscend}
+                      sortByDescend={sort.label === 'quantity' && sort.sortByDescend}
+                    />
+                    &nbsp;&nbsp;
+                  </p>
+                </th>
+                <th className='w-[30%] sm:w-1/6'>
+                  <p
+                    className='flex cursor-pointer items-center justify-end hover:opacity-90'
+                    onClick={() => onSortBy('conversion')}
+                  >
+                    {t('project.conversion')}
+                    <Sort
+                      className='ml-1'
+                      sortByAscend={sort.label === 'conversion' && sort.sortByAscend}
+                      sortByDescend={sort.label === 'conversion' && sort.sortByDescend}
+                    />
+                  </p>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {_map(keysToDisplay, (ev) => (
+                <Fragment key={ev}>
+                  <tr
+                    className='group cursor-pointer py-1 text-base text-gray-900 hover:bg-gray-100 dark:text-gray-50 hover:dark:bg-slate-700'
+                    onClick={toggleEventMetadata(ev)}
+                  >
+                    <td className='flex items-center text-left'>
+                      {activeEvents[ev] ? (
+                        <ChevronUpIcon className='h-5 w-auto px-2 text-gray-500 hover:opacity-80 dark:text-gray-300' />
+                      ) : (
+                        <ChevronDownIcon className='h-5 w-auto px-2 text-gray-500 hover:opacity-80 dark:text-gray-300' />
+                      )}
+                      {ev}
+                    </td>
+                    <td className='text-right'>
+                      {customsEventsData[ev]}
+                      &nbsp;&nbsp;
+                    </td>
+                    <td className='text-right'>
+                      {uniques === 0 ? 100 : _round((customsEventsData[ev] / uniques) * 100, 2)}%
+                    </td>
+                  </tr>
+                  {activeEvents[ev] && (
+                    <tr>
+                      <td className='pl-9' colSpan={3}>
+                        <KVTable data={eventsMetadata[ev]} t={t} uniques={uniques} loading={loadingEvents[ev]} />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              ))}
+            </tbody>
+          </table>
+        }
+        size='large'
+      />
     </PanelContainer>
   )
-}
-
-CustomEvents.propTypes = {
-  customs: PropTypes.objectOf(PropTypes.number).isRequired,
-  onFilter: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  chartData: PropTypes.objectOf(PropTypes.any).isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  customTabs: PropTypes.array,
-}
-
-CustomEvents.defaultProps = {
-  customTabs: [],
 }
 
 interface IPanel {
   name: string | JSX.Element
   data: IEntry[]
-  rowMapper: any
-  valueMapper: any
-  capitalize: boolean
-  linkContent: boolean
-  t: (arg0: string) => string
+  rowMapper?: (row: any) => string | JSX.Element
+  valueMapper?: (value: number) => number
+  capitalize?: boolean
+  linkContent?: boolean
+  t: typeof i18next.t
   icon: any
   id: string
-  hideFilters: boolean
+  hideFilters?: boolean
   onFilter: any
   customTabs?: any
   pid?: string | null
@@ -847,11 +911,32 @@ interface IPanel {
   activeTab?: string
   onFragmentChange?: (arg: number) => void
   filters?: string[]
+  projectPassword?: string
 }
 
 const Panel = ({
-  name, data, rowMapper, valueMapper, capitalize, linkContent, t, icon, id, hideFilters,
-  onFilter, customTabs, pid, period, timeBucket, from, to, timezone, activeTab, onFragmentChange, filters,
+  name,
+  data,
+  rowMapper = (row: IEntry): string => row.name,
+  valueMapper = (value: number): number => value,
+  capitalize,
+  linkContent,
+  t,
+  icon,
+  id,
+  hideFilters,
+  onFilter = () => {},
+  customTabs = [],
+  pid,
+  period,
+  timeBucket,
+  from,
+  to,
+  timezone,
+  activeTab,
+  onFragmentChange = () => {},
+  filters,
+  projectPassword,
 }: IPanel): JSX.Element => {
   const [page, setPage] = useState(0)
   const currentIndex = page * ENTRIES_PER_PANEL
@@ -865,7 +950,7 @@ const Panel = ({
   const canGoPrev = () => page > 0
   const canGoNext = () => page < _floor((_size(entries) - 1) / ENTRIES_PER_PANEL)
 
-  const _onFilter = hideFilters ? () => { } : onFilter
+  const _onFilter = hideFilters ? () => {} : onFilter
 
   useEffect(() => {
     const sizeKeys = _size(entries)
@@ -908,25 +993,15 @@ const Panel = ({
         type={id}
         activeFragment={activeFragment}
         setActiveFragment={_setActiveFragment}
-        openModal={() => setModal(true)}
+        onExpandClick={() => setModal(true)}
         customTabs={customTabs}
       >
-        <InteractiveMap
-          data={data}
-          total={total}
-          onClickCountry={(key) => _onFilter(id, key)}
-        />
+        <InteractiveMap data={data} total={total} onClickCountry={(key) => _onFilter(id, key)} />
         <Modal
           onClose={() => setModal(false)}
           closeText={t('common.close')}
           isOpened={modal}
-          message={(
-            <InteractiveMap
-              data={data}
-              total={total}
-              onClickCountry={(key) => _onFilter(id, key)}
-            />
-          )}
+          message={<InteractiveMap data={data} total={total} onClickCountry={(key) => _onFilter(id, key)} />}
           size='large'
         />
       </PanelContainer>
@@ -942,12 +1017,12 @@ const Panel = ({
         type={id}
         activeFragment={activeFragment}
         setActiveFragment={_setActiveFragment}
-        openModal={() => setModal(true)}
+        onExpandClick={() => setModal(true)}
         customTabs={customTabs}
       >
         {/* @ts-ignore */}
         <UserFlow
-          disableLegend
+          projectPassword={projectPassword}
           pid={pid || ''}
           period={period || ''}
           timeBucket={timeBucket || ''}
@@ -963,19 +1038,20 @@ const Panel = ({
           onClose={() => setModal(false)}
           closeText={t('common.close')}
           isOpened={modal}
-          customButtons={(
+          customButtons={
             <button
               type='button'
               onClick={() => setIsReversedUserFlow(!isReversedUserFlow)}
-              className='mt-3 w-full inline-flex justify-center rounded-md dark:border-none border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 dark:text-gray-50 dark:border-gray-600 dark:bg-slate-700 dark:hover:border-gray-600 dark:hover:bg-gray-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm'
+              className='mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:border-none dark:border-gray-600 dark:bg-slate-700 dark:text-gray-50 dark:hover:border-gray-600 dark:hover:bg-gray-700 sm:ml-3 sm:mt-0 sm:w-auto sm:text-sm'
             >
               {t('project.reverse')}
             </button>
-          )}
-          message={(
+          }
+          message={
             <div className='h-[500px] dark:text-gray-800'>
               {/* @ts-ignore */}
               <UserFlow
+                projectPassword={projectPassword}
                 pid={pid || ''}
                 period={period || ''}
                 timeBucket={timeBucket || ''}
@@ -987,7 +1063,7 @@ const Panel = ({
                 t={t}
               />
             </div>
-          )}
+          }
           size='large'
         />
       </PanelContainer>
@@ -1044,14 +1120,9 @@ const Panel = ({
         activeTab={activeTab}
       >
         {_isEmpty(data) ? (
-          <p className='mt-1 text-base text-gray-700 dark:text-gray-300'>
-            {t('project.noParamData')}
-          </p>
+          <p className='mt-1 text-base text-gray-700 dark:text-gray-300'>{t('project.noParamData')}</p>
         ) : (
-          <Chart
-            options={options}
-            current={`Panels-${id}`}
-          />
+          <Chart options={options} current={`Panels-${id}`} />
         )}
       </PanelContainer>
     )
@@ -1060,9 +1131,7 @@ const Panel = ({
   // Showing custom tabs (Extensions Marketplace)
   // todo: check activeFragment for being equal to customTabs -> extensionID + panelID
   if (!_isEmpty(customTabs) && typeof activeFragment === 'string' && !_isEmpty(data)) {
-    const {
-      tabContent,
-    } = _find(customTabs, (tab) => tab.extensionID === activeFragment)
+    const { tabContent } = _find(customTabs, (tab) => tab.extensionID === activeFragment)
 
     return (
       <PanelContainer
@@ -1071,7 +1140,7 @@ const Panel = ({
         type={id}
         activeFragment={activeFragment}
         setActiveFragment={_setActiveFragment}
-        openModal={() => setModal(true)}
+        onExpandClick={() => setModal(true)}
         customTabs={customTabs}
         activeTab={activeTab}
         isCustomContent
@@ -1083,108 +1152,113 @@ const Panel = ({
   }
 
   return (
-    <PanelContainer name={name} icon={icon} type={id} activeFragment={activeFragment} setActiveFragment={_setActiveFragment} customTabs={customTabs} activeTab={activeTab}>
+    <PanelContainer
+      name={name}
+      icon={icon}
+      type={id}
+      activeFragment={activeFragment}
+      setActiveFragment={_setActiveFragment}
+      customTabs={customTabs}
+      activeTab={activeTab}
+    >
       {_isEmpty(data) ? (
-        <p className='mt-1 text-base text-gray-700 dark:text-gray-300'>
-          {t('project.noParamData')}
-        </p>
-      ) : _map(entriesToDisplay, entry => {
-        const {
-          count, name: entryName, cc,
-        } = entry
-        const perc = _round((count / total) * 100, 2)
-        const rowData = rowMapper(entry)
-        const valueData = valueMapper(count)
+        <p className='mt-1 text-base text-gray-700 dark:text-gray-300'>{t('project.noParamData')}</p>
+      ) : (
+        _map(entriesToDisplay, (entry) => {
+          const { count, name: entryName, cc } = entry
+          const perc = _round((count / total) * 100, 2)
+          const rowData = rowMapper(entry)
+          const valueData = valueMapper(count)
 
-        return (
-          <Fragment key={`${id}-${entryName}-${cc}`}>
-            <div
-              className={cx('flex justify-between mt-[0.32rem] first:mt-0 dark:text-gray-50 rounded', {
-                'group hover:bg-gray-100 hover:dark:bg-slate-700 cursor-pointer': !hideFilters,
-              })}
-              onClick={() => _onFilter(id, entryName)}
-            >
-              {linkContent ? (
-                <a
-                  className={cx('flex items-center label hover:underline text-blue-600 dark:text-blue-500', { capitalize })}
-                  href={rowData}
-                  target='_blank'
-                  rel='noopener noreferrer nofollow'
-                  aria-label={`${rowData} (opens in a new tab)`}
-                >
-                  {rowData}
-                  {!hideFilters && (
-                    <FunnelIcon className='ml-2 w-4 h-4 text-gray-500 hidden group-hover:block dark:text-gray-300' />
-                  )}
-                </a>
-              ) : (
-                <span className={cx('flex items-center label', { capitalize })}>
-                  {rowData}
-                  {!hideFilters && (
-                    <FunnelIcon className='ml-2 w-4 h-4 text-gray-500 hidden group-hover:block dark:text-gray-300' />
+          return (
+            <Fragment key={`${id}-${entryName}-${cc}`}>
+              <div
+                className={cx('mt-[0.32rem] flex justify-between rounded first:mt-0 dark:text-gray-50', {
+                  'group cursor-pointer hover:bg-gray-100 hover:dark:bg-slate-700': !hideFilters,
+                })}
+                onClick={() => _onFilter(id, entryName)}
+              >
+                {linkContent ? (
+                  <a
+                    className={cx('label flex items-center text-blue-600 hover:underline dark:text-blue-500', {
+                      capitalize,
+                    })}
+                    href={rowData as string}
+                    target='_blank'
+                    rel='noopener noreferrer nofollow'
+                    aria-label={`${rowData} (opens in a new tab)`}
+                  >
+                    {rowData}
+                    {!hideFilters && (
+                      <FunnelIcon className='ml-2 hidden h-4 w-4 text-gray-500 group-hover:block dark:text-gray-300' />
+                    )}
+                  </a>
+                ) : (
+                  <span className={cx('label flex items-center', { capitalize })}>
+                    {rowData}
+                    {!hideFilters && (
+                      <FunnelIcon className='ml-2 hidden h-4 w-4 text-gray-500 group-hover:block dark:text-gray-300' />
+                    )}
+                  </span>
+                )}
+                <span className='ml-3 dark:text-gray-50'>
+                  {activeTab === PROJECT_TABS.traffic ? nFormatter(valueData, 1) : valueData}
+                  &nbsp;
+                  {activeTab !== PROJECT_TABS.performance && (
+                    <span className='font-light text-gray-500 dark:text-gray-200'>
+                      ({perc}
+                      %)
+                    </span>
                   )}
                 </span>
-              )}
-              <span className='ml-3 dark:text-gray-50'>
-                {activeTab === PROJECT_TABS.traffic ? nFormatter(valueData, 1) : valueData}
-                &nbsp;
-                <span className='text-gray-500 dark:text-gray-200 font-light'>
-                  (
-                  {perc}
-                  %)
-                </span>
-              </span>
-            </div>
-            <Progress now={perc} />
-          </Fragment>
-        )
-      })}
+              </div>
+              <Progress now={perc} />
+            </Fragment>
+          )
+        })
+      )}
       {/* for pagination in tabs */}
       {_size(entries) > ENTRIES_PER_PANEL && (
-        <div className='absolute bottom-0 w-card-toggle-sm sm:!w-card-toggle'>
-          <div className='flex justify-between select-none mb-2'>
+        <div className='w-card-toggle-sm absolute bottom-0 sm:!w-card-toggle'>
+          <div className='mb-2 flex select-none justify-between'>
             <div>
-              <span className='text-gray-500 dark:text-gray-200 font-light lowercase text-xs'>
-                {_size(entries)}
-                {' '}
-                {t('project.results')}
+              <span className='text-xs font-light lowercase text-gray-500 dark:text-gray-200'>
+                {_size(entries)} {t('project.results')}
               </span>
-              <span className='text-gray-500 dark:text-gray-200 font-light text-xs'>
-                .
-                {' '}
-                {t('project.page')}
-                {' '}
-                {page + 1}
-                {' '}
-                /
-                {' '}
-                {totalPages}
+              <span className='text-xs font-light text-gray-500 dark:text-gray-200'>
+                . {t('project.page')} {page + 1} / {totalPages}
               </span>
             </div>
-            <div className='flex justify-between w-[4.5rem]'>
+            <div className='flex w-[4.5rem] justify-between'>
               <Button
-                className={cx('text-gray-500 dark:text-gray-200 font-light shadow bg-gray-100 dark:bg-slate-800 border-none px-1.5 py-0.5', {
-                  'opacity-50 cursor-not-allowed': !canGoPrev(),
-                  'hover:bg-gray-200 hover:dark:bg-slate-700': canGoPrev(),
-                })}
+                className={cx(
+                  'border-none bg-gray-100 px-1.5 py-0.5 font-light text-gray-500 shadow dark:bg-slate-800 dark:text-gray-200',
+                  {
+                    'cursor-not-allowed opacity-50': !canGoPrev(),
+                    'hover:bg-gray-200 hover:dark:bg-slate-700': canGoPrev(),
+                  },
+                )}
                 type='button'
                 onClick={onPrevious}
                 disabled={!canGoPrev()}
                 focus={false}
               >
-                <ArrowLongLeftIcon className='w-5 h-5' />
+                <ArrowLongLeftIcon className='h-5 w-5' />
               </Button>
               <Button
-                className={cx('text-gray-500 dark:text-gray-200 font-light shadow bg-gray-100 dark:bg-slate-800 border-none px-1.5 py-0.5', {
-                  'opacity-50 cursor-not-allowed': !canGoNext(),
-                  'hover:bg-gray-200 hover:dark:bg-slate-700': canGoNext(),
-                })}
+                className={cx(
+                  'border-none bg-gray-100 px-1.5 py-0.5 font-light text-gray-500 shadow dark:bg-slate-800 dark:text-gray-200',
+                  {
+                    'cursor-not-allowed opacity-50': !canGoNext(),
+                    'hover:bg-gray-200 hover:dark:bg-slate-700': canGoNext(),
+                  },
+                )}
                 onClick={onNext}
                 disabled={!canGoNext()}
                 type='button'
                 focus={false}
               >
-                <ArrowLongRightIcon className='w-5 h-5' />
+                <ArrowLongRightIcon className='h-5 w-5' />
               </Button>
             </div>
           </div>
@@ -1194,52 +1268,7 @@ const Panel = ({
   )
 }
 
-Panel.propTypes = {
-  name: PropTypes.oneOfType([
-    PropTypes.string.isRequired, PropTypes.node,
-  ]).isRequired,
-  data: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string,
-    count: PropTypes.number,
-  })).isRequired,
-  id: PropTypes.string,
-  rowMapper: PropTypes.func,
-  valueMapper: PropTypes.func,
-  onFilter: PropTypes.func,
-  capitalize: PropTypes.bool,
-  linkContent: PropTypes.bool,
-  hideFilters: PropTypes.bool,
-  icon: PropTypes.node,
-  onFragmentChange: PropTypes.func,
-}
-
-Panel.defaultProps = {
-  id: null,
-  rowMapper: (row: IEntry): string => row.name,
-  valueMapper: (value: number): number => value,
-  capitalize: false,
-  linkContent: false,
-  onFilter: () => { },
-  hideFilters: false,
-  icon: null,
-  customTabs: [],
-  to: null,
-  from: null,
-  timezone: null,
-  timeBucket: null,
-  period: null,
-  pid: null,
-  activeTab: null,
-  onFragmentChange: () => { },
-  filters: [],
-}
-
 const PanelMemo = memo(Panel)
-const OverviewMemo = memo(Overview)
 const CustomEventsMemo = memo(CustomEvents)
 
-export {
-  PanelMemo as Panel,
-  OverviewMemo as Overview,
-  CustomEventsMemo as CustomEvents,
-}
+export { PanelMemo as Panel, CustomEventsMemo as CustomEvents }

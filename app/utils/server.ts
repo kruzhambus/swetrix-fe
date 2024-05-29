@@ -1,5 +1,8 @@
+import type i18next from 'i18next'
 import routes from 'routesPath'
 import _includes from 'lodash/includes'
+import _split from 'lodash/split'
+import _startsWith from 'lodash/startsWith'
 import { TITLE_SUFFIX, SUPPORTED_THEMES, ThemeType } from 'redux/constants'
 
 export const hasAuthCookies = (request: Request) => {
@@ -12,12 +15,19 @@ export const hasAuthCookies = (request: Request) => {
 
 /**
  * Function detects theme based on user's browser hints and cookies
- * 
+ *
  * @param request
  * @returns [theme, storeToCookie]
  */
 export function detectTheme(request: Request): [ThemeType, boolean] {
-  // Stage 1: Check if user has set theme manually
+  // Stage 1: Check if theme is set via `theme` query param
+  const queryTheme = new URL(request.url).searchParams.get('theme') as ThemeType | null
+
+  if (queryTheme && _includes(SUPPORTED_THEMES, queryTheme)) {
+    return [queryTheme, false]
+  }
+
+  // Stage 2: Check if user has set theme manually
   const cookie = request.headers.get('Cookie')
   const theme = cookie?.match(/(?<=colour-theme=)[^;]*/)?.[0] as ThemeType
 
@@ -25,7 +35,7 @@ export function detectTheme(request: Request): [ThemeType, boolean] {
     return [theme, false]
   }
 
-  // Stage 2: Try to detect theme based on Sec-CH browser hints
+  // Stage 3: Try to detect theme based on Sec-CH browser hints
   // Currently only Chromium-based browsers support this feature
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-CH-Prefers-Color-Scheme
   const hintedTheme = request.headers.get('Sec-CH-Prefers-Color-Scheme') as ThemeType
@@ -35,6 +45,42 @@ export function detectTheme(request: Request): [ThemeType, boolean] {
   }
 
   return ['light', false]
+}
+
+/**
+ * Function detects theme based on the query
+ *
+ * @param request
+ * @returns boolean
+ */
+export function isEmbedded(request: Request): boolean {
+  return new URL(request.url).searchParams.get('embedded') === 'true'
+}
+
+/**
+ * Function returns project tabs from query
+ *
+ * @param request
+ * @returns string[]
+ */
+export function getProjectTabs(request: Request): string[] {
+  const tabs = new URL(request.url).searchParams.get('tabs')
+
+  if (!tabs) {
+    return []
+  }
+
+  return _split(tabs, ',')
+}
+
+/**
+ * Function returns password from query
+ *
+ * @param request
+ * @returns boolean
+ */
+export function getProjectPassword(request: Request): string | null {
+  return new URL(request.url).searchParams.get('password')
 }
 
 export function getAccessToken(request: Request): string | null {
@@ -48,21 +94,25 @@ export function isAuthenticated(request: Request): boolean {
   return !!getAccessToken(request)
 }
 
-interface IPageMeta {
-  title: string
+export function isWWW(url: URL): boolean {
+  return _startsWith(url.hostname, 'www.')
 }
 
-export const getPageMeta = (
-  t: (key: string) => string,
-  url?: string,
-  _pathname?: string,
-): IPageMeta => {
+interface IPageMeta {
+  title: string
+  prefixLessTitle: string
+}
+
+export const getPageMeta = (t: typeof i18next.t, url?: string, _pathname?: string): IPageMeta => {
   const DEFAULT_RESULT = {
     title: t('titles.main'),
-  }
+  } as Partial<IPageMeta>
 
   if (!url && !_pathname) {
-    return DEFAULT_RESULT
+    return {
+      title: DEFAULT_RESULT.title as string,
+      prefixLessTitle: DEFAULT_RESULT.title as string,
+    }
   }
 
   const pathname = _pathname || new URL(url as string).pathname
@@ -86,6 +136,12 @@ export const getPageMeta = (
     case routes.new_password_form:
       result = {
         title: t('titles.recovery'),
+      }
+      break
+
+    case routes.confirm_email:
+      result = {
+        title: t('titles.confirm'),
       }
       break
 
@@ -130,6 +186,18 @@ export const getPageMeta = (
       }
       break
 
+    case routes.performance:
+      result = {
+        title: t('titles.performance'),
+      }
+      break
+
+    case routes.errorTracking:
+      result = {
+        title: t('titles.errors'),
+      }
+      break
+
     case routes.privacy:
       result = {
         title: 'Privacy Policy',
@@ -145,6 +213,12 @@ export const getPageMeta = (
     case routes.terms:
       result = {
         title: 'Terms and Conditions',
+      }
+      break
+
+    case routes.imprint:
+      result = {
+        title: t('footer.imprint'),
       }
       break
 
@@ -192,7 +266,8 @@ export const getPageMeta = (
 
   // todo: create_alert, alert_settings, project_protected_password,
 
+  result.prefixLessTitle = result.title
   result.title += ` ${TITLE_SUFFIX}`
 
-  return result
+  return result as IPageMeta
 }

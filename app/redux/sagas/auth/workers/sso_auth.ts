@@ -1,4 +1,5 @@
 import { call, put, delay } from 'redux-saga/effects'
+import type i18next from 'i18next'
 
 import { authActions } from 'redux/reducers/auth'
 import { errorsActions } from 'redux/reducers/errors'
@@ -8,9 +9,7 @@ import { openBrowserWindow } from 'utils/generic'
 import { getCookie, deleteCookie } from 'utils/cookie'
 import { REFERRAL_COOKIE } from 'redux/constants'
 import sagaActions from '../../actions/index'
-const {
-  getJWTBySSOHash, generateSSOAuthURL,
-} = require('api')
+const { getJWTBySSOHash, generateSSOAuthURL } = require('api')
 
 const AUTH_WINDOW_WIDTH = 600
 const AUTH_WINDOW_HEIGHT = 800
@@ -21,30 +20,26 @@ interface ISSOAuth {
   payload: {
     callback: (isSuccess: boolean, is2FA: boolean) => void
     dontRemember: boolean
-    t: (key: string) => string
+    t: typeof i18next.t
     provider: string
   }
 }
 
-export default function* ssoAuth({
-  payload: {
-    callback, dontRemember, t, provider,
-  },
-}: ISSOAuth) {
+export default function* ssoAuth({ payload: { callback, dontRemember, t, provider } }: ISSOAuth) {
   const authWindow = openBrowserWindow('', AUTH_WINDOW_WIDTH, AUTH_WINDOW_HEIGHT)
 
   if (!authWindow) {
-    yield put(errorsActions.loginFailed({
-      message: t('apiNotifications.socialisationAuthGenericError'),
-    }))
+    yield put(
+      errorsActions.loginFailed({
+        message: t('apiNotifications.socialisationAuthGenericError'),
+      }),
+    )
     callback(false, false)
     return
   }
 
   try {
-    const {
-      uuid, auth_url: authUrl, expires_in: expiresIn,
-    } = yield call(generateSSOAuthURL, provider)
+    const { uuid, auth_url: authUrl, expires_in: expiresIn } = yield call(generateSSOAuthURL, provider)
 
     // Set the URL of the authentification browser window
     authWindow.location = authUrl
@@ -58,9 +53,7 @@ export default function* ssoAuth({
       yield delay(HASH_CHECK_FREQUENCY)
 
       try {
-        const {
-          accessToken, refreshToken, user,
-        } = yield call(getJWTBySSOHash, uuid, provider, refCode)
+        const { accessToken, refreshToken, user } = yield call(getJWTBySSOHash, uuid, provider, refCode)
         authWindow.close()
 
         if (refCode) {
@@ -83,6 +76,7 @@ export default function* ssoAuth({
         // yield put(UIActions.setThemeType(user.theme))
         yield put(sagaActions.loadProjects())
         yield put(sagaActions.loadSharedProjects())
+        yield put(sagaActions.loadProjectsCaptcha())
         yield put(sagaActions.loadProjectAlerts())
         yield put(authActions.finishLoading())
         callback(true, false)
@@ -96,9 +90,11 @@ export default function* ssoAuth({
       }
     }
   } catch (reason) {
-    yield put(errorsActions.loginFailed({
-      message: t('apiNotifications.socialisationAuthGenericError'),
-    }))
+    yield put(
+      errorsActions.loginFailed({
+        message: t('apiNotifications.socialisationAuthGenericError'),
+      }),
+    )
     callback(false, false)
   }
 }

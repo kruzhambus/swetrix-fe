@@ -1,20 +1,9 @@
 import React from 'react'
 import cx from 'clsx'
-import PropTypes from 'prop-types'
 
-const Webflow = ({ theme, className }: {
-  theme: 'dark' | 'light',
-  className?: string,
-}): JSX.Element => (
-  <svg
-    className={className}
-    x='0px'
-    y='0px'
-    viewBox='0 0 808.3 203.3'
-  >
-    <title>
-      Webflow
-    </title>
+const Webflow = ({ theme, className }: { theme: 'dark' | 'light'; className?: string }): JSX.Element => (
+  <svg className={className} x='0px' y='0px' viewBox='0 0 808.3 203.3'>
+    <title>Webflow</title>
     <path
       className={cx({
         'fill-white': theme === 'dark',
@@ -41,14 +30,5 @@ const Webflow = ({ theme, className }: {
     />
   </svg>
 )
-
-Webflow.propTypes = {
-  className: PropTypes.string,
-  theme: PropTypes.string.isRequired,
-}
-
-Webflow.defaultProps = {
-  className: '',
-}
 
 export default Webflow

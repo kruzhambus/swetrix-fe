@@ -1,7 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-has-content, lodash/prefer-lodash-method */
-import React, {
-  memo, useMemo, useState, useEffect,
-} from 'react'
+import React, { memo, useMemo, useState, useEffect } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
 import dayjs from 'dayjs'
@@ -11,7 +9,12 @@ import { ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react
 import _round from 'lodash/round'
 
 import {
-  isSelfhosted, PADDLE_JS_URL, PADDLE_VENDOR_ID, CONTACT_EMAIL, paddleLanguageMapping, isBrowser,
+  isSelfhosted,
+  PADDLE_JS_URL,
+  PADDLE_VENDOR_ID,
+  CONTACT_EMAIL,
+  paddleLanguageMapping,
+  isBrowser,
 } from 'redux/constants'
 import { loadScript } from 'utils/generic'
 import Loader from 'ui/Loader'
@@ -25,20 +28,25 @@ import Tooltip from 'ui/Tooltip'
 import { IUser } from 'redux/models/IUser'
 import UIActions from 'redux/reducers/ui'
 import Pricing from '../MainPage/Pricing'
+import DashboardLockedBanner from 'components/DashboardLockedBanner'
 
 dayjs.extend(utc)
 dayjs.extend(duration)
 
 interface IBilling {
-  ssrAuthenticated: boolean,
-  ssrTheme: 'dark' | 'light',
+  ssrAuthenticated: boolean
+  ssrTheme: 'dark' | 'light'
 }
 
 const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Element => {
   const [isCancelSubModalOpened, setIsCancelSubModalOpened] = useState<boolean>(false)
   const { metainfo, usageinfo } = useSelector((state: StateType) => state.ui.misc)
-  const { user, loading }: {
-    user: IUser, loading: boolean,
+  const {
+    user,
+    loading,
+  }: {
+    user: IUser
+    loading: boolean
   } = useSelector((state: StateType) => state.auth)
   const { theme: reduxTheme } = useSelector((state: StateType) => state.ui.theme)
   const theme = isBrowser ? reduxTheme : ssrTheme
@@ -46,17 +54,20 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
   const reduxAuthenticated = useSelector((state: StateType) => state.auth.authenticated)
   const dispatch = useDispatch()
   const _dispatch = useAppDispatch()
-  const { t, i18n: { language } }: {
-    t: (key: string, optinions?: {
-      [key: string]: string | number,
-    }) => string,
-    i18n: {
-      language: string,
-    },
+  const {
+    t,
+    i18n: { language },
   } = useTranslation('common')
   const authenticated = isBrowser ? reduxAuthenticated : ssrAuthenticated
   const {
-    nextBillDate, planCode, subUpdateURL, trialEndDate, timeFormat, cancellationEffectiveDate, subCancelURL, maxEventsCount,
+    nextBillDate,
+    planCode,
+    subUpdateURL,
+    trialEndDate,
+    timeFormat,
+    cancellationEffectiveDate,
+    subCancelURL,
+    maxEventsCount,
   } = user
   const isSubscriber = user.planCode !== 'none' && user.planCode !== 'trial' && user.planCode !== 'free'
 
@@ -78,6 +89,7 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
     // eslint-disable-next-line no-use-before-define
     const interval = setInterval(paddleSetup, 200)
 
+    // prettier-ignore
     function paddleSetup() {
       if (isSelfhosted) {
         clearInterval(interval)
@@ -148,7 +160,8 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
       method: 'inline',
       frameTarget: 'checkout-container',
       frameInitialHeight: 416,
-      frameStyle: 'width:100%; min-width:312px; background-color: #f9fafb; border: none; border-radius: 10px; margin-top: 10px;',
+      frameStyle:
+        'width:100%; min-width:312px; background-color: #f9fafb; border: none; border-radius: 10px; margin-top: 10px;',
       locale: paddleLanguageMapping[language] || language,
       displayModeTheme: theme,
       country: metainfo.country,
@@ -172,7 +185,8 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
       method: 'inline',
       frameTarget: 'checkout-container',
       frameInitialHeight: 416,
-      frameStyle: 'width:100%; min-width:312px; background-color: #f9fafb; border: none; border-radius: 10px; margin-top: 10px;',
+      frameStyle:
+        'width:100%; min-width:312px; background-color: #f9fafb; border: none; border-radius: 10px; margin-top: 10px;',
       locale: paddleLanguageMapping[language] || language,
       displayModeTheme: theme,
       country: metainfo.country,
@@ -184,66 +198,60 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
   }
 
   return (
-    <div className='bg-gray-50 dark:bg-slate-900 min-h-page'>
-      {/* NEW */}
-      <div className='w-11/12 md:w-4/5 mx-auto pb-16 pt-12 px-4 sm:px-6 lg:px-8 whitespace-pre-line'>
-        <div className='flex justify-between flex-wrap gap-y-2 mb-4'>
-          <h1 className='text-4xl font-extrabold text-gray-900 dark:text-gray-50 tracking-tight mr-2'>
+    <div className='min-h-page bg-gray-50 dark:bg-slate-900'>
+      <DashboardLockedBanner />
+      <div className='mx-auto w-11/12 whitespace-pre-line px-4 pb-16 pt-12 sm:px-6 md:w-4/5 lg:px-8'>
+        <div className='mb-4 flex flex-wrap justify-between gap-y-2'>
+          <h1 className='mr-2 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50'>
             {t('billing.title')}
           </h1>
         </div>
-        <h2 id='billing' className='text-2xl font-medium text-gray-900 dark:text-gray-50 tracking-tight mb-2'>
+        <h2 id='billing' className='mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-gray-50'>
           {t('billing.subscription')}
         </h2>
-        <p className='mt-1 text-base text-gray-900 dark:text-gray-50 tracking-tight'>
-          {isSubscriber
-            ? t('billing.selectPlan')
-            : t('billing.changePlan')}
+        <p className='mt-1 text-base tracking-tight text-gray-900 dark:text-gray-50'>
+          {isSubscriber ? t('billing.selectPlan') : t('billing.changePlan')}
         </p>
-        <p className='text-base text-gray-900 dark:text-gray-50 tracking-tight'>
-          {t('billing.membersNotification')}
-        </p>
+        <p className='text-base tracking-tight text-gray-900 dark:text-gray-50'>{t('billing.membersNotification')}</p>
         {isSubscriber && nextBillDate && (
-          <p className='mt-1 text-base text-gray-900 dark:text-gray-50 tracking-tight'>
+          <p className='mt-1 text-base tracking-tight text-gray-900 dark:text-gray-50'>
             {t('billing.nextBillDateIs', {
-              date: language === 'en'
-                ? dayjs(nextBillDate).locale(language).format('MMMM D, YYYY')
-                : dayjs(nextBillDate).locale(language).format('D MMMM, YYYY')
+              date:
+                language === 'en'
+                  ? dayjs(nextBillDate).locale(language).format('MMMM D, YYYY')
+                  : dayjs(nextBillDate).locale(language).format('D MMMM, YYYY'),
             })}
           </p>
         )}
         {cancellationEffectiveDate && (
-          <div className='flex items-center text-lg text-gray-900 dark:text-gray-50 tracking-tight mt-3'>
-            <InformationCircleIcon className='h-10 w-10 mr-2 text-blue-600' aria-hidden='true' />
-            <span className='font-medium max-w-prose'>
+          <div className='mt-3 flex items-center text-lg tracking-tight text-gray-900 dark:text-gray-50'>
+            <InformationCircleIcon className='mr-2 h-10 w-10 text-blue-600' aria-hidden='true' />
+            <span className='max-w-prose font-medium'>
               {t('billing.cancelledSubMessage', {
-                date: language === 'en'
-                  ? dayjs(cancellationEffectiveDate).locale(language).format('MMMM D, YYYY')
-                  : dayjs(cancellationEffectiveDate).locale(language).format('D MMMM, YYYY'),
+                date:
+                  language === 'en'
+                    ? dayjs(cancellationEffectiveDate).locale(language).format('MMMM D, YYYY')
+                    : dayjs(cancellationEffectiveDate).locale(language).format('D MMMM, YYYY'),
               })}
             </span>
           </div>
         )}
         {isTrial && trialMessage && (
-          <div className='text-lg text-gray-900 dark:text-gray-50 tracking-tight mt-3'>
-            <span className='font-medium'>
-              {trialMessage}
-            </span>
+          <div className='mt-3 text-lg tracking-tight text-gray-900 dark:text-gray-50'>
+            <span className='font-medium'>{trialMessage}</span>
           </div>
         )}
         {isNoSub && (
-          <div className='flex items-center text-lg text-gray-900 dark:text-gray-50 tracking-tight mt-3'>
-            <ExclamationTriangleIcon className='h-10 w-10 mr-2 text-red-600' aria-hidden='true' />
-            <span className='font-medium max-w-prose'>
-              {t('billing.noSubWarning')}
-            </span>
+          <div className='mt-3 flex items-center text-lg tracking-tight text-gray-900 dark:text-gray-50'>
+            <ExclamationTriangleIcon className='mr-2 h-10 w-10 text-red-600' aria-hidden='true' />
+            <span className='max-w-prose font-medium'>{t('billing.noSubWarning')}</span>
           </div>
         )}
         {loading ? (
           <Loader />
         ) : (
           <>
-            <div className='flex xl:space-x-5 mt-5 flex-col xl:flex-row'>
+            <div className='mt-5 flex flex-col xl:flex-row xl:space-x-5'>
               <Pricing authenticated={authenticated} t={t} language={language} isBillingPage />
               <div className='space-y-2'>
                 {subUpdateURL && (
@@ -258,14 +266,14 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
                 )}
               </div>
             </div>
-            <h2 id='usage' className='mt-5 text-2xl font-medium text-gray-900 dark:text-gray-50 tracking-tight'>
+            <h2 id='usage' className='mt-5 text-2xl font-medium tracking-tight text-gray-900 dark:text-gray-50'>
               {t('billing.planUsage')}
             </h2>
-            <p className='mt-1 text-base text-gray-900 dark:text-gray-50 tracking-tight'>
+            <p className='mt-1 text-base tracking-tight text-gray-900 dark:text-gray-50'>
               {t('billing.planUsageDesc')}
             </p>
-            <div className='mt-2 text-lg text-gray-900 dark:text-gray-50 tracking-tight'>
-              <p className='text-base font-medium text-gray-900 dark:text-gray-50 tracking-tight mb-1'>
+            <div className='mt-2 text-lg tracking-tight text-gray-900 dark:text-gray-50'>
+              <p className='mb-1 text-base font-medium tracking-tight text-gray-900 dark:text-gray-50'>
                 {t('billing.xofy', {
                   x: usageinfo.total || 0,
                   y: maxEventsCount || 0,
@@ -273,7 +281,7 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
               </p>
 
               <Tooltip
-                text={(
+                text={
                   <div>
                     <p>
                       {t('billing.usageOverview', {
@@ -282,7 +290,7 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
                         maxEvents: maxEventsCount || 0,
                       })}
                     </p>
-                    <ul className='list-disc list-inside mt-2'>
+                    <ul className='mt-2 list-inside list-disc'>
                       <li className='marker:text-blue-600 dark:marker:text-blue-800'>
                         {t('billing.pageviews', {
                           quantity: usageinfo.traffic || 0,
@@ -301,13 +309,19 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
                           percentage: usageinfo.captchaPerc || 0,
                         })}
                       </li>
+                      <li className='marker:text-red-600 dark:marker:text-red-800'>
+                        {t('billing.errors', {
+                          quantity: usageinfo.errors || 0,
+                          percentage: usageinfo.errorsPerc || 0,
+                        })}
+                      </li>
                     </ul>
                   </div>
-                )}
-                tooltipNode={(
+                }
+                tooltipNode={
                   <MultiProgress
                     theme={theme}
-                    className='max-w-[25rem] w-[85vw]'
+                    className='w-[85vw] max-w-[25rem]'
                     progress={[
                       {
                         value: usageinfo.traffic === 0 ? 0 : (usageinfo.traffic / maxEventsCount) * 100,
@@ -320,18 +334,16 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
                         darkColour: '#a21caf',
                       },
                       {
-                        value: usageinfo.captcha === 0 ? 0 : (usageinfo.captcha/ maxEventsCount) * 100,
+                        value: usageinfo.captcha === 0 ? 0 : (usageinfo.captcha / maxEventsCount) * 100,
                         lightColour: '#65a30d',
                         darkColour: '#4d7c0f',
-                      }
+                      },
                     ]}
                   />
-                )}
-                className='max-w-max !w-max !h-auto'
+                }
+                className='!h-auto !w-max max-w-max'
               />
-              <p className='mt-1 text-base text-gray-900 dark:text-gray-50 tracking-tight'>
-                {t('billing.resetDate')}
-              </p>
+              <p className='mt-1 text-base tracking-tight text-gray-900 dark:text-gray-50'>{t('billing.resetDate')}</p>
             </div>
           </>
         )}
@@ -349,7 +361,7 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
         title={t('pricing.cancelTitle')}
         submitType='danger'
         type='error'
-        message={(
+        message={
           <Trans
             // @ts-ignore
             t={t}
@@ -358,7 +370,7 @@ const Billing: React.FC<IBilling> = ({ ssrAuthenticated, ssrTheme }): JSX.Elemen
               email: CONTACT_EMAIL,
             }}
           />
-        )}
+        }
         isOpened={isCancelSubModalOpened}
       />
     </div>

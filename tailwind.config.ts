@@ -50,17 +50,13 @@ export default {
     },
     minHeight: {
       72: '18rem',
-     page: 'calc(100vh - 74px)', // header height -> 74px
-     'min-footer': 'calc(100vh - 148px)',
-     'min-footer-ad': 'calc(100vh - 265px)',
+      page: 'calc(100vh - 74px)', // header height -> 74px
+      'min-footer': 'calc(100vh - 148px)',
     },
   },
   variants: {
     extend: {},
     scrollBehavior: ['motion-safe', 'motion-reduce', 'responsive'],
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 } satisfies Config

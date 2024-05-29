@@ -1,6 +1,6 @@
 import Singup from 'pages/Auth/Signup'
 import type { SitemapFunction } from 'remix-sitemap'
-import type { HeadersFunction, LoaderArgs } from '@remix-run/node'
+import type { HeadersFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { json, redirect } from '@remix-run/node'
 
@@ -12,7 +12,7 @@ export const headers: HeadersFunction = ({ parentHeaders }) => {
   return parentHeaders
 }
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   if (isSelfhosted) {
     return redirect('/login', 302)
   }
@@ -28,9 +28,7 @@ export const sitemap: SitemapFunction = () => ({
 })
 
 export default function Index() {
-  const {
-    theme,
-  } = useLoaderData<typeof loader>()
+  const { theme } = useLoaderData<typeof loader>()
 
   return <Singup ssrTheme={theme} />
 }

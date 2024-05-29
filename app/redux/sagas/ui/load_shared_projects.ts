@@ -7,29 +7,42 @@ import UIActions from 'redux/reducers/ui'
 
 import { ENTRIES_PER_PAGE_DASHBOARD, isSelfhosted } from 'redux/constants'
 import { IOverall } from 'redux/models/IProject'
-const {
-  getSharedProjects, getOverallStats, getLiveVisitors,
-} = require('api')
+const { getSharedProjects, getOverallStats, getLiveVisitors } = require('api')
 
 const debug = Debug('swetrix:rx:s:load-projects')
 
-export default function* loadSharedProjects({ payload: { take = ENTRIES_PER_PAGE_DASHBOARD, skip = 0 } }) {
+export default function* loadSharedProjects({ payload: { take = ENTRIES_PER_PAGE_DASHBOARD, skip = 0, search = '' } }) {
   if (isSelfhosted) {
+    yield put(
+      UIActions.setProjectsLoading({
+        isLoading: false,
+        shared: true,
+      }),
+    )
     return
   }
 
   try {
-    yield put(UIActions.setProjectsLoading({
-      isLoading: true,
-      shared: true,
-    }))
+    yield put(
+      UIActions.setProjectsLoading({
+        isLoading: true,
+        shared: true,
+      }),
+    )
 
     let {
       // eslint-disable-next-line prefer-const
-      results, total,
-    } = yield call(getSharedProjects, take, skip)
+      results,
+      total,
+    } = yield call(getSharedProjects, take, skip, search)
 
     if (total === 0) {
+      yield put(
+        UIActions.setProjectsLoading({
+          isLoading: false,
+          shared: true,
+        }),
+      )
       return
     }
 
@@ -47,32 +60,31 @@ export default function* loadSharedProjects({ payload: { take = ENTRIES_PER_PAGE
     let overall: IOverall
 
     try {
-      overall = yield call(getOverallStats, pids)
+      overall = yield call(getOverallStats, pids, '7d')
+      yield put(UIActions.setBirdsEyeBulk(overall))
     } catch (e) {
       debug('failed to overall stats: %s', e)
     }
 
-    results = _map(projectsWithShared, res => ({
-      ...res,
-      project: {
-        ...res.project,
-        overall: overall?.[res.project.id],
-      },
-    }))
-
-    yield put(UIActions.setProjects({
-      projects: results,
-      shared: true,
-    }))
-    yield put(UIActions.setTotal({
-      total,
-      shared: true,
-    }))
+    yield put(
+      UIActions.setProjects({
+        projects: projectsWithShared,
+        shared: true,
+      }),
+    )
+    yield put(
+      UIActions.setTotal({
+        total,
+        shared: true,
+      }),
+    )
 
     const liveStats: any[] = yield call(getLiveVisitors, pids)
-    yield put(UIActions.setLiveStats({
-      data: liveStats,
-    }))
+    yield put(
+      UIActions.setLiveStats({
+        data: liveStats,
+      }),
+    )
   } catch (e: unknown) {
     const { message } = e as { message: string }
     if (_isString(message)) {

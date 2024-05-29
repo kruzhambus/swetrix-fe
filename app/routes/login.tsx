@@ -1,5 +1,5 @@
 import Signin from 'pages/Auth/Signin'
-import type { HeadersFunction, LoaderArgs } from '@remix-run/node'
+import type { HeadersFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { json } from '@remix-run/node'
 
@@ -10,16 +10,14 @@ export const headers: HeadersFunction = ({ parentHeaders }) => {
   return parentHeaders
 }
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const [theme] = detectTheme(request)
 
   return json({ theme })
 }
 
 export default function Index() {
-  const {
-    theme,
-  } = useLoaderData<typeof loader>()
+  const { theme } = useLoaderData<typeof loader>()
 
   return <Signin ssrTheme={theme} />
 }

@@ -13,30 +13,29 @@ import { TRIAL_DAYS } from 'redux/constants'
 import { isValidEmail } from 'utils/validator'
 
 const ForgotPassword = ({
-  createNewPasswordFailed, newPassword,
+  createNewPasswordFailed,
+  newPassword,
 }: {
-  createNewPasswordFailed: (e: string) => void,
-  newPassword: (message: string) => void,
+  createNewPasswordFailed: (e: string) => void
+  newPassword: (message: string) => void
 }): JSX.Element => {
-  const { t }: {
-    t: (key: string) => string,
-  } = useTranslation('common')
+  const { t } = useTranslation('common')
   const navigate = useNavigate()
   const [form, setForm] = useState<{
-    email: string,
+    email: string
   }>({
     email: '',
   })
   const [validated, setValidated] = useState<boolean>(false)
   const [errors, setErrors] = useState<{
-    email?: string,
+    email?: string
   }>({})
   const [beenSubmitted, setBeenSubmitted] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const validate = () => {
     const allErrors = {} as {
-      email?: string,
+      email?: string
     }
 
     if (!isValidEmail(form.email)) {
@@ -53,9 +52,7 @@ const ForgotPassword = ({
     validate()
   }, [form]) // eslint-disable-line
 
-  const onSubmit = async (data: {
-    email: string,
-  }) => {
+  const onSubmit = async (data: { email: string }) => {
     if (!isLoading) {
       setIsLoading(true)
 
@@ -72,12 +69,10 @@ const ForgotPassword = ({
     }
   }
 
-  const handleInput = ({ target }: {
-    target: HTMLInputElement,
-  }) => {
+  const handleInput = ({ target }: { target: HTMLInputElement }) => {
     const value = target.type === 'checkbox' ? target.checked : target.value
 
-    setForm(oldForm => ({
+    setForm((oldForm) => ({
       ...oldForm,
       [target.name]: value,
     }))
@@ -95,18 +90,17 @@ const ForgotPassword = ({
 
   return (
     <div>
-      <div className='min-h-[40rem] bg-gray-50 dark:bg-slate-900 flex flex-col py-6 px-4 sm:px-6 lg:px-8'>
+      <div className='flex min-h-min-footer flex-col bg-gray-50 px-4 py-6 dark:bg-slate-900 sm:px-6 lg:px-8'>
         <div className='sm:mx-auto sm:w-full sm:max-w-md'>
           <h2 className='text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-gray-50'>
             {t('titles.recovery')}
           </h2>
         </div>
         <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]'>
-          <div className='bg-white dark:bg-slate-800/20 dark:ring-1 dark:ring-slate-800 px-6 py-12 shadow sm:rounded-lg sm:px-12'>
+          <div className='bg-white px-6 py-12 shadow dark:bg-slate-800/20 dark:ring-1 dark:ring-slate-800 sm:rounded-lg sm:px-12'>
             <form className='space-y-6' onSubmit={handleSubmit}>
               <Input
                 name='email'
-                id='email'
                 type='email'
                 label={t('auth.common.email')}
                 value={form.email}
@@ -118,14 +112,20 @@ const ForgotPassword = ({
               </Button>
             </form>
           </div>
-          <p className='mt-10 mb-4 text-center text-sm text-gray-500 dark:text-gray-200'>
+          <p className='mb-4 mt-10 text-center text-sm text-gray-500 dark:text-gray-200'>
             <Trans
               // @ts-ignore
               t={t}
               i18nKey='auth.signin.notAMember'
               components={{
                 // eslint-disable-next-line jsx-a11y/anchor-has-content
-                url: <Link to={routes.signup} className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-500' aria-label={t('footer.tos')} />,
+                url: (
+                  <Link
+                    to={routes.signup}
+                    className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-500'
+                    aria-label={t('footer.tos')}
+                  />
+                ),
               }}
               values={{
                 amount: TRIAL_DAYS,

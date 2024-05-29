@@ -1,17 +1,16 @@
 import React from 'react'
 import spacetime from 'spacetime'
 import soft from 'timezone-soft'
-import { allTimezones } from 'react-timezone-select'
 import { useTranslation } from 'react-i18next'
-import PropTypes from 'prop-types'
 import _find from 'lodash/find'
 import _reduce from 'lodash/reduce'
 import _includes from 'lodash/includes'
+import timezones from 'redux/constants/timezones'
 
 import Select from './Select'
 
 const options = _reduce(
-  Object.entries(allTimezones),
+  Object.entries(timezones),
   (selectOptions: any[], zone) => {
     const now = spacetime.now(zone[0])
     const tz = now.timezone()
@@ -36,50 +35,47 @@ const options = _reduce(
     return selectOptions
   },
   [],
-)
-  .sort((a, b) => a.offset - b.offset)
+).sort((a, b) => a.offset - b.offset)
 
 interface ITimezoneSelect {
-  value: string | {
-    value: string,
-    label: string,
-  },
-  onChange: (item: string) => void,
+  value:
+    | string
+    | {
+        value: string
+        label: string
+      }
+  onChange: (item: string) => void
 }
 
-const TimezoneSelect = ({
-  value, onChange,
-}: ITimezoneSelect): JSX.Element => {
-  const { t }: {
-    t: (key: string) => string,
-  } = useTranslation('common')
-  const labelExtractor = (option: {
-    label: string,
-  }) => option?.label
-  const keyExtractor = (option: {
-    value: string,
-  }) => option?.value
+const TimezoneSelect = ({ value, onChange }: ITimezoneSelect): JSX.Element => {
+  const { t } = useTranslation('common')
+  const labelExtractor = (option: { label: string }) => option?.label
+  const keyExtractor = (option: { value: string }) => option?.value
 
   const handleChange = (label: string) => {
-    const tz = _find(options, timezone => labelExtractor(timezone) === label)
+    const tz = _find(options, (timezone) => labelExtractor(timezone) === label)
     const key = keyExtractor(tz)
     onChange(key)
   }
 
-  const parseTimezone = (zone: string | {
-    value: string,
-    label: string,
-  }) => {
+  const parseTimezone = (
+    zone:
+      | string
+      | {
+          value: string
+          label: string
+        },
+  ) => {
     if (typeof zone === 'object' && zone.value && zone.label) {
       return zone
     }
 
     if (typeof zone === 'string') {
-      return _find(options, tz => tz.value === zone)
+      return _find(options, (tz) => tz.value === zone)
     }
 
     if (zone.value && !zone.label) {
-      return _find(options, tz => tz.value === zone.value)
+      return _find(options, (tz) => tz.value === zone.value)
     }
 
     return null
@@ -94,19 +90,9 @@ const TimezoneSelect = ({
       labelExtractor={labelExtractor}
       keyExtractor={keyExtractor}
       onSelect={handleChange}
+      capitalise
     />
   )
-}
-
-TimezoneSelect.propTypes = {
-  value: PropTypes.oneOfType([
-    PropTypes.string, PropTypes.object,
-  ]).isRequired,
-  onChange: PropTypes.func,
-}
-
-TimezoneSelect.defaultProps = {
-  onChange: () => { },
 }
 
 export default TimezoneSelect

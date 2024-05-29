@@ -1,7 +1,24 @@
-const getCustomLabel = (dates: Date[], t: Function): string => {
+/* eslint-disable no-undef */
+import _endsWith from 'lodash/endsWith'
+
+const displayDateOptions: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+}
+
+const getCustomLabel = (dates: Date[], t: Function, language?: string): string => {
   if (dates) {
-    const from = dates[0].toLocaleDateString()
-    const to = dates[1].toLocaleDateString()
+    let from: string
+    let to: string
+
+    if (language) {
+      from = dates[0].toLocaleDateString(language, displayDateOptions)
+      to = dates[1].toLocaleDateString(language, displayDateOptions)
+    } else {
+      from = dates[0].toLocaleDateString()
+      to = dates[1].toLocaleDateString()
+    }
 
     if (from === to) {
       return from
@@ -23,85 +40,191 @@ export const FORECAST_MAX_MAPPING: {
 
 export const KEY_FOR_ALL_TIME = 'all'
 
-export const tbPeriodPairs = (t: Function, tbs?: string[] | null, dates?: Date[]): {
+export const ALL_PERIODS = ['minute', 'hour', 'day', 'month', 'year']
+
+export interface ITBPeriodPairs {
   label: string
   period: string
   tbs: string[]
   countDays?: number
   dropdownLabel?: string
   isCustomDate?: boolean
-}[] => [{
-  label: t('project.thisHour'),
-  period: '1h',
-  tbs: ['minute'],
-}, {
-  label: t('project.today'),
-  period: 'today',
-  tbs: ['hour'],
-}, {
-  label: t('project.yesterday'),
-  period: 'yesterday',
-  tbs: ['hour'],
-}, {
-  label: t('project.last24h'),
-  period: '1d',
-  countDays: 1,
-  tbs: ['hour'],
-}, {
-  label: t('project.lastXDays', { amount: 7 }),
-  period: '7d',
-  tbs: ['hour', 'day'],
-  countDays: 7,
-}, {
-  label: t('project.lastXWeeks', { amount: 4 }),
-  period: '4w',
-  tbs: ['day'],
-  countDays: 28,
-}, {
-  label: t('project.lastXMonths', { amount: 3 }),
-  period: '3M',
-  tbs: ['month'],
-  countDays: 90,
-}, {
-  label: t('project.lastXMonths', { amount: 12 }),
-  period: '12M',
-  tbs: ['month'],
-  countDays: 365,
-}, {
-  label: t('project.lastXMonths', { amount: 24 }),
-  period: '24M',
-  tbs: ['month'],
-}, {
-  label: t('project.all'),
-  period: KEY_FOR_ALL_TIME,
-  tbs: ['month', 'year'],
-}, {
-  label: dates ? getCustomLabel(dates, t) : t('project.custom'),
-  dropdownLabel: t('project.custom'),
-  isCustomDate: true,
-  period: 'custom',
-  tbs: tbs || ['custom'],
-}, {
-  label: t('project.compare'),
-  period: 'compare',
-  tbs: tbs || ['custom'],
-}]
+}
 
-export const filtersPeriodPairs = ['1h', '1d', '7d', '4w', '3M', '12M', 'custom', 'compare']
+export const tbPeriodPairs = (
+  t: Function,
+  tbs?: string[] | null,
+  dates?: Date[],
+  language?: string,
+): ITBPeriodPairs[] => [
+  {
+    label: t('project.thisHour'),
+    period: '1h',
+    tbs: ['minute'],
+  },
+  {
+    label: t('project.today'),
+    period: 'today',
+    tbs: ['hour'],
+  },
+  {
+    label: t('project.yesterday'),
+    period: 'yesterday',
+    tbs: ['hour'],
+  },
+  {
+    label: t('project.last24h'),
+    period: '1d',
+    countDays: 1,
+    tbs: ['hour'],
+  },
+  {
+    label: t('project.lastXDays', { amount: 7 }),
+    period: '7d',
+    tbs: ['hour', 'day'],
+    countDays: 7,
+  },
+  {
+    label: t('project.lastXWeeks', { amount: 4 }),
+    period: '4w',
+    tbs: ['day'],
+    countDays: 28,
+  },
+  {
+    label: t('project.lastXMonths', { amount: 3 }),
+    period: '3M',
+    tbs: ['month'],
+    countDays: 90,
+  },
+  {
+    label: t('project.lastXMonths', { amount: 12 }),
+    period: '12M',
+    tbs: ['month'],
+    countDays: 365,
+  },
+  {
+    label: t('project.lastXMonths', { amount: 24 }),
+    period: '24M',
+    tbs: ['month'],
+  },
+  {
+    label: t('project.all'),
+    period: KEY_FOR_ALL_TIME,
+    tbs: ['month', 'year'],
+  },
+  {
+    label: dates ? getCustomLabel(dates, t, language) : t('project.custom'),
+    dropdownLabel: t('project.custom'),
+    isCustomDate: true,
+    period: 'custom',
+    tbs: tbs || ['custom'],
+  },
+  {
+    label: t('project.compare'),
+    period: 'compare',
+    tbs: tbs || ['custom'],
+  },
+]
 
-export const tbPeriodPairsCompare = (t: Function, dates?: Date[]): {
+export const captchaTbPeriodPairs = (
+  t: Function,
+  tbs?: string[] | null,
+  dates?: Date[],
+  language?: string,
+): ITBPeriodPairs[] => [
+  {
+    label: t('project.thisHour'),
+    period: '1h',
+    tbs: ['minute'],
+  },
+  {
+    label: t('project.today'),
+    period: 'today',
+    tbs: ['hour'],
+  },
+  {
+    label: t('project.yesterday'),
+    period: 'yesterday',
+    tbs: ['hour'],
+  },
+  {
+    label: t('project.last24h'),
+    period: '1d',
+    countDays: 1,
+    tbs: ['hour'],
+  },
+  {
+    label: t('project.lastXDays', { amount: 7 }),
+    period: '7d',
+    tbs: ['hour', 'day'],
+    countDays: 7,
+  },
+  {
+    label: t('project.lastXWeeks', { amount: 4 }),
+    period: '4w',
+    tbs: ['day'],
+    countDays: 28,
+  },
+  {
+    label: t('project.lastXMonths', { amount: 3 }),
+    period: '3M',
+    tbs: ['month'],
+    countDays: 90,
+  },
+  {
+    label: t('project.lastXMonths', { amount: 12 }),
+    period: '12M',
+    tbs: ['month'],
+    countDays: 365,
+  },
+  {
+    label: t('project.lastXMonths', { amount: 24 }),
+    period: '24M',
+    tbs: ['month'],
+  },
+  {
+    label: t('project.all'),
+    period: KEY_FOR_ALL_TIME,
+    tbs: ['month', 'year'],
+  },
+  {
+    label: dates ? getCustomLabel(dates, t, language) : t('project.custom'),
+    dropdownLabel: t('project.custom'),
+    isCustomDate: true,
+    period: 'custom',
+    tbs: tbs || ['custom'],
+  },
+]
+
+export const FILTERS_PERIOD_PAIRS = ['1h', '1d', '7d', '4w', '3M', '12M', 'custom', 'compare']
+
+// TODO: add 'custom' later after an issue with it is resolved
+// currently if you select a date range - it will not display errors within the last day of the date range
+export const ERROR_PERIOD_PAIRS = ['1h', '1d', '7d', '4w', '3M', '12M']
+
+export const FUNNELS_PERIOD_PAIRS = ['1h', '1d', '7d', '4w', '3M', '12M', 'custom']
+
+export const tbPeriodPairsCompare = (
+  t: Function,
+  dates?: Date[],
+  language?: string,
+): {
   label: string
   period: string
-}[] => [{
-  label: t('project.previousPeriod'),
-  period: 'previous',
-}, {
-  label: dates ? getCustomLabel(dates, t) : t('project.custom'),
-  period: 'custom',
-}, {
-  label: t('project.disableCompare'),
-  period: 'disable',
-}]
+}[] => [
+  {
+    label: t('project.previousPeriod'),
+    period: 'previous',
+  },
+  {
+    label: dates ? getCustomLabel(dates, t, language) : t('project.custom'),
+    period: 'custom',
+  },
+  {
+    label: t('project.disableCompare'),
+    period: 'disable',
+  },
+]
 
 export const PERIOD_PAIRS_COMPARE: {
   COMPARE: string
@@ -120,9 +243,11 @@ interface IStringObject {
 }
 
 // the order of panels in the project view
-export const TRAFFIC_PANELS_ORDER: string[] = ['cc', 'pg', 'lc', 'br', 'os', 'dv', 'ref', 'so', 'me', 'ca']
-export const FILTERS_PANELS_ORDER: string[] = ['cc', 'pg', 'lc', 'br', 'os', 'dv', 'ref']
-export const PERFORMANCE_PANELS_ORDER: string[] = ['cc', 'pg', 'br', 'dv']
+export const TRAFFIC_PANELS_ORDER = ['cc', 'pg', 'br', 'os', 'ref', 'lc', 'dv', 'so']
+export const FILTERS_PANELS_ORDER = ['cc', 'pg', 'br', 'os', 'ref', 'lc', 'dv']
+export const ERRORS_FILTERS_PANELS_ORDER = ['cc', 'pg', 'br', 'os', 'lc', 'dv']
+export const PERFORMANCE_PANELS_ORDER = ['cc', 'pg', 'br', 'dv']
+export const ERROR_PANELS_ORDER = ['cc', 'pg', 'br', 'os', 'lc', 'dv']
 
 // the maximum amount of months user can go back when picking a date in flat picker (project view)
 export const MAX_MONTHS_IN_PAST: number = 24
@@ -209,7 +334,8 @@ export const DEFAULT_TIMEZONE: string = 'Etc/GMT'
 
 export const DONATE_URL: string = 'https://ko-fi.com/andriir'
 export const FIREFOX_ADDON_URL: string = 'https://addons.mozilla.org/en-US/firefox/addon/swetrix/'
-export const CHROME_EXTENSION_URL: string = 'https://chrome.google.com/webstore/detail/swetrix/glbeclfdldjldjonfnpnembfkhphmeld'
+export const CHROME_EXTENSION_URL: string =
+  'https://chrome.google.com/webstore/detail/swetrix/glbeclfdldjldjonfnpnembfkhphmeld'
 export const HAVE_I_BEEN_PWNED_URL: string = 'https://haveibeenpwned.com/passwords'
 export const LINKEDIN_URL: string = 'https://www.linkedin.com/company/swetrix/'
 export const GITHUB_URL: string = 'https://github.com/Swetrix'
@@ -221,16 +347,20 @@ export const MAIN_URL: string = 'https://swetrix.com'
 export const REF_URL_PREFIX: string = `${MAIN_URL}/ref/`
 export const UTM_GENERATOR_URL: string = 'https://url.swetrix.com'
 export const LIVE_DEMO_URL: string = '/projects/STEzHcB1rALV'
+export const BOOK_A_CALL_URL: string = 'https://cal.com/swetrix'
+export const PERFORMANCE_LIVE_DEMO_URL: string = '/projects/STEzHcB1rALV?tab=performance'
+export const ERROR_TRACKING_LIVE_DEMO_URL: string = '/projects/STEzHcB1rALV?tab=errors'
 export const MARKETPLACE_URL: string = 'https://marketplace.swetrix.com'
 export const DOCS_URL: string = 'https://docs.swetrix.com'
+export const ERROR_TRACKING_DOCS_URL: string = 'https://docs.swetrix.com/error-tracking'
 export const CAPTCHA_URL: string = 'https://captcha.swetrix.com'
 export const DOCS_CAPTCHA_URL: string = `${DOCS_URL}/captcha/introduction`
 export const DOCS_REFERRAL_PROGRAM_URL: string = `${DOCS_URL}/affiliate/about`
 
 // Swetrix vs ...
-export const SWETRIX_VS_GOOGLE: string = 'https://blog.swetrix.com/post/vs-google-analytics/'
-export const SWETRIX_VS_CLOUDFLARE: string = 'https://blog.swetrix.com/post/vs-cloudflare-analytics/'
-export const SWETRIX_VS_SIMPLE_ANALYTICS: string = 'https://blog.swetrix.com/post/vs-simple-analytics/'
+export const SWETRIX_VS_GOOGLE: string = 'https://swetrix.com/blog/vs-google-analytics/'
+export const SWETRIX_VS_CLOUDFLARE: string = 'https://swetrix.com/blog/vs-cloudflare-analytics/'
+export const SWETRIX_VS_SIMPLE_ANALYTICS: string = 'https://swetrix.com/blog/vs-simple-analytics/'
 
 // Referral program
 export const REFERRAL_COOKIE = 'affiliate'
@@ -256,24 +386,58 @@ const isStaging = isBrowser ? window.REMIX_ENV?.STAGING : process.env.STAGING
 const STAGING_API_URL = isBrowser ? window.REMIX_ENV?.API_STAGING_URL : process.env.API_STAGING_URL
 const PRODUCTION_API_URL = isBrowser ? window.REMIX_ENV?.API_URL : process.env.API_URL
 
-export const API_URL = isStaging ? STAGING_API_URL : PRODUCTION_API_URL
-export const BLOG_URL = isBrowser ? window.REMIX_ENV?.BLOG_URL : process.env.BLOG_URL
+export const isSelfhosted = Boolean(isBrowser ? window.REMIX_ENV?.SELFHOSTED : process.env.SELFHOSTED)
+
+export const API_URL = isSelfhosted || !isStaging ? PRODUCTION_API_URL : STAGING_API_URL
 export const AIAPI_URL = isBrowser ? window.REMIX_ENV?.AIAPI_URL : process.env.AIAPI_URL
 export const CDN_URL = isBrowser ? window.REMIX_ENV?.CDN_URL : process.env.CDN_URL
 export const NODE_ENV = isBrowser ? window.REMIX_ENV?.NODE_ENV : process.env.NODE_ENV
 
 export const isDevelopment = !NODE_ENV || NODE_ENV === 'development'
-export const isSelfhosted = Boolean(
-  isBrowser ? window.REMIX_ENV?.SELFHOSTED : process.env.SELFHOSTED,
-)
+
+export const getOgImageUrl = (title: string) => {
+  const apiUrl = _endsWith(API_URL, '/') ? API_URL.slice(0, -1) : API_URL
+
+  return `${apiUrl}/v1/og-image?title=${title}`
+}
 
 // Functions
-export const getProjectCacheKey = (period: string, timeBucket: string, filters?: any): string => `${period}${timeBucket}${filters ? JSON.stringify(filters) : ''}}`
-export const getProjectCaptchaCacheKey = (period: string, timeBucket: string, filters?: any): string => `${period}${timeBucket}captcha${filters ? JSON.stringify(filters) : ''}}`
-export const getProjectForcastCacheKey = (period: string, timeBucket: string, periodToForecast: string, filters: any): string => `${period}${timeBucket}${periodToForecast}forecast${filters ? JSON.stringify(filters) : ''}`
-export const getProjectCacheCustomKey = (from: string, to: string, timeBucket: string, filters: any): string => `${from}-${to}-${timeBucket}${filters ? JSON.stringify(filters) : ''}}`
-export const getProjectCacheCustomKeyPerf = (from: string, to: string, timeBucket: string, filters: any): string => `${from}-${to}-${timeBucket}perf${filters ? JSON.stringify(filters) : ''}`
-export const getUserFlowCacheKey = (pid: string, period: string, filters: any): string => `${pid}${period}userflow${filters ? JSON.stringify(filters) : ''}`
+export const getProjectCacheKey = (
+  period: string,
+  timeBucket: string,
+  mode: 'periodical' | 'cumulative',
+  filters?: any,
+  meta = '',
+): string => `${period}${timeBucket}${mode}${filters ? JSON.stringify(filters) : ''}${meta}`
+export const getProjectCaptchaCacheKey = (period: string, timeBucket: string, filters?: any): string =>
+  `${period}${timeBucket}captcha${filters ? JSON.stringify(filters) : ''}}`
+export const getProjectForcastCacheKey = (
+  period: string,
+  timeBucket: string,
+  periodToForecast: string,
+  filters: any,
+): string => `${period}${timeBucket}${periodToForecast}forecast${filters ? JSON.stringify(filters) : ''}`
+export const getProjectCacheCustomKey = (
+  from: string,
+  to: string,
+  timeBucket: string,
+  mode: 'periodical' | 'cumulative',
+  filters: any,
+  meta = '',
+): string => `cst${from}${to}${timeBucket}-${mode}${filters ? JSON.stringify(filters) : ''}${meta}`
+export const getProjectCacheCustomKeyPerf = (
+  from: string,
+  to: string,
+  timeBucket: string,
+  filters: any,
+  measure: string,
+): string => `${from}-${to}-${timeBucket}perf${filters ? JSON.stringify(filters) : ''}-${measure}`
+export const getUserFlowCacheKey = (pid: string, period: string, filters: any): string =>
+  `${pid}${period}userflow${filters ? JSON.stringify(filters) : ''}`
+export const getFunnelsCacheKey = (pid: string, funnelId: string, period: string): string =>
+  `${pid}${funnelId}${period}funnels`
+export const getFunnelsCacheCustomKey = (pid: string, funnelId: string, from: string, to: string): string =>
+  `${pid}${funnelId}${from}${to}funnels`
 
 // Cookies
 export const GDPR_REQUEST: string = 'gdpr_request'
@@ -285,11 +449,22 @@ export const REFRESH_TOKEN: string = 'refresh_token'
 // LocalStorage
 export const PAGE_FORCE_REFRESHED = 'page-force-refreshed'
 export const PROJECTS_PROTECTED = 'projects_protected'
-
 export const IS_ACTIVE_COMPARE = 'is-active-compare'
 
+// Funnels
+export const MIN_FUNNEL_STEPS = 2
+export const MAX_FUNNEL_STEPS = 10
+
 // List of languages with translations available
-export const whitelist: string[] = ['en', 'uk', 'pl', 'de', 'sv', 'el', 'ru', 'hi', 'zh']
+export const whitelist: string[] = ['en', 'uk', 'pl', 'de', 'sv', 'el']
+export const whitelistWithCC = {
+  en: 'en-GB',
+  uk: 'uk-UA',
+  pl: 'pl-PL',
+  de: 'de-DE',
+  sv: 'sv-SE',
+  el: 'el-GR',
+}
 export const defaultLanguage: string = 'en'
 export const languages: IStringObject = {
   en: 'English',
@@ -298,9 +473,6 @@ export const languages: IStringObject = {
   de: 'Deutsch',
   sv: 'Svenska',
   el: 'Ελληνικά',
-  ru: 'Русский',
-  hi: 'हिन्दी',
-  zh: '中文简体',
 }
 
 export const languageFlag: IStringObject = {
@@ -310,14 +482,10 @@ export const languageFlag: IStringObject = {
   de: 'DE',
   sv: 'SE',
   el: 'GR',
-  ru: 'RU',
-  hi: 'IN',
-  zh: 'CN',
 }
 
 export const paddleLanguageMapping: IStringObject = {
-  zh: 'zh-Hans',
-  uk: 'ru',
+  uk: 'en',
   el: 'en',
 }
 
@@ -372,11 +540,17 @@ export const tabsForDashboard: IDashboardTabs[] = [
 const SELFHOSTED_PROJECT_TABS: IStringObject = {
   traffic: 'traffic',
   performance: 'performance',
+  funnels: 'funnels',
+  sessions: 'sessions',
+  errors: 'errors',
 }
 
 const PRODUCTION_PROJECT_TABS: IStringObject = {
   traffic: 'traffic',
   performance: 'performance',
+  funnels: 'funnels',
+  sessions: 'sessions',
+  errors: 'errors',
   alerts: 'alerts',
 }
 
@@ -444,7 +618,9 @@ type ICurrencies = {
 }
 
 export const CURRENCIES: ICurrencies = {
-  EUR, USD, GBP,
+  EUR,
+  USD,
+  GBP,
 }
 
 export const MERCHANT_FEE = '5% + 50¢'
@@ -511,7 +687,7 @@ export const PLAN_LIMITS = {
   trial: {
     index: 0, // 'downgrade' or 'upgrade' logic depends on this
     planCode: 'trial',
-    monthlyUsageLimit: 100000,
+    monthlyUsageLimit: 10000000,
     legacy: false,
     price: {
       USD: {
@@ -724,3 +900,72 @@ export const SSO_PROVIDERS = Object.freeze({
   GOOGLE: 'google',
   GITHUB: 'github',
 })
+
+export const BROWSER_LOGO_MAP = {
+  Chrome: '/assets/browsers/chrome_48x48.png',
+  Firefox: '/assets/browsers/firefox_48x48.png',
+  Safari: '/assets/browsers/safari_48x48.png',
+  'Mobile Safari': '/assets/browsers/safari-ios_48x48.png',
+  Edge: '/assets/browsers/edge_48x48.png',
+  'Samsung Browser': '/assets/browsers/samsung-internet_48x48.png',
+  'Chrome WebView': '/assets/browsers/android-webview_48x48.png',
+  Opera: '/assets/browsers/opera_48x48.png',
+  GSA: '/assets/browsers/chrome_48x48.png',
+  WebKit: '/assets/browsers/safari_48x48.png',
+  Yandex: '/assets/browsers/yandex_48x48.png',
+  'Android Browser': '/assets/browsers/android-webview_48x48.png',
+  Silk: '/assets/browsers/silk_48x48.png',
+  'Opera Touch': '/assets/browsers/opera-touch_48x48.png',
+  Electron: '/assets/browsers/electron_48x48.png',
+  'Coc Coc': '/assets/browsers/coc-coc_48x48.png',
+  SeaMonkey: '/assets/browsers/seamonkey_48x48.png',
+  PaleMoon: '/assets/browsers/pale-moon_48x48.png',
+  Falkon: '/assets/browsers/falkon_48x48.png',
+  Chromium: '/assets/browsers/chromium_48x48.png',
+  Vivaldi: '/assets/browsers/vivaldi_48x48.png',
+  Puffin: '/assets/browsers/puffin_48x48.png',
+  'Opera Mini': '/assets/browsers/opera-mini_48x48.png',
+  Mozilla: '/assets/browsers/firefox_48x48.png',
+  Midori: '/assets/browsers/midori_48x48.png',
+  Maxthon: '/assets/browsers/maxthon_48x48.png',
+  Konqueror: '/assets/browsers/konqueror_48x48.png',
+  Epiphany: '/assets/browsers/web_48x48.png',
+  Fennec: '/assets/browsers/firefox_48x48.png',
+  Basilisk: '/assets/browsers/basilisk_48x48.png',
+  DuckDuckGo: '/assets/duckduckgo.png',
+  Facebook: '/assets/facebook.svg',
+  MetaSr: '/assets/facebook.svg',
+  Instagram: '/assets/instagram.svg',
+  LinkedIn: '/assets/linkedin.svg',
+}
+
+export const OS_LOGO_MAP = {
+  Windows: 'assets/os/WIN.png',
+  Android: 'assets/os/AND.png',
+  iOS: 'assets/os/apple.svg',
+  'Mac OS': 'assets/os/apple.svg',
+  Mac: 'assets/os/apple.svg',
+  Linux: 'assets/os/LIN.png',
+  Ubuntu: 'assets/os/UBT.png',
+  'Chromium OS': 'assets/os/COS.png',
+  Fedora: 'assets/os/FED.png',
+  HarmonyOS: 'assets/os/HAR.png',
+  PlayStation: 'assets/os/PS3.png',
+  FreeBSD: 'assets/os/BSD.png',
+  Tizen: 'assets/os/TIZ.png',
+  OpenBSD: 'assets/os/OBS.png',
+  Chromecast: 'assets/os/COS.png',
+  Kubuntu: 'assets/os/KBT.png',
+  Xbox: 'assets/os/XBX.png',
+  NetBSD: 'assets/os/NBS.png',
+  Nintendo: 'assets/os/WII.png',
+  KAIOS: 'assets/os/KOS.png',
+  BSD: 'assets/os/BSD.png',
+  'Windows Phone': 'assets/os/WIN.png',
+}
+
+export const OS_LOGO_MAP_DARK = {
+  iOS: 'assets/os/apple-dark.svg',
+  'Mac OS': 'assets/os/apple-dark.svg',
+  Mac: 'assets/os/apple-dark.svg',
+}

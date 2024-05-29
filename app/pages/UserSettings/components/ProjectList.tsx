@@ -1,40 +1,36 @@
 import React, { memo, useState } from 'react'
 import dayjs from 'dayjs'
-import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 
 import Button from 'ui/Button'
 import Modal from 'ui/Modal'
-import {
-  deleteShareProject, acceptShareProject,
-} from 'api'
+import { deleteShareProject, acceptShareProject } from 'api'
 import { ISharedProject } from 'redux/models/ISharedProject'
 
 const ProjectList = ({
-  item, removeShareProject, removeProject, setProjectsShareData, setUserShareData,
-  userSharedUpdate, sharedProjectError,
+  item,
+  removeShareProject,
+  removeProject,
+  setProjectsShareData,
+  setUserShareData,
+  userSharedUpdate,
+  sharedProjectError,
 }: {
-  item: ISharedProject,
-  removeShareProject: (id: string) => void,
-  removeProject: (id: string) => void,
-  setProjectsShareData: (data: Partial<ISharedProject>, id: string, shared?: boolean) => void,
-  setUserShareData: (data: Partial<ISharedProject>, id: string) => void,
-  userSharedUpdate: (message: string) => void,
-  sharedProjectError: (message: string) => void,
+  item: ISharedProject
+  removeShareProject: (id: string) => void
+  removeProject: (id: string) => void
+  setProjectsShareData: (data: Partial<ISharedProject>, id: string, shared?: boolean) => void
+  setUserShareData: (data: Partial<ISharedProject>, id: string) => void
+  userSharedUpdate: (message: string) => void
+  sharedProjectError: (message: string) => void
 }): JSX.Element => {
-  const { t, i18n: { language } }: {
-    t: (key: string, options?: {
-      [key: string]: string | number,
-    }) => string,
-    i18n: {
-      language: string,
-    },
+  const {
+    t,
+    i18n: { language },
   } = useTranslation('common')
 
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const {
-    created, confirmed, id, role, project,
-  } = item
+  const { created, confirmed, id, role, project } = item
 
   const deleteProject = async (pid: string) => {
     try {
@@ -106,14 +102,6 @@ const ProjectList = ({
       </td>
     </tr>
   )
-}
-
-ProjectList.propTypes = {
-  item: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  sharedProjectError: PropTypes.func.isRequired,
-  removeProject: PropTypes.func.isRequired,
-  removeShareProject: PropTypes.func.isRequired,
-  userSharedUpdate: PropTypes.func.isRequired,
 }
 
 export default memo(ProjectList)

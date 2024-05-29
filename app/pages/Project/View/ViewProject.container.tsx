@@ -17,8 +17,10 @@ const mapStateToProps = (state: StateType) => {
       isLoading: state.ui.projects.isLoadingShared,
       cache: state.ui.cache.analytics,
       cachePerf: state.ui.cache.analyticsPerf,
+      cacheFunnels: state.ui.cache.funnels,
       projectViewPrefs: state.ui.cache.projectViewPrefs,
       authenticated: state.auth.authenticated,
+      authLoading: state.auth.loading,
       timezone: state.auth.user.timezone,
       extensions: state.ui.misc.extensions,
       user: state.auth.user,
@@ -34,8 +36,10 @@ const mapStateToProps = (state: StateType) => {
     projects: state.ui.projects.projects,
     sharedProjects: state.ui.projects.sharedProjects,
     isLoading: state.ui.projects.isLoading,
+    authLoading: state.auth.loading,
     cache: state.ui.cache.analytics,
     cachePerf: state.ui.cache.analyticsPerf,
+    cacheFunnels: state.ui.cache.funnels,
     projectViewPrefs: state.ui.cache.projectViewPrefs,
     authenticated: state.auth.authenticated,
     timezone: state.auth.user.timezone,
@@ -51,70 +55,107 @@ const mapStateToProps = (state: StateType) => {
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
   showError: (message: string) => {
-    dispatch(errorsActions.genericError({
-      message,
-    }))
+    dispatch(
+      errorsActions.genericError({
+        message,
+      }),
+    )
   },
   setProjectCache: (pid: string, data: any, key: string) => {
-    dispatch(UIActions.setProjectCache({
-      pid,
-      key,
-      data,
-    }))
+    dispatch(
+      UIActions.setProjectCache({
+        pid,
+        key,
+        data,
+      }),
+    )
   },
   setProjectViewPrefs: (pid: string, period: string, timeBucket: string, rangeDate?: Date[]) => {
-    dispatch(UIActions.setProjectViewPrefs({
-      pid,
-      period,
-      timeBucket,
-      rangeDate,
-    }))
+    dispatch(
+      UIActions.setProjectViewPrefs({
+        pid,
+        period,
+        timeBucket,
+        rangeDate,
+      }),
+    )
   },
   setProjectCachePerf: (pid: string, data: any, key: string) => {
-    dispatch(UIActions.setProjectCachePerf({
-      pid,
-      data,
-      key,
-    }))
+    dispatch(
+      UIActions.setProjectCachePerf({
+        pid,
+        data,
+        key,
+      }),
+    )
+  },
+  setFunnelsCache: (pid: string, data: any, key: string) => {
+    dispatch(
+      UIActions.setFunnelsCache({
+        pid,
+        data,
+        key,
+      }),
+    )
   },
   setPublicProject: (project: Partial<IProject | ISharedProject>) => {
-    dispatch(UIActions.setPublicProject({
-      project,
-    }))
+    dispatch(
+      UIActions.setPublicProject({
+        project,
+      }),
+    )
   },
   setProjects: (project: Partial<IProject | ISharedProject>[], shared?: boolean) => {
-    dispatch(UIActions.setProjects({
-      projects: project,
-      shared,
-    }))
+    dispatch(
+      UIActions.setProjects({
+        projects: project,
+        shared,
+      }),
+    )
+  },
+  updateProject: (pid: string, project: Partial<IProject | ISharedProject>) => {
+    dispatch(
+      UIActions.updateProject({
+        pid,
+        project,
+      }),
+    )
   },
   setLiveStatsForProject: (id: string, count: number) => {
-    dispatch(UIActions.setLiveStatsProject({
-      id,
-      count,
-    }))
+    dispatch(
+      UIActions.setLiveStatsProject({
+        id,
+        count,
+      }),
+    )
   },
   generateAlert: (message: string, type: string) => {
-    dispatch(alertsActions.generateAlerts({
-      message,
-      type,
-    }))
+    dispatch(
+      alertsActions.generateAlerts({
+        message,
+        type,
+      }),
+    )
   },
   setProjectTab: (tabs: string) => {
     dispatch(UIActions.setProjectTab(tabs))
   },
   setProjectForcastCache: (pid: string, data: any, key: string) => {
-    dispatch(UIActions.setProjectForecastCache({
-      pid,
-      data,
-      key,
-    }))
+    dispatch(
+      UIActions.setProjectForecastCache({
+        pid,
+        data,
+        key,
+      }),
+    )
   },
   setCustomEventsPrefs: (pid: string, data: any) => {
-    dispatch(UIActions.setCustomEventsPrefs({
-      pid,
-      data,
-    }))
+    dispatch(
+      UIActions.setCustomEventsPrefs({
+        pid,
+        data,
+      }),
+    )
   },
 })
 

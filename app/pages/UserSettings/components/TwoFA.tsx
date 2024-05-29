@@ -7,31 +7,28 @@ import _isString from 'lodash/isString'
 
 import Input from 'ui/Input'
 import Button from 'ui/Button'
-import {
-  generate2FA, enable2FA, disable2FA,
-} from 'api'
+import { generate2FA, enable2FA, disable2FA } from 'api'
 import { setAccessToken } from 'utils/accessToken'
 import { setRefreshToken } from 'utils/refreshToken'
 import { IUser } from 'redux/models/IUser'
 
 const TwoFA = ({
-  user, dontRemember, updateUserData, genericError,
+  user,
+  dontRemember,
+  updateUserData,
+  genericError,
 }: {
-  user: IUser,
-  dontRemember: boolean,
-  updateUserData: (data: Partial<IUser>) => void,
-  genericError: (message: string) => void,
+  user: IUser
+  dontRemember: boolean
+  updateUserData: (data: Partial<IUser>) => void
+  genericError: (message: string) => void
 }): JSX.Element => {
-  const { t }: {
-    t: (key: string, options?: {
-      [key: string]: string | number,
-    }) => string,
-  } = useTranslation('common')
+  const { t } = useTranslation('common')
   const [twoFAConfigurating, setTwoFAConfigurating] = useState<boolean>(false)
   const [twoFADisabling, setTwoFADisabling] = useState<boolean>(false)
   const [twoFAConfigData, setTwoFAConfigData] = useState<{
-    secret?: string,
-    otpauthUrl?: string,
+    secret?: string
+    otpauthUrl?: string
   }>({}) // { secret, otpauthUrl }
   const [isTwoFaLoading, setIsTwoFaLoading] = useState<boolean>(false)
   const [twoFACode, setTwoFACode] = useState('')
@@ -40,7 +37,9 @@ const TwoFA = ({
   const { isTwoFactorAuthenticationEnabled } = user
 
   const handle2FAInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { value } } = event
+    const {
+      target: { value },
+    } = event
     setTwoFACode(value)
     setTwoFACodeError(null)
   }
@@ -109,12 +108,14 @@ const TwoFA = ({
     }
   }
 
-  const callFnOnKeyPress = (fn: (e: any) => void, key = 'Enter') => (e: any) => {
-    e.stopPropagation()
-    if (e.key === key) {
-      fn(e)
+  const callFnOnKeyPress =
+    (fn: (e: any) => void, key = 'Enter') =>
+    (e: any) => {
+      e.stopPropagation()
+      if (e.key === key) {
+        fn(e)
+      }
     }
-  }
 
   const recoverySaved = () => {
     setTwoFARecovery(null)
@@ -124,10 +125,8 @@ const TwoFA = ({
   if (twoFARecovery) {
     return (
       <div className='max-w-prose'>
-        <p className='text-base text-gray-900 dark:text-gray-50'>
-          {t('profileSettings.2faRecoveryNote')}
-        </p>
-        <Input type='text' className='mt-4' value={twoFARecovery} />
+        <p className='text-base text-gray-900 dark:text-gray-50'>{t('profileSettings.2faRecoveryNote')}</p>
+        <Input className='mt-4' value={twoFARecovery} />
         <Button onClick={recoverySaved} primary large>
           {t('profileSettings.2faRecoverySaved')}
         </Button>
@@ -139,12 +138,9 @@ const TwoFA = ({
     if (twoFADisabling) {
       return (
         <>
-          <p className='text-base max-w-prose text-gray-900 dark:text-gray-50'>
-            {t('profileSettings.2faDisableHint')}
-          </p>
-          <div className='flex items-center mt-4'>
+          <p className='max-w-prose text-base text-gray-900 dark:text-gray-50'>{t('profileSettings.2faDisableHint')}</p>
+          <div className='mt-4 flex items-center'>
             <Input
-              type='text'
               label={t('profileSettings.enter2faToDisable')}
               value={twoFACode}
               placeholder={t('profileSettings.yourOneTimeCode')}
@@ -173,9 +169,7 @@ const TwoFA = ({
 
     return (
       <>
-        <p className='max-w-prose text-base text-gray-900 dark:text-gray-50'>
-          {t('profileSettings.2faEnabled')}
-        </p>
+        <p className='max-w-prose text-base text-gray-900 dark:text-gray-50'>{t('profileSettings.2faEnabled')}</p>
         <Button className='mt-4' onClick={() => setTwoFADisabling(true)} danger large>
           {t('profileSettings.2faDisableBtn')}
         </Button>
@@ -186,18 +180,15 @@ const TwoFA = ({
   if (twoFAConfigurating) {
     return (
       <>
-        <p className='text-base max-w-prose text-gray-900 dark:text-gray-50'>
-          {t('profileSettings.2faDesc')}
-        </p>
-        <div className='mt-4 p-4 bg-white w-max'>
+        <p className='max-w-prose text-base text-gray-900 dark:text-gray-50'>{t('profileSettings.2faDesc')}</p>
+        <div className='mt-4 w-max bg-white p-4'>
           <QRCode value={twoFAConfigData?.otpauthUrl || ''} />
         </div>
-        <p className='text-base whitespace-pre-line mt-2 text-gray-900 dark:text-gray-50'>
+        <p className='mt-2 whitespace-pre-line text-base text-gray-900 dark:text-gray-50'>
           {t('profileSettings.2faQRAlt', { key: twoFAConfigData?.secret || '' })}
         </p>
-        <div className='flex items-center mt-4'>
+        <div className='mt-4 flex items-center'>
           <Input
-            type='text'
             label={t('profileSettings.enter2faToEnable')}
             value={twoFACode}
             placeholder={t('profileSettings.yourOneTimeCode')}
@@ -226,9 +217,7 @@ const TwoFA = ({
 
   return (
     <>
-      <p className='max-w-prose text-base text-gray-900 dark:text-gray-50'>
-        {t('profileSettings.2faEnable')}
-      </p>
+      <p className='max-w-prose text-base text-gray-900 dark:text-gray-50'>{t('profileSettings.2faEnable')}</p>
       <Button className='mt-4' onClick={_generate2FA} loading={isTwoFaLoading} primary large>
         {t('profileSettings.2faEnableBtn')}
       </Button>

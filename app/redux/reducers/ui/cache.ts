@@ -3,8 +3,12 @@ import _filter from 'lodash/filter'
 import _isEmpty from 'lodash/isEmpty'
 import { getItem, removeItem, setItem } from 'utils/localstorage'
 import {
-  getProjectCacheKey, LS_VIEW_PREFS_SETTING, LS_CAPTCHA_VIEW_PREFS_SETTING, getProjectCaptchaCacheKey,
-  getUserFlowCacheKey, isBrowser,
+  getProjectCacheKey,
+  LS_VIEW_PREFS_SETTING,
+  LS_CAPTCHA_VIEW_PREFS_SETTING,
+  getProjectCaptchaCacheKey,
+  getUserFlowCacheKey,
+  isBrowser,
 } from 'redux/constants'
 import { IUserFlow } from 'redux/models/IUserFlow'
 import { filterInvalidViewPrefs } from 'pages/Project/View/ViewProject.helpers'
@@ -28,6 +32,7 @@ export const getInitialViewPrefs = (LS_VIEW: string) => {
 interface IInitialState {
   analytics: any
   analyticsPerf: any
+  funnels: any
   captchaAnalytics: any
   captchaProjectsViewPrefs: any
   customEventsPrefs: any
@@ -36,7 +41,7 @@ interface IInitialState {
       period: string
       timeBucket: string
       rangeDate?: Date[]
-    },
+    }
   } | null
   userFlowAscending: {
     [key: string]: IUserFlow
@@ -51,6 +56,7 @@ interface IInitialState {
 const initialState: IInitialState = {
   analytics: {},
   analyticsPerf: {},
+  funnels: {},
   captchaAnalytics: {},
   captchaProjectsViewPrefs: getInitialViewPrefs(LS_CAPTCHA_VIEW_PREFS_SETTING) || {},
   projectViewPrefs: getInitialViewPrefs(LS_VIEW_PREFS_SETTING),
@@ -65,7 +71,7 @@ const cacheSlice = createSlice({
   name: 'cache',
   initialState,
   reducers: {
-    setProjectCache(state, { payload }: PayloadAction<{ pid: string, key: string, data: any }>) {
+    setProjectCache(state, { payload }: PayloadAction<{ pid: string; key: string; data: any }>) {
       state.analytics = {
         ...state.analytics,
         [payload.pid]: {
@@ -74,7 +80,7 @@ const cacheSlice = createSlice({
         },
       }
     },
-    setCaptchaProjectCache(state, { payload }: PayloadAction<{ pid: string, key: string, data: any }>) {
+    setCaptchaProjectCache(state, { payload }: PayloadAction<{ pid: string; key: string; data: any }>) {
       state.captchaAnalytics = {
         ...state.captchaAnalytics,
         [payload.pid]: {
@@ -83,10 +89,11 @@ const cacheSlice = createSlice({
         },
       }
     },
-    deleteProjectCache(state, { payload }: PayloadAction<{ pid?: string, period?: string, timeBucket?: string, filters?: any }>) {
-      const {
-        pid, period, timeBucket, filters,
-      } = payload
+    deleteProjectCache(
+      state,
+      { payload }: PayloadAction<{ pid?: string; period?: string; timeBucket?: string; filters?: any }>,
+    ) {
+      const { pid, period, timeBucket, filters } = payload
       let key: string
 
       if (period && timeBucket && filters) {
@@ -106,10 +113,11 @@ const cacheSlice = createSlice({
         }
       }
     },
-    deleteCaptchaProjectCache(state, { payload }: PayloadAction<{ pid: string, period?: string, timeBucket?: string }>) {
-      const {
-        pid, period, timeBucket,
-      } = payload
+    deleteCaptchaProjectCache(
+      state,
+      { payload }: PayloadAction<{ pid: string; period?: string; timeBucket?: string }>,
+    ) {
+      const { pid, period, timeBucket } = payload
       let key: string
 
       if (period && timeBucket) {
@@ -127,21 +135,27 @@ const cacheSlice = createSlice({
         [pid]: _filter(state.captchaAnalytics[pid], (ckey) => ckey !== key),
       }
     },
-    setProjectViewPrefs(state, { payload }: PayloadAction<{ pid: string, period: string, timeBucket: string, rangeDate?: Date[] }>) {
-      const {
-        pid, period, timeBucket, rangeDate,
-      } = payload
-      const viewPrefs = rangeDate ? {
-        period, timeBucket, rangeDate,
-      } : {
-        period, timeBucket,
-      }
+    setProjectViewPrefs(
+      state,
+      { payload }: PayloadAction<{ pid: string; period: string; timeBucket: string; rangeDate?: Date[] }>,
+    ) {
+      const { pid, period, timeBucket, rangeDate } = payload
+      const viewPrefs = rangeDate
+        ? {
+            period,
+            timeBucket,
+            rangeDate,
+          }
+        : {
+            period,
+            timeBucket,
+          }
       const storedPrefs = getItem(LS_VIEW_PREFS_SETTING) as {
         [key: string]: {
           period: string
           timeBucket: string
           rangeDate?: Date[]
-        },
+        }
       }
       if (typeof storedPrefs === 'object' && storedPrefs !== null) {
         storedPrefs[pid] = viewPrefs
@@ -154,21 +168,27 @@ const cacheSlice = createSlice({
         [pid]: viewPrefs,
       }
     },
-    setCaptchaProjectViewPrefs(state, { payload }: PayloadAction<{ pid: string, period: string, timeBucket: string, rangeDate?: Date[] | null }>) {
-      const {
-        pid, period, timeBucket, rangeDate,
-      } = payload
-      const viewPrefs = rangeDate ? {
-        period, timeBucket, rangeDate,
-      } : {
-        period, timeBucket,
-      }
+    setCaptchaProjectViewPrefs(
+      state,
+      { payload }: PayloadAction<{ pid: string; period: string; timeBucket: string; rangeDate?: Date[] | null }>,
+    ) {
+      const { pid, period, timeBucket, rangeDate } = payload
+      const viewPrefs = rangeDate
+        ? {
+            period,
+            timeBucket,
+            rangeDate,
+          }
+        : {
+            period,
+            timeBucket,
+          }
       const storedPrefs = getItem(LS_CAPTCHA_VIEW_PREFS_SETTING) as {
         [key: string]: {
           period: string
           timeBucket: string
           rangeDate?: Date[]
-        },
+        }
       }
       if (typeof storedPrefs === 'object' && storedPrefs !== null) {
         storedPrefs[pid] = viewPrefs
@@ -181,7 +201,7 @@ const cacheSlice = createSlice({
         [pid]: viewPrefs,
       }
     },
-    setProjectCachePerf(state, { payload }: PayloadAction<{ pid: string, key: string, data: any }>) {
+    setProjectCachePerf(state, { payload }: PayloadAction<{ pid: string; key: string; data: any }>) {
       state.analyticsPerf = {
         ...state.analyticsPerf,
         [payload.pid]: {
@@ -190,7 +210,16 @@ const cacheSlice = createSlice({
         },
       }
     },
-    setProjectForecastCache(state, { payload }: PayloadAction<{ pid: string, key: string, data: any }>) {
+    setFunnelsCache(state, { payload }: PayloadAction<{ pid: string; key: string; data: any }>) {
+      state.funnels = {
+        ...state.funnels,
+        [payload.pid]: {
+          ...state.funnels[payload.pid],
+          [payload.key]: payload.data,
+        },
+      }
+    },
+    setProjectForecastCache(state, { payload }: PayloadAction<{ pid: string; key: string; data: any }>) {
       state.analytics = {
         ...state.analytics,
         [payload.pid]: {
@@ -199,7 +228,7 @@ const cacheSlice = createSlice({
         },
       }
     },
-    setCustomEventsPrefs(state, { payload }: PayloadAction<{ pid: string, data: any }>) {
+    setCustomEventsPrefs(state, { payload }: PayloadAction<{ pid: string; data: any }>) {
       state.customEventsPrefs = {
         ...state.customEventsPrefs,
         [payload.pid]: {
@@ -208,7 +237,10 @@ const cacheSlice = createSlice({
         },
       }
     },
-    setUserFlowAscending(state, { payload }: PayloadAction<{ pid: string, period: string, data: IUserFlow, filters: any }>) {
+    setUserFlowAscending(
+      state,
+      { payload }: PayloadAction<{ pid: string; period: string; data: IUserFlow; filters: any }>,
+    ) {
       const key = getUserFlowCacheKey(payload.pid, payload.period, payload.filters)
 
       state.userFlowAscending = {
@@ -216,7 +248,10 @@ const cacheSlice = createSlice({
         [key]: payload.data,
       }
     },
-    setUserFlowDescending(state, { payload }: PayloadAction<{ pid: string, period: string, data: IUserFlow, filters: any }>) {
+    setUserFlowDescending(
+      state,
+      { payload }: PayloadAction<{ pid: string; period: string; data: IUserFlow; filters: any }>,
+    ) {
       const key = getUserFlowCacheKey(payload.pid, payload.period, payload.filters)
 
       state.userFlowDescending = {
@@ -224,7 +259,7 @@ const cacheSlice = createSlice({
         [key]: payload.data,
       }
     },
-    setCache(state, { payload }: PayloadAction<{ key: string, value: any }>) {
+    setCache(state, { payload }: PayloadAction<{ key: string; value: any }>) {
       const { key, value } = payload
 
       // @ts-ignore

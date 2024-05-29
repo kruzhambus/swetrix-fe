@@ -35,7 +35,13 @@
     "socialAccountLinked": "The Swetrix account has been linked with your selected provider",
     "socialAccountUninked": "The Swetrix account has been unlinked from the selected provider",
     "enterPassword": "Please enter the password",
-    "incorrectPassword": "Incorrect password, please try again."
+    "incorrectPassword": "Incorrect password, please try again.",
+    "funnelCreated": "The funnel has been created",
+    "funnelUpdated": "The funnel has been updated",
+    "funnelDeleted": "The funnel has been deleted",
+    "errorCode": "Error code: {{error}}",
+    "updateErrorStatusFailed": "Error occured while updating error status",
+    "errorStatusUpdated": "Error status has been updated"
   },
   "common": {
     "features": "Features",
@@ -45,7 +51,6 @@
     "pricing": "Pricing",
     "faqs": "FAQs",
     "accountSettings": "Account settings",
-    "explore": "Explore",
     "liveDemo": "Live demo",
     "dashboard": "Dashboard",
     "logout": "Logout",
@@ -54,6 +59,8 @@
     "confirm": "Confirm",
     "amount": "Amount",
     "date": "Date",
+    "success": "Success",
+    "info": "Info",
     "error": "Error",
     "close": "Close",
     "cancel": "Cancel",
@@ -84,26 +91,62 @@
     "account": "Account",
     "transferring": "Transferring",
     "link": "Link",
-    "unlink": "Unlink"
+    "unlink": "Unlink",
+    "nothingFound": "Nothing found",
+    "oneMember": "1 Member",
+    "xMembers": "{{number}} Members",
+    "general": "General",
+    "fixIt": "Fix it",
+    "bookADemo": "Book an enterprise demo"
+  },
+  "performance": {
+    "slogan": "End user <span>performance monitoring</span> to deliver fast websites.",
+    "description": "Deliver a flawless experience to your users, and we will let you know if your site is fast enough.",
+    "fast": {
+      "title": "Everyone loves a fast website",
+      "desc": "People love fast websites, so in addition to <indexUrl>traffic analytics</indexUrl>, Swetrix allows you to analyse your website speed and monitor other performance metrics based on real traffic from your users.\nUsers are more likely to <wpostatsUrl>abandon your website</wpostatsUrl> if it takes too long to load, stay ahead of these problems and measure insights from real interactions.",
+      "list": ["Measure which pages are taking too long to load", "Aggregate performance data by geolocation, browser, device type, page and other metrics", "Compare site speed to previous periods to analyse potential problems or improvements"]
+    },
+    "metrics": {
+      "title": "Analyse all key metrics in one tool",
+      "desc": "With Swetrix you can measure key metrics such as overall page load time, detailed breakdowns by TTFB, DNS, TLS resolution time and other metrics. Split the data into different percentiles to see how well your site performs for people with fast and slow internet connections."
+    },
+    "privacy": {
+      "title": "Privacy-first, easy to use",
+      "desc": "Swetrix is built with a privacy-first and transparent approach. We do not use cookies or collect personal information from our users. There's no cross-site or cross-device tracking. No data is ever sold to advertisers or anyone else.\nThe Swetrix dashboard is very intuitive to use, giving you real-time data and a clear view of your website. There are no layers of menus, no need to export your data into custom reports to understand it properly."
+    }
+  },
+  "errors": {
+    "slogan": "End user <span>error tracking</span> tool to deliver bug-free experiences.",
+    "description": "Focus on making beautiful apps, and we will let you know if something goes wrong.",
+    "fast": {
+      "title": "Deliver bug-free experiences",
+      "desc": "Everyone hates bugs, so in addition to <indexUrl>traffic</indexUrl> and <perfUrl>performance</perfUrl> analytics, Swetrix allows you to monitor your website errors to quickly resolve them. Easily set up error monitoring with a <oneLC>one line of code</oneLC>, so you can focus on building your applications, not hunting for bugs.",
+      "list": ["Get a bird's eye insights on what kind of errors are present on your website", "View specific error details and aggregated data by geolocation, browser, device type, page and other metrics", "Understand if the bug is new or regressed, making it easier to fix"]
+    },
+    "track": {
+      "title": "Track all errors with one tool",
+      "desc": "With Swetrix, you can track exactly what kind of errors your users are experiencing and when. We also give you insight into which browsers, operating systems, devices and more, making it even easier to resolve issues."
+    }
   },
   "main": {
     "ukrSupport": "Support the Ukrainian army to fight Russian invasion.",
-    "slogan": "<span>Ultimate open-source analytics</span> to satisfy all your needs.",
-    "trackEveryMetric": "Track every metric you need without invading your users' privacy.",
-    "description": "Swetrix brings an advanced and customisable analytics service for your web applications.",
+    "slogan": "<span>Ultimate open-source web analytics</span> to satisfy all your needs.",
+    "trackEveryMetric": "This is the way analytics should be: GDPR compliant, lightweight and easy to use.",
+    "description": "Swetrix is a cookieless Google Analytics alternative that does not invade your users' privacy.",
     "start": "Start for free",
     "signup": "Sign up, it's free!",
     "signupTerms": "By signing up, you agree to our <tos>Terms and Conditions</tos> and <pp>Privacy Policy</pp>.",
     "techDetails": "Want to know more technical details?",
     "lookAtDocs": "Look at the documentation and live demonstration pages.",
     "readyToStart": "Ready to get started?",
-    "exploreService": "Explore our service or create an account.",
+    "metric": "Metric",
     "coreFeatures": {
       "title": "Core Analytics Features",
       "desc": "Powerful and easy analytics to display all the metrics you need. Cookieless. No need to be a data scientist to understand our analytics."
     },
     "marketplace": {
-      "title": "Marketplace & build-in Extensions",
+      "title": "Marketplace & built-in Extensions",
       "desc1": "Need additional features? Connect extensions or write your own! Now you do not need to use many sources from different systems - expand and supplement everything in one!",
       "desc2": "Install extensions and sell your own. Came up with a great extension for your company? Great! Publish it on the marketplace and share your insights with the whole community."
     },
@@ -205,11 +248,12 @@
       }
     ],
     "supports": "Supports all popular platforms",
-    "becomeDev": "Become a developer",
-    "becomeDevDesc": "Write your extensions, follow the news and join our developer community.",
+    "peopleLoveSwetrix": "People 🥰 Swetrix",
+    "whyPeopleLoveSwetrix": "Swetrix is an ethical and powerful service. Hundreds of people have already made the switch from Google Analytics and other alternatives.",
     "marketplaceBlock": "Marketplace and extension features",
     "coreFeaturesBlock": "Core features",
     "testimonials": "Testimonials",
+    "peopleUseSwetrix": "Hundreds of people already use Swetrix as their web analytics solution",
     "lTestimonials": [
       {
         "name": "Alex",
@@ -239,7 +283,8 @@
         "desc": "Your data is protected, all the features and fixes are implemented in a matter of days by our developers."
       }
     ],
-    "os": "<gradi>Open source</gradi> analytics - a powerful and simple tool.",
+    "timeToDitchGoogleAnalytics": "It's time <colour>to ditch</colour> Google Analytics.",
+    "whyDitch": "Tired of the frustration, complexity and privacy issues of Google Analytics? We were too. That's why we built Swetrix - the ethical, open source and fully cookieless alternative.",
     "custSupport": "Could not find the answer you're looking for? Reach out to our <mail>customer support</mail> team.",
     "whyUs": "Why us",
     "ourStats": "Our statistics",
@@ -253,6 +298,8 @@
       "ext": "Custom extensions",
       "gdpr": "GDPR-compatible",
       "usfl": "User flow",
+      "funnels": "Funnels",
+      "sessionAnalysis": "Session analysis",
       "alrt": "Custom alerts",
       "pbld": "Public dashboards",
       "shad": "Dashboard sharing",
@@ -263,9 +310,12 @@
     }
   },
   "referral": {
-    "desc": "Swetrix is an ethical, open-source and fully cookieless Google Analytics alternative. It allows you to understand your users behaviour, monitor your website performance, track your marketing campaigns and much more. All of that without invading your users' privacy!",
+    "desc": "Swetrix is an ethical, open source and completely cookie-less alternative to Google Analytics. It allows you to understand your users' behaviour, monitor your website performance, track your marketing campaigns and much more. All without invading your users' privacy!",
     "cookieDetails": "If you click on the buttons above, a cookie will be stored for {{days}} days to reward the person who referred you and give you {{discount}}% off your first bill.",
     "buttons": "Click on these buttons to receive {{discount}}% off your first bill!"
+  },
+  "unsubscribe": {
+    "success": "You've unsubscribed from analytics email reports"
   },
   "auth": {
     "recovery": {
@@ -297,11 +347,20 @@
       "noCC": "No credit card required.",
       "alreadyAMember": "Already a member? <url>Sign in</url>"
     },
+    "confirm": {
+      "title": "Check your inbox",
+      "linkSent": "We've sent an account confirmation link to {{email}}, please click the link to confirm your email address.",
+      "spam": "Can't see the email? Please check your spam folder.",
+      "wrongEmail": "Wrong email? <url>Create a new account.</url>"
+    },
     "verification": {
       "success": "Your email has been successfully verified!"
     },
     "socialisation": {
-      "success": "Socialisation successful",
+      "authSuccess": "Authentication successful",
+      "failed": "Authentication failed",
+      "failedDesc": "An error has occurred while authenticating through a third party service, please try again or contact support.",
+      "successDesc": "You are now authenticated through a 3rd party service and can safely close this page if it didn't close automatically.",
       "orSingUpWith": "or sign up with"
     },
     "common": {
@@ -459,11 +518,15 @@
   },
   "dashboard": {
     "newProject": "New project",
+    "newFunnel": "New funnel",
+    "reloadPage": "Reload page",
     "newCaptchaProject": "New CAPTCHA project",
     "verifyEmailTitle": "Please, verify the email address first",
     "verifyEmailDesc": "To start using our service and creating your projects, you first need to confirm your email address.\n\nA link to confirm your account was sent to the email address you provided during registration, if it was not delivered - you can request the link again in your account settings.",
     "lowEventsTitle": "You are running out of events!",
     "lowEventsDesc": "You have used more than 85% of the available events per your tier for this month.\nThat means that in case you use 100% of the available events until the end of the month, all the subsequent traffic will not be saved.\nTo avoid this we recommend that you update your tier on the Billing page.",
+    "accountLocked": "Your account has been temporarily suspended due to a billing issue.",
+    "accountLockedTitle": "Account temporarily suspended",
     "eventsXPercUsed": "You have used more than {{amount}}% of the available events per your tier for this month.",
     "noProjects": "You have not yet created any projects",
     "createProject": "Create a new project here to start using our service",
@@ -472,11 +535,16 @@
     "shared": "Shared",
     "disabled": "Disabled",
     "pageviews": "Pageviews",
+    "captchaEvents": "CAPTCHA events",
+    "firstSeen": "First seen",
+    "lastSeen": "Last seen",
+    "atFile": "At {{filename}}, line {{lineno}}, column {{colno}}",
     "unique": "Unique views",
     "createdAt": "Created at",
     "inc": "Increased by",
     "dec": "Descreased by",
     "liveVisitors": "Live visitors",
+    "xLiveVisitors": "{{amount}} live visitors",
     "live": "Live",
     "bounceRate": "Bounce rate",
     "viewsPerUnique": "Views per session",
@@ -484,15 +552,24 @@
     "invitationFor": "Invitation for {{project}}",
     "invitationDesc": "You have been invited to join the project {{project}}.\nYou can either accept the invitation here or reject it in your account settings.",
     "sessionDuration": "Session duration",
+    "cumulativeMode": "Cumulative mode",
     "traffic": "Traffic",
     "performance": "Performance",
+    "funnels": "Funnels",
+    "sessions": "Sessions",
+    "xOccurrences": "{{x}} occurrences",
+    "errors": "Errors",
+    "xPageviews": "{{x}} pageviews",
+    "onePageview": "1 pageview",
     "alerts": "Alerts",
-    "alertsDesc": "Automated alerts are a powerful tool that allow you to run automated tasks when specific events occur.\nWe can automatically monitor your project for traffic spikes and notify you via Telegram.",
+    "alertsDesc": "Automated alerts is a powerful tool that allows you to run automated tasks when specific events occur.\nWe can automatically monitor your project for traffic spikes and notify you via Telegram.",
+    "funnelsDesc": "Funnels is a powerful tool that allows you to track the conversion rate of your users through a series of steps.\nThe analysis provided by the marketing funnel gives you the ability to discover potential problems, improve your website, and boost your conversion rate.",
     "frontend": "Frontend",
     "backend": "Backend",
     "network": "Network",
     "timing": "Timing breakdown",
     "timingFull": "Timing breakdown (full)",
+    "allocation": "Load time allocation",
     "dns": "DNS",
     "conn": "Connection",
     "tls": "TLS Setup",
@@ -500,18 +577,23 @@
     "domLoad": "DOM Content Load",
     "pageLoad": "Page load time",
     "render": "Browser render",
-    "response": "Response Time"
+    "response": "Response Time",
+    "average": "Average",
+    "median": "Median",
+    "xPercentile": "{{x}}th percentile"
   },
   "alert": {
     "create": "Create an alert",
     "customEvent": "Custom event name",
-    "add": "Add Alert",
+    "add": "Add alert",
     "delete": "Delete alert",
-		"noNameError": "Please enter a name for the alert.",
-		"queryValueError": "Please fill threshold and the query value has to be a number.",
+    "noNameError": "Please enter a name for the alert.",
+    "queryValueError": "Please fill threshold and the query value has to be a number.",
     "noIntegration": "You have not configured an integration yet. Create one in your <url>account settings</url>.",
-    "noNotification": "No notification channels set",
+    "noNotificationChannel": "You do not have a notification channel set up, please set it up to be notified when one of your alerts is triggered.",
     "lastTriggered": "Last Triggered",
+    "lastTriggeredOn": "Last triggered on {{date}}",
+    "notYetTriggered": "Not yet triggered",
     "never": "Never",
     "qDelete": "Delete the alert?",
     "settingsOf": "Settings of {{name}}",
@@ -539,6 +621,13 @@
       "custom_events": "Custom events"
     }
   },
+  "error": {
+    "status": {
+      "active": "Active",
+      "resolved": "Resolved",
+      "regressed": "Regressed"
+    }
+  },
   "notFoundPage": {
     "title": "Page not found",
     "description": "Sorry, we couldn’t find the page you’re looking for.\nPlease check the URL in the address bar and try again.",
@@ -547,20 +636,57 @@
   },
   "project": {
     "search": "Search",
+    "loadMore": "Load more",
+    "unknownCountry": "Unknown country",
+    "selectCategory": "Select category to filter",
+    "currentFilters": "Currently applied filters",
+    "newFilters": "New filters",
     "advancedFilters": "Advanced filters",
     "applyFilters": "Apply filters",
+    "lookingForMore": "Looking for more?",
     "overrideCurrentlyFilters": "Override currently applied filters",
-    "ad": "Want these stats for your website?",
     "noExist": "The selected project does not exist",
     "geo": "Geolocation",
+    "campaigns": "Campaigns",
+    "pageviewX": "Pageview <value>{{x}}</value>",
+    "eventX": "Event <value>{{x}}</value>",
     "exportData": "Export data",
-    "asImage": "As image",
     "asCSV": "As CSV",
     "noEvTitle": "No events yet",
+    "noErrorDetails": "No error details",
+    "noErrorDesc": "This error does not exist or has not occurred within the specified time frame.",
     "showAll": "Show all views",
     "trendlineUnique": "Unique visitors trendline",
+    "backToFunnels": "Back to funnels list",
+    "backToSessions": "Back to sessions list",
+    "backToErrors": "Back to errors list",
+    "occurrences": "Occurrences",
+    "visitPage": "Visit {{page}}",
+    "visitors": "Visitors",
+    "events": "Events",
+    "dropoff": "Dropoff",
+    "neverEnteredTheFunnel": "Never entered the funnel",
+    "locked": {
+      "title": "Dashboard locked",
+      "descExceedingTier": "This dashboard is locked because your traffic has exceeded your subscription plan.\nIn order to continue using Swetrix and have access to your stats, you need to upgrade your subscription plan to reflect your usage.",
+      "descTialEnded": "This dashboard is locked because your trial ended.\nIn order to continue using Swetrix and have access to your stats, you need to subscribe to one of our tiers.",
+      "descPaymentFailed": "This dashboard is locked because there was a problem with your last Swetrix subscription payment.\nIn order to continue using Swetrix and have access to your stats, you need to update / confirm your payment details.",
+      "descSharedProject": "This dashboard is locked due to a billing issue of the project owner.\nIn order to continue using Swetrix and have access to the stats, the billing issue must be resolved first.",
+      "descGenericIssue": "This dashboard has been locked and is currently unavailable, please come back later or contact the project owner to resolve the issue.",
+      "descSubCancelled": "This dashboard has been locked because you've cancelled your subscription.\nIn order to continue using Swetrix and have access to your stats, you need to have an active subscription.",
+      "resolve": "We're still counting your stats and we haven't deleted any of your data. Once you have updated your payment information, your dashboard access will be restored immediately.",
+      "manageSubscription": "Manage subscription"
+    },
+    "waiting": {
+      "title": "Waiting for your first pageview",
+      "desc": "We're waiting for your first pageview! If your integration is set up correctly, you should see it within 1 minute.\n<snippet>Click here</snippet> to view your JavaScript tracking code.\nStill not working? Try <turl>troubleshooting</turl> your integration or <curl>contact us</curl> for help with your setup."
+    },
+    "waitingError": {
+      "title": "Waiting for your first error.. hopefully not :)",
+      "desc": "We're waiting for your first error event! If your integration is set up correctly, you should see it within 1 minute when it happens.\n<howto>Click here</howto> to learn how to set up error tracking for your website.\nStill not working? Try <turl>troubleshooting</turl> your integration or <curl>contact us</curl> for help with your setup."
+    },
     "trendlineTotal": "Pageviews trendline",
-    "noEvContent": "No events have been captured for the specified timeframe.\nIf you haven't tracked any events yet, you can check out our <url>Docs</url> to easily integrate tracking into your app.",
+    "noEvContent": "No events have been recorded for the specified period, please try a different period.",
     "noCaptchaEv": "No events have been captured for the specified timeframe.\nIf you haven't set up CAPTCHA yet, you can check out our <url>Docs</url> to easily integrate it into your app.",
     "mapping": {
       "cc": "Country",
@@ -571,13 +697,18 @@
       "ref": "Referrer",
       "dv": "Device type",
       "br": "Browser",
-      "os": "OS name"
+      "os": "OS name",
+      "so": "UTM Source",
+      "me": "UTM Medium",
+      "ca": "UTM Campaign"
     },
     "redactedPage": "Redacted page",
+    "noData": "No data to display",
     "overview": "Overview",
     "weeklyStats": "Weekly stats",
     "statsFor": "Stats for",
     "event": "Event",
+    "value": "Value",
     "quantity": "Quantity",
     "conversion": "Conversion",
     "ratio": "Ratio",
@@ -608,6 +739,10 @@
     "exportImgError": "Exporting data as image failed",
     "codeExample": "Or insert the following code into your website to track your events:",
     "metricVis": "Metrics visualisation",
+    "filters": "Filters",
+    "showResolved": "Show resolved",
+    "resolve": "Resolve",
+    "markAsActive": "Mark as active",
     "refreshStats": "Refresh stats",
     "barChart": "Bar chart",
     "lineChart": "Line chart",
@@ -621,13 +756,15 @@
       "create": "Create a new project",
       "settings": "Settings of",
       "name": "Project name",
+      "sharableLink": "Sharable link",
+      "sharableDesc": "Used to share your dashboard with others, only available if you make your dashboard public or password protected.",
       "pid": "Project ID",
       "origins": "Allowed origins",
       "originsHint": "A list of origins (domains) which are allowed to use script with your ProjectID, separated by commas.\nLeave it empty to allow all origins (default setting).\nExample: cornell.edu, app.example.com, *.gov.ua",
       "enabled": "Project enabled",
-      "public": "Dashboard is public",
+      "public": "Public dashboard",
       "enabledHint": "Disabled projects will not count any newly incoming events or pageviews.\nYou will still be able to access the project's analytics in dashboard.",
-      "publicHint": "By checking this, anyone on the internet (including Google) would be able to see this project's Dashboard.\nOnly project's administrator can edit the settings.",
+      "publicHint": "By checking this, anyone on the Internet (including Google) would be able to see this project's dashboard.\nOnly the project administrator can edit the settings.",
       "createHint": "*you will be able to set up your project more thoroughly after you have created it",
       "delete": "Delete project",
       "reset": "Reset project",
@@ -680,8 +817,8 @@
         "filtersPlaceholder": "Select filters",
         "noFilters": "No filters selected or no data for the selected filter type"
       },
-      "protected": "Password protected Dashboard",
-      "protectedHint": "You can make your Dashboard public & password protected. This way, only people who know the password will be able to access it.",
+      "protected": "Password protected",
+      "protectedHint": "You can protect your password. That way, people who know the password can access it through a shareable link.",
       "password": "Dashboard password"
     },
     "captcha": {
@@ -729,6 +866,7 @@
     "pageviews": "Pageview events: {{quantity}} ({{percentage}}%)",
     "customEvents": "Custom events: {{quantity}} ({{percentage}}%)",
     "captcha": "CAPTCHA events: {{quantity}} ({{percentage}}%)",
+    "errors": "Error events: {{quantity}} ({{percentage}}%)",
     "gotoUsage": "Go to plan usage",
     "confirmNewPlan": "Confirm your new subscription plan",
     "previewLoadingError": "An error occured while loading the pricing preview, please try again later.\nIf the problem persists, please contact us at <mail>{{email}}</mail>.\nYou can still change your plan, but you won't be able to see the pricing preview at the moment, sorry for that.",
@@ -742,22 +880,40 @@
     "resetDate": "The plan usage resets on the first day of each month.",
     "selectPlan": "Select a subscription plan to unveil full Swetrix potential.",
     "changePlan": "You can change or cancel your subscription plan at any time here.",
-    "membersNotification": "Pageviews, custom events and CAPTCHA completions are counted towards the limit of the subscription of the account owner. People you invite into your projects don't need a subscription."
+    "membersNotification": "Pageviews, custom events and CAPTCHA completions are counted towards the limit of the subscription of the account owner. People you invite into your projects don't need a subscription.",
+    "xMonthsFree": "{{amount}} months free"
   },
   "modals": {
     "paidFeature": {
       "title": "Upgrade your plan to use this feature",
       "desc": "We apologise for the inconvenience, but you must subscribe to a paid plan to use this feature.\n\nWe realise that you might not be ready to buy a paid subscription yet, but buying it will give you not only access to this feature, but also many other great perks, such as access to all the other paid features, higher limits on visits per month and number of websites available, and you will support the growth of a small business :)"
     },
+    "trackingSnippet": {
+      "title": "Add a Swetrix tracking code to your website",
+      "add": "Add the following snippet into the <bsect></bsect> section of your site.",
+      "docs": "Check our <pdocs>our documentation</pdocs> for details and more integration guides."
+    },
     "forecast": {
       "title": "Traffic forecast",
       "desc": "This is a rough estimate of how much traffic you can expect to get on your website, based on Swetrix AI models.",
       "input": "The quantity of '{{frequency}}' you want to forecast"
+    },
+    "funnels": {
+      "addTitle": "Add funnel",
+      "editTitle": "Edit funnel",
+      "name": "Funnel name",
+      "steps": "Funnel steps",
+      "addStep": "Add one more step"
+    },
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "timebuckets": "Timebuckets selection",
+      "tabs": "Tabs switching"
     }
   },
   "pricing": {
-    "title": "Pricing Plans",
-    "adv": "Start out for free, no credit card needed.\nWhen your business grows, you can upgrade your plan at any time.",
+    "title": "Simple, traffic-based pricing",
+    "adv": "Try Swetrix on your website for {{amount}} days - completely free of charge.\nNo credit card required. No strings attached.",
     "currentPlan": "Current plan",
     "free": "Free",
     "legacy": "Legacy",
@@ -765,6 +921,7 @@
     "perYear": "yr",
     "yourPlan": "Your plan",
     "downgrade": "Downgrade",
+    "selectPlan": "Select plan:",
     "upgrade": "Upgrade",
     "whatIncl": "What's included",
     "monthlyBilling": "Monthly",
@@ -806,12 +963,14 @@
     "cancelDesc": "After cancelling your subscription, no new events will be collected by Swetrix for your projects.\nYou will be able to return to your current plan at any time.\nIf you have any questions, you can always email us at {{email}}."
   },
   "contact": {
-    "howTo": "Have something to ask? There are several ways on how to contact us:",
-    "ways": {
-      "email": "You can drop us an email at <mail>{{email}}</mail>",
-      "twitter": "Tweet or message us at <url>{{twitter}}</url>",
-      "discord": "Join our Discord server by following <url>this link</url>",
-      "chat": "Use a chatbox located on the bottom right of this page"
+    "description": "You can reach us at <mail>{{email}}</mail>, tweet us at <twitter>{{twitterHandle}}</twitter> or talk to us via our <discord>Discord</discord> community. We aim to respond as soon as possible, usually within a day.",
+    "docs": {
+      "title": "Documentation",
+      "desc": "Learn how to integrate Swetrix into your application and find answers to the most common questions"
+    },
+    "demo": {
+      "title": "Book a demo call",
+      "desc": "Book a demo with our team to see how Swetrix can solve your problems"
     }
   },
   "beta": {
@@ -852,19 +1011,43 @@
     "dashboard": "Dashboard",
     "docs": "Documentation",
     "billing": "Billing",
-    "contact": "Contact",
+    "contact": "Have something to ask?",
     "changelog": "Changelog",
-    "main": "Ultimate open-source analytics to satisfy all your needs",
+    "main": "Ultimate open-source web analytics to satisfy all your needs",
     "press": "Media & Press",
     "socialisation": "Socialisation",
     "open": "Open startup",
-    "passwordProtected": "This project is password protected"
+    "passwordProtected": "This project is password protected",
+    "confirm": "Check your inbox",
+    "performance": "End user performance monitoring to deliver fast websites",
+    "errors": "End user error tracking tool to deliver bug-free experiences"
   },
   "header": {
     "switchTheme": "Switch theme",
     "dark": "Dark",
     "light": "Light",
-    "signedInAs": "Signed in as"
+    "signedInAs": "Signed in as",
+    "watchDemo": "Watch demo",
+    "contactSales": "Contact sales",
+    "solutions": {
+      "title": "Solutions",
+      "analytics": {
+        "title": "Analytics",
+        "desc": "Monitor your site's traffic with privacy in mind"
+      },
+      "errors": {
+        "title": "Error tracking",
+        "desc": "Deliver bug-free experiences to your users"
+      },
+      "captcha": {
+        "title": "CAPTCHA",
+        "desc": "Protect your site from bots with privacy-focused captcha"
+      },
+      "performance": {
+        "title": "Performance monitoring",
+        "desc": "Analyse your sites key speed metrics"
+      }
+    }
   },
   "footer": {
     "slogan": "The best apps need the best services.",
@@ -893,9 +1076,10 @@
     "donate": "Donate",
     "changelog": "Changelog",
     "captcha": "CAPTCHA",
-    "press":"Media & Press",
+    "press": "Media & Press",
     "open": "Open startup",
     "about": "About us",
-    "features": "Features"
+    "features": "Features",
+    "imprint": "Imprint"
   }
 }

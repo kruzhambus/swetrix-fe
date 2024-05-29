@@ -14,32 +14,38 @@ const mapStateToProps = (state: StateType) => ({
   authenticated: state.auth.authenticated,
   timezone: state.auth.user.timezone,
   user: state.auth.user,
-  liveStats: state.ui.projects.liveStats,
+  theme: state.ui.theme.theme,
 })
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
   showError: (message: string) => {
-    dispatch(errorsActions.genericError({
-      message,
-    }))
+    dispatch(
+      errorsActions.genericError({
+        message,
+      }),
+    )
   },
   setProjectCache: (pid: string, data: any, key: string) => {
-    dispatch(UIActions.setCaptchaProjectCache({
-      pid,
-      data,
-      key,
-    }))
+    dispatch(
+      UIActions.setCaptchaProjectCache({
+        pid,
+        data,
+        key,
+      }),
+    )
   },
   setProjects: (project: ICaptchaProject[]) => {
     dispatch(UIActions.setCaptchaProjects(project))
   },
   setProjectViewPrefs: (pid: string, period: string, timeBucket: string, rangeDate?: Date[] | null) => {
-    dispatch(UIActions.setCaptchaProjectViewPrefs({
-      pid,
-      period,
-      timeBucket,
-      rangeDate,
-    }))
+    dispatch(
+      UIActions.setCaptchaProjectViewPrefs({
+        pid,
+        period,
+        timeBucket,
+        rangeDate,
+      }),
+    )
   },
 })
 

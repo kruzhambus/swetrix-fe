@@ -1,8 +1,5 @@
-/* eslint-disable react/forbid-prop-types */
-import React, {
-  useState, useEffect, useMemo, memo, useRef,
-} from 'react'
-import { useLocation, useNavigate, useParams } from '@remix-run/react'
+import React, { useState, useEffect, useMemo, memo, useRef } from 'react'
+import { useNavigate, useParams } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import cx from 'clsx'
 import _isEmpty from 'lodash/isEmpty'
@@ -16,13 +13,18 @@ import _keys from 'lodash/keys'
 import _map from 'lodash/map'
 import _filter from 'lodash/filter'
 import _includes from 'lodash/includes'
-import PropTypes from 'prop-types'
 import { ExclamationTriangleIcon, TrashIcon, ClipboardDocumentIcon } from '@heroicons/react/24/outline'
 
 import { withAuthentication, auth } from 'hoc/protected'
 import { isSelfhosted, TITLE_SUFFIX } from 'redux/constants'
 import {
-  createProject, updateProject, deleteCaptchaProject, resetCaptchaProject, reGenerateCaptchaSecretKey, getProjectsNames, createCaptchaInherited,
+  createProject,
+  updateProject,
+  deleteCaptchaProject,
+  resetCaptchaProject,
+  reGenerateCaptchaSecretKey,
+  getProjectsNames,
+  createCaptchaInherited,
 } from 'api'
 import Input from 'ui/Input'
 import Loader from 'ui/Loader'
@@ -39,13 +41,16 @@ const MAX_NAME_LENGTH = 50
 const MAX_ORIGINS_LENGTH = 300
 const MAX_IPBLACKLIST_LENGTH = 300
 
-const tabForCreateCaptcha = [{
-  name: 'new',
-  label: 'project.captcha.settings.general',
-}, {
-  name: 'inheritance',
-  label: 'project.captcha.settings.inheritance',
-}]
+const tabForCreateCaptcha = [
+  {
+    name: 'new',
+    label: 'project.captcha.settings.general',
+  },
+  {
+    name: 'inheritance',
+    label: 'project.captcha.settings.inheritance',
+  },
+]
 
 const tabForNew = 'new'
 const tabForInheritance = 'inheritance'
@@ -60,39 +65,51 @@ interface IForm extends Partial<ICaptchaProject> {
 }
 
 interface ICaptchaSettings {
-  updateProjectFailed: (error: string) => void,
-  createNewProjectFailed: (error: string) => void,
-  newProject: (message: string) => void,
-  projectDeleted: (message: string) => void,
-  deleteProjectFailed: (error: string) => void,
-  loadProjects: () => void,
-  isLoading: boolean,
-  projects: ICaptchaProject[],
-  showError: (error: string) => void,
-  removeProject: (pid: string) => void,
-  user: IUser,
-  deleteProjectCache: (pid: string) => void,
-  analyticsProjects: IProject[],
-  loading: boolean,
+  updateProjectFailed: (error: string) => void
+  createNewProjectFailed: (error: string) => void
+  newProject: (message: string) => void
+  projectDeleted: (message: string) => void
+  deleteProjectFailed: (error: string) => void
+  loadProjects: () => void
+  isLoading: boolean
+  projects: ICaptchaProject[]
+  showError: (error: string) => void
+  removeProject: (pid: string) => void
+  user: IUser
+  deleteProjectCache: (pid: string) => void
+  analyticsProjects: IProject[]
+  loading: boolean
+  isSettings: boolean
 }
 
 const CaptchaSettings = ({
-  updateProjectFailed, createNewProjectFailed, newProject, projectDeleted, deleteProjectFailed,
-  loadProjects, isLoading, projects, showError, removeProject, user,
-  deleteProjectCache, analyticsProjects, loading,
+  updateProjectFailed,
+  createNewProjectFailed,
+  newProject,
+  projectDeleted,
+  deleteProjectFailed,
+  loadProjects,
+  isLoading,
+  projects,
+  showError,
+  removeProject,
+  user,
+  deleteProjectCache,
+  analyticsProjects,
+  loading,
+  isSettings,
 }: ICaptchaSettings): JSX.Element => {
-  const { t }: {
-    t: (key: string, options?: {
-      [key: string]: string | number | boolean | undefined
-    }) => string,
-  } = useTranslation('common')
-  const { pathname } = useLocation()
+  const { t } = useTranslation('common')
   // @ts-ignore
-  const { id }: {
-    id: string,
+  const {
+    id,
+  }: {
+    id: string
   } = useParams()
-  const project: ICaptchaProject | IProject = useMemo(() => _find([...projects, ...analyticsProjects], p => p.id === id) || {} as IProject | ICaptchaProject, [projects, analyticsProjects, id])
-  const isSettings: boolean = !_isEmpty(id) && (_replace(routes.captcha_settings, ':id', id) === pathname)
+  const project: ICaptchaProject | IProject = useMemo(
+    () => _find([...projects, ...analyticsProjects], (p) => p.id === id) || ({} as IProject | ICaptchaProject),
+    [projects, analyticsProjects, id],
+  )
   const navigate = useNavigate()
   const [form, setForm] = useState<IForm>({
     name: '',
@@ -102,9 +119,9 @@ const CaptchaSettings = ({
   })
   const [validated, setValidated] = useState<boolean>(false)
   const [errors, setErrors] = useState<{
-    name?: string,
-    id?: string,
-    origins?: string,
+    name?: string
+    id?: string
+    origins?: string
     ipBlacklist?: string
   }>({})
   const [beenSubmitted, setBeenSubmitted] = useState<boolean>(false)
@@ -151,16 +168,18 @@ const CaptchaSettings = ({
       try {
         const formalisedData: IForm = {
           ...data,
-          origins: _isEmpty(data.origins) ? null : _map(_split(data.origins as string, ','), (origin) => {
-            try {
-              if (_includes(origin, 'localhost')) {
-                return origin
-              }
-              return new URL(origin).host
-            } catch (e) {
-              return origin
-            }
-          }),
+          origins: _isEmpty(data.origins)
+            ? null
+            : _map(_split(data.origins as string, ','), (origin) => {
+                try {
+                  if (_includes(origin, 'localhost')) {
+                    return origin
+                  }
+                  return new URL(origin).host
+                } catch (e) {
+                  return origin
+                }
+              }),
           ipBlacklist: _isEmpty(data.ipBlacklist) ? null : _split(data.ipBlacklist as string, ','),
         }
         if (isSettings) {
@@ -233,8 +252,8 @@ const CaptchaSettings = ({
 
   const validate = () => {
     const allErrors = {} as {
-      name?: string,
-      origins?: string,
+      name?: string
+      origins?: string
       ipBlacklist?: string
     }
 
@@ -265,11 +284,10 @@ const CaptchaSettings = ({
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event
-    const value = target.type === 'checkbox' ? target.checked : target.value
 
-    setForm(oldForm => ({
+    setForm((oldForm) => ({
       ...oldForm,
-      [target.name]: value,
+      [target.name]: target.value,
     }))
   }
 
@@ -279,13 +297,16 @@ const CaptchaSettings = ({
     setBeenSubmitted(true)
 
     if (tab === tabForInheritance) {
-      const data = _find(allProjectsNames || analyticsProjects, (item) => `${item.name} | ${item.id}` === reuseProjectId)
+      const data = _find(
+        allProjectsNames || analyticsProjects,
+        (item) => `${item.name} | ${item.id}` === reuseProjectId,
+      )
 
       if (_isEmpty(data)) {
         showError('Select project or select corect project')
       }
 
-      onSubmit({ ...data as IForm, isCaptcha: true })
+      onSubmit({ ...(data as IForm), isCaptcha: true })
       return
     }
 
@@ -331,7 +352,8 @@ const CaptchaSettings = ({
     await getProjectsNames()
       .then((res) => {
         setAllProjectsNames(res)
-      }).catch((e) => {
+      })
+      .catch((e) => {
         console.log(e)
       })
   }
@@ -344,46 +366,46 @@ const CaptchaSettings = ({
   }, [tab])
 
   if (loading) {
-    return <Loader />
+    return (
+      <div className='flex min-h-min-footer flex-col bg-gray-50 px-4 py-6 dark:bg-slate-900 sm:px-6 lg:px-8'>
+        <Loader />
+      </div>
+    )
   }
 
   return (
     <div
-      className={cx('min-h-min-footer bg-gray-50 dark:bg-slate-900 flex flex-col py-6 px-4 sm:px-6 lg:px-8', {
+      className={cx('flex min-h-min-footer flex-col bg-gray-50 px-4 py-6 dark:bg-slate-900 sm:px-6 lg:px-8', {
         'pb-40': isSettings,
       })}
     >
-      <form className='max-w-7xl w-full mx-auto' onSubmit={handleSubmit}>
-        <h2 className='mt-2 text-3xl font-bold text-gray-900 dark:text-gray-50'>
-          {title}
-        </h2>
-        <h3 className='mt-2 text-lg font-bold text-gray-900 dark:text-gray-50'>
-          {t('profileSettings.general')}
-        </h3>
+      <form className='mx-auto w-full max-w-7xl' onSubmit={handleSubmit}>
+        <h2 className='mt-2 text-3xl font-bold text-gray-900 dark:text-gray-50'>{title}</h2>
+        <h3 className='mt-2 text-lg font-bold text-gray-900 dark:text-gray-50'>{t('profileSettings.general')}</h3>
         <div className='mt-6'>
-          {(!isSettings && _filter(allProjectsNames || analyticsProjects, (item) => !item?.isCaptchaProject).length > 0) && (
-            <nav className='-mb-px flex space-x-8'>
-              {_map(tabForCreateCaptcha, (tabCaptcha) => (
-                <button
-                  key={tabCaptcha.name}
-                  type='button'
-                  onClick={() => setTab(tabCaptcha.name)}
-                  className={cx('whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-md', {
-                    'border-indigo-500 text-indigo-600 dark:text-indigo-500': tab === tabCaptcha.name,
-                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-300': tab !== tabCaptcha.name,
-                  })}
-                >
-                  {t(tabCaptcha.label)}
-                </button>
-              ))}
-            </nav>
-          )}
+          {!isSettings &&
+            _filter(allProjectsNames || analyticsProjects, (item) => !item?.isCaptchaProject).length > 0 && (
+              <nav className='-mb-px flex space-x-8'>
+                {_map(tabForCreateCaptcha, (tabCaptcha) => (
+                  <button
+                    key={tabCaptcha.name}
+                    type='button'
+                    onClick={() => setTab(tabCaptcha.name)}
+                    className={cx('text-md whitespace-nowrap border-b-2 px-1 pb-4 font-medium', {
+                      'border-indigo-500 text-indigo-600 dark:text-indigo-500': tab === tabCaptcha.name,
+                      'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-300 dark:hover:text-gray-300':
+                        tab !== tabCaptcha.name,
+                    })}
+                  >
+                    {t(tabCaptcha.label)}
+                  </button>
+                ))}
+              </nav>
+            )}
         </div>
         {tab === tabForNew && (
           <Input
             name='name'
-            id='name'
-            type='text'
             label={t('project.captcha.settings.name')}
             value={form.name}
             placeholder='My awesome project'
@@ -401,14 +423,13 @@ const CaptchaSettings = ({
             labelExtractor={(item) => `${item.name} | ${item.id}`}
             keyExtractor={(item) => item.id}
             onSelect={(item) => setReuseProjectId(item)}
+            capitalise
           />
         )}
         {isSettings ? (
           <>
             <Input
               name='id'
-              id='id'
-              type='text'
               label={t('project.captcha.settings.pid')}
               value={form.id}
               className='mt-4'
@@ -418,29 +439,25 @@ const CaptchaSettings = ({
             />
             <Input
               name='origins'
-              id='origins'
-              type='text'
               label={t('project.settings.origins')}
               hint={t('project.settings.originsHint')}
-              value={form.origins as string || ''}
+              value={(form.origins as string) || ''}
               className='mt-4'
               onChange={handleInput}
               error={beenSubmitted ? errors.origins : null}
             />
             <Input
               name='ipBlacklist'
-              id='ipBlacklist'
-              type='text'
               label={t('project.settings.ipBlacklist')}
               hint={t('project.settings.ipBlacklistHint')}
-              value={form.ipBlacklist as string || ''}
+              value={(form.ipBlacklist as string) || ''}
               className='mt-4'
               onChange={handleInput}
               error={beenSubmitted ? errors.ipBlacklist : null}
               isBeta
             />
             <hr className='mt-5 border-gray-200 dark:border-gray-600' />
-            <h3 className='flex items-center mt-2 text-lg font-bold text-gray-900 dark:text-gray-50'>
+            <h3 className='mt-2 flex items-center text-lg font-bold text-gray-900 dark:text-gray-50'>
               {t('profileSettings.captchaSecretKey')}
             </h3>
             {captchaSecretKey ? (
@@ -451,12 +468,10 @@ const CaptchaSettings = ({
                 <p className='mt-4 max-w-prose text-base text-gray-900 dark:text-gray-50'>
                   {t('profileSettings.captchaSecretKey')}
                 </p>
-                <div className='grid grid-cols-1 gap-y-6 gap-x-4 lg:grid-cols-2'>
-                  <div className='relative group'>
+                <div className='grid grid-cols-1 gap-x-4 gap-y-6 lg:grid-cols-2'>
+                  <div className='group relative'>
                     <Input
                       name='sercretKey'
-                      id='sercretKey'
-                      type='text'
                       className='pr-9'
                       value={captchaSecretKey}
                       onChange={handleInput}
@@ -471,9 +486,9 @@ const CaptchaSettings = ({
                           noBorder
                         >
                           <>
-                            <ClipboardDocumentIcon className='w-6 h-6' />
+                            <ClipboardDocumentIcon className='h-6 w-6' />
                             {copied && (
-                              <div className='animate-appear bg-white dark:bg-slate-800 cursor-auto rounded p-1 absolute sm:top-0 top-0.5 right-8 text-xs text-green-600'>
+                              <div className='absolute right-8 top-0.5 animate-appear cursor-auto rounded bg-white p-1 text-xs text-green-600 dark:bg-slate-800 sm:top-0'>
                                 {t('common.copied')}
                               </div>
                             )}
@@ -485,9 +500,7 @@ const CaptchaSettings = ({
                 </div>
               </>
             ) : (
-              <p className='max-w-prose text-base text-gray-900 dark:text-gray-50'>
-                {t('profileSettings.noApiKey')}
-              </p>
+              <p className='max-w-prose text-base text-gray-900 dark:text-gray-50'>{t('profileSettings.noApiKey')}</p>
             )}
             {captchaSecretKey ? (
               <Button className='mt-4' onClick={() => setShowRegenerateSecret(true)} danger large>
@@ -501,25 +514,38 @@ const CaptchaSettings = ({
             <hr className='mt-5 border-gray-200 dark:border-gray-600' />
             <Checkbox
               checked={Boolean(form.active)}
-              onChange={handleInput}
+              onChange={(checked) =>
+                setForm((prev) => ({
+                  ...prev,
+                  active: checked,
+                }))
+              }
               name='active'
-              id='active'
               className='mt-4'
               label={t('project.captcha.settings.enabled')}
               hint={t('project.captcha.settings.enabledHint')}
             />
             <Checkbox
               checked={Boolean(form.public)}
-              onChange={handleInput}
+              onChange={(checked) =>
+                setForm((prev) => ({
+                  ...prev,
+                  public: checked,
+                }))
+              }
               name='public'
-              id='public'
               className='mt-4'
               label={t('project.settings.public')}
               hint={t('project.settings.publicHint')}
             />
-            <div className='flex flex-wrap justify-center gap-2 sm:justify-between mt-8'>
+            <div className='mt-8 flex flex-wrap justify-center gap-2 sm:justify-between'>
               <div className='flex flex-wrap items-center justify-center gap-2'>
-                <Button className='border-indigo-100 dark:text-gray-50 dark:border-slate-700/50 dark:bg-slate-800 dark:hover:bg-slate-700' onClick={onCancel} secondary regular>
+                <Button
+                  className='border-indigo-100 dark:border-slate-700/50 dark:bg-slate-800 dark:text-gray-50 dark:hover:bg-slate-700'
+                  onClick={onCancel}
+                  secondary
+                  regular
+                >
                   {t('common.cancel')}
                 </Button>
                 <Button type='submit' loading={projectSaving} primary regular>
@@ -527,31 +553,46 @@ const CaptchaSettings = ({
                 </Button>
               </div>
               <div className='flex flex-wrap items-center justify-center gap-2'>
-                <Button onClick={() => !projectResetting && setShowReset(true)} loading={projectDeleting} semiDanger semiSmall>
+                <Button
+                  onClick={() => !projectResetting && setShowReset(true)}
+                  loading={projectDeleting}
+                  semiDanger
+                  semiSmall
+                >
                   <>
-                    <TrashIcon className='w-5 h-5 mr-1' />
+                    <TrashIcon className='mr-1 h-5 w-5' />
                     {t('project.settings.reset')}
                   </>
                 </Button>
-                <Button onClick={() => !projectDeleting && setShowDelete(true)} loading={projectDeleting} danger semiSmall>
+                <Button
+                  onClick={() => !projectDeleting && setShowDelete(true)}
+                  loading={projectDeleting}
+                  danger
+                  semiSmall
+                >
                   <>
-                    <ExclamationTriangleIcon className='w-5 h-5 mr-1' />
+                    <ExclamationTriangleIcon className='mr-1 h-5 w-5' />
                     {t('project.settings.delete')}
                   </>
                 </Button>
               </div>
             </div>
-            <hr className='mt-2 sm:mt-5 border-gray-200 dark:border-gray-600' />
+            <hr className='mt-2 border-gray-200 dark:border-gray-600 sm:mt-5' />
           </>
         ) : (
-          <p className='text-gray-500 dark:text-gray-300 italic mt-1 mb-4 text-sm'>
+          <p className='mb-4 mt-1 text-sm italic text-gray-500 dark:text-gray-300'>
             {t('project.settings.createHint')}
           </p>
         )}
 
         {!isSettings && (
           <div>
-            <Button className='mr-2 border-indigo-100 dark:text-gray-50 dark:border-slate-700/50 dark:bg-slate-800 dark:hover:bg-slate-700' onClick={onCancel} secondary regular>
+            <Button
+              className='mr-2 border-indigo-100 dark:border-slate-700/50 dark:bg-slate-800 dark:text-gray-50 dark:hover:bg-slate-700'
+              onClick={onCancel}
+              secondary
+              regular
+            >
               {t('common.cancel')}
             </Button>
             <Button type='submit' loading={projectSaving} primary regular>
@@ -598,20 +639,6 @@ const CaptchaSettings = ({
       />
     </div>
   )
-}
-
-CaptchaSettings.propTypes = {
-  updateProjectFailed: PropTypes.func.isRequired,
-  createNewProjectFailed: PropTypes.func.isRequired,
-  newProject: PropTypes.func.isRequired,
-  projectDeleted: PropTypes.func.isRequired,
-  deleteProjectFailed: PropTypes.func.isRequired,
-  loadProjects: PropTypes.func.isRequired,
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  showError: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  user: PropTypes.object.isRequired,
-  deleteProjectCache: PropTypes.func.isRequired,
 }
 
 export default memo(withAuthentication(CaptchaSettings, auth.authenticated))

@@ -3,24 +3,26 @@ import React, { memo, createRef } from 'react'
 import Flatpickr from 'react-flatpickr'
 import _size from 'lodash/size'
 import _split from 'lodash/split'
-import PropTypes from 'prop-types'
 import cx from 'clsx'
 
 import { MAX_MONTHS_IN_PAST } from 'redux/constants'
 
 interface FlatPickerProps {
-  onChange?: (dates: Date[]) => void,
-  value?: Date[],
-  maxDateMonths?: number,
-  options?: any,
-  maxRange?: number,
-  className?: string,
+  onChange?: (dates: Date[]) => void
+  value?: Date[]
+  maxDateMonths?: number
+  options?: any
+  maxRange?: number
+  className?: string
 }
 
-class FlatPicker extends React.Component<FlatPickerProps, {
-  maxDate: string,
-  minDate: Date | string,
-}> {
+class FlatPicker extends React.Component<
+  FlatPickerProps,
+  {
+    maxDate: string
+    minDate: Date | string
+  }
+> {
   private calendar = createRef<Flatpickr>()
 
   constructor(props: FlatPickerProps) {
@@ -28,7 +30,7 @@ class FlatPicker extends React.Component<FlatPickerProps, {
     this.setCustomDate = this.setCustomDate.bind(this)
     this.state = {
       maxDate: 'today',
-      minDate: this.removeMonths(new Date(), props?.maxDateMonths || 24),
+      minDate: this.removeMonths(new Date(), props?.maxDateMonths || MAX_MONTHS_IN_PAST),
     }
   }
 
@@ -57,7 +59,7 @@ class FlatPicker extends React.Component<FlatPickerProps, {
       this.setState({
         maxDate: 'today',
         // eslint-disable-next-line react/destructuring-assignment
-        minDate: this.removeMonths(new Date(), this.props?.maxDateMonths || 24),
+        minDate: this.removeMonths(new Date(), this.props?.maxDateMonths || MAX_MONTHS_IN_PAST),
       })
       this.calendar.current.flatpickr.open()
     }
@@ -73,9 +75,7 @@ class FlatPicker extends React.Component<FlatPickerProps, {
   }
 
   public render() {
-    const {
-      value = [], maxDateMonths = MAX_MONTHS_IN_PAST, options, className,
-    } = this.props
+    const { value = [], maxDateMonths = MAX_MONTHS_IN_PAST, options, className } = this.props
     const { maxDate, minDate } = this.state
 
     if (options) {
@@ -102,7 +102,7 @@ class FlatPicker extends React.Component<FlatPickerProps, {
     }
 
     return (
-      <div className={cx('h-0 flatpicker-custom', className)}>
+      <div className={cx('flatpicker-custom h-0', className)}>
         <Flatpickr
           id='calendar'
           data-testid='calendar'
@@ -125,24 +125,6 @@ class FlatPicker extends React.Component<FlatPickerProps, {
       </div>
     )
   }
-}
-
-// @ts-ignore
-FlatPicker.propTypes = {
-  onChange: PropTypes.func,
-  value: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
-  maxDateMonths: PropTypes.number,
-  className: PropTypes.string,
-}
-
-// @ts-ignore
-FlatPicker.defaultProps = {
-  onChange: () => { },
-  value: [],
-  maxDateMonths: MAX_MONTHS_IN_PAST,
-  options: null,
-  maxRange: 0,
-  className: '',
 }
 
 export default memo(FlatPicker)

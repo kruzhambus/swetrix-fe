@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import PropTypes from 'prop-types'
 import _isNaN from 'lodash/isNaN'
 
 import Modal from 'ui/Modal'
@@ -10,18 +9,16 @@ import _toString from 'lodash/toString'
 
 const DEFAULT_PERIOD = '3'
 
-const Forecast = ({
-  onClose, onSubmit, isOpened, activeTB, tb,
-}: {
-  onClose: () => void,
-  onSubmit: (period: string) => void,
-  isOpened: boolean,
-  activeTB: string,
-  tb: string,
-}): JSX.Element => {
-  const { t }: {
-    t: (key: string, options?: { [key: string]: string | number }) => string,
-  } = useTranslation('common')
+interface IForecast {
+  onClose: () => void
+  onSubmit: (period: string) => void
+  isOpened: boolean
+  activeTB: string
+  tb: string
+}
+
+const Forecast = ({ onClose, onSubmit, isOpened, activeTB, tb }: IForecast): JSX.Element => {
+  const { t } = useTranslation('common')
   const [period, setPeriod] = useState<string>(DEFAULT_PERIOD)
   const [error, setError] = useState<string | null>(null)
 
@@ -46,9 +43,11 @@ const Forecast = ({
     }
 
     if (processedPeriod > FORECAST_MAX_MAPPING[tb]) {
-      setError(t('apiNotifications.forecastNumberCantBeBigger', {
-        max: FORECAST_MAX_MAPPING[tb],
-      }))
+      setError(
+        t('apiNotifications.forecastNumberCantBeBigger', {
+          max: FORECAST_MAX_MAPPING[tb],
+        }),
+      )
       return
     }
 
@@ -67,14 +66,12 @@ const Forecast = ({
       onSubmit={_onSubmit}
       submitText={t('common.continue')}
       closeText={t('common.cancel')}
-      message={(
+      message={
         <div>
           {t('modals.forecast.desc')}
 
           <Input
             name='forecast-input'
-            id='forecast-input'
-            type='text'
             label={t('modals.forecast.input', {
               frequency: activeTB,
             })}
@@ -85,20 +82,11 @@ const Forecast = ({
             error={error}
           />
         </div>
-      )}
+      }
       title={t('modals.forecast.title')}
       isOpened={isOpened}
-      isBeta
     />
   )
-}
-
-Forecast.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  isOpened: PropTypes.bool.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  activeTB: PropTypes.string.isRequired,
-  tb: PropTypes.string.isRequired,
 }
 
 export default Forecast

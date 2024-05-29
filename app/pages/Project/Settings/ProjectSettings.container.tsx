@@ -12,7 +12,8 @@ const mapStateToProps = (state: StateType) => ({
   projects: state.ui.projects.projects,
   sharedProjects: state.ui.projects.sharedProjects,
   isLoading: state.ui.projects.isLoading,
-  loading: state.auth.loading,
+  isLoadingShared: state.ui.projects.isLoadingShared,
+  authLoading: state.auth.loading,
   dashboardPaginationPage: state.ui.projects.dashboardPaginationPage,
   dashboardPaginationPageShared: state.ui.projects.dashboardPaginationPageShared,
   user: state.auth.user,
@@ -21,64 +22,71 @@ const mapStateToProps = (state: StateType) => ({
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
   updateProjectFailed: (message: string) => {
-    dispatch(errorsActions.updateProjectFailed({
-      message,
-    }))
-  },
-  createNewProjectFailed: (message: string) => {
-    dispatch(errorsActions.createNewProjectFailed({
-      message,
-    }))
+    dispatch(
+      errorsActions.updateProjectFailed({
+        message,
+      }),
+    )
   },
   generateAlerts: (message: string) => {
-    dispatch(alertsActions.generateAlerts({
-      message,
-      type: 'success',
-    }))
+    dispatch(
+      alertsActions.generateAlerts({
+        message,
+        type: 'success',
+      }),
+    )
   },
   projectDeleted: (message: string) => {
-    dispatch(alertsActions.generateAlerts({
-      message,
-      type: 'success',
-    }))
+    dispatch(
+      alertsActions.generateAlerts({
+        message,
+        type: 'success',
+      }),
+    )
   },
   deleteProjectFailed: (message: string) => {
-    dispatch(errorsActions.deleteProjectFailed({
-      message,
-    }))
+    dispatch(
+      errorsActions.deleteProjectFailed({
+        message,
+      }),
+    )
   },
   loadProjects: (shared: boolean, skip: number) => {
     if (shared) {
-      dispatch(sagaActions.loadSharedProjects(
-        skip,
-      ))
+      dispatch(sagaActions.loadSharedProjects(skip))
     } else {
-      dispatch(sagaActions.loadProjects(
-        skip,
-      ))
+      dispatch(sagaActions.loadProjects(skip))
     }
   },
   removeProject: (pid: string, shared: boolean) => {
-    dispatch(UIActions.removeProject({
-      pid,
-      shared,
-    }))
+    dispatch(
+      UIActions.removeProject({
+        pid,
+        shared,
+      }),
+    )
   },
   deleteProjectCache: (pid: string) => {
-    dispatch(UIActions.deleteProjectCache({
-      pid,
-    }))
+    dispatch(
+      UIActions.deleteProjectCache({
+        pid,
+      }),
+    )
   },
   showError: (message: string) => {
-    dispatch(errorsActions.genericError({
-      message,
-    }))
+    dispatch(
+      errorsActions.genericError({
+        message,
+      }),
+    )
   },
   setProjectProtectedPassword(id: string, password: string) {
-    dispatch(UIActions.setProjectProtectedPassword({
-      id,
-      password,
-    }))
+    dispatch(
+      UIActions.setProjectProtectedPassword({
+        id,
+        password,
+      }),
+    )
   },
 })
 

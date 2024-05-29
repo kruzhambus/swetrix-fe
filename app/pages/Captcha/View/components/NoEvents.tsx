@@ -1,60 +1,47 @@
-import React, {
-  memo,
-} from 'react'
+import React, { memo } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import _isEmpty from 'lodash/isEmpty'
-import PropTypes from 'prop-types'
 
 import Button from 'ui/Button'
 import { DOCS_CAPTCHA_URL } from 'redux/constants'
 
-/**
- * This component is used to display text if the data is not available.
- *
- * @param {array} filters - Active filters.
- * @param {function} resetFilters - Callback to reset all filters.
- * @param {string} pid - Project ID.
- * @returns {JSX.Element}
- */
-const NoEvents = ({
-  filters, resetFilters,
-}: {
+interface INoEvents {
   filters: {
     column: string
     filter: string
     isExclusive: boolean
   }[]
   resetFilters: () => void
-}): JSX.Element => {
-  const { t }: {
-    t: (key: string) => string
-  } = useTranslation('common')
+}
+
+const NoEvents = ({ filters, resetFilters }: INoEvents): JSX.Element => {
+  const { t } = useTranslation('common')
 
   return (
-    <div className='flex flex-col py-6 sm:px-6 lg:px-8 mt-5'>
-      <div className='max-w-7xl w-full mx-auto text-gray-900 dark:text-gray-50'>
-        <h2 className='text-4xl text-center leading-tight my-3'>
-          {t('project.noEvTitle')}
-        </h2>
-        <h2 className='text-2xl mb-8 text-center leading-snug'>
+    <div className='mt-5 flex flex-col py-6 sm:px-6 lg:px-8'>
+      <div className='mx-auto w-full max-w-7xl text-gray-900 dark:text-gray-50'>
+        <h2 className='my-3 text-center text-4xl leading-tight'>{t('project.noEvTitle')}</h2>
+        <h2 className='mb-8 text-center text-2xl leading-snug'>
           <Trans
             // @ts-ignore
             t={t}
             i18nKey='project.noCaptchaEv'
             components={{
               // eslint-disable-next-line jsx-a11y/anchor-has-content
-              url: <a href={DOCS_CAPTCHA_URL} className='hover:underline text-blue-600' target='_blank' rel='noreferrer noopener' />,
+              url: (
+                <a
+                  href={DOCS_CAPTCHA_URL}
+                  className='text-blue-600 hover:underline'
+                  target='_blank'
+                  rel='noreferrer noopener'
+                />
+              ),
             }}
           />
         </h2>
         {!_isEmpty(filters) && (
-          <div className='!flex !mx-auto'>
-            <Button
-              onClick={resetFilters}
-              className='!flex !mx-auto'
-              primary
-              giant
-            >
+          <div className='!mx-auto !flex'>
+            <Button onClick={resetFilters} className='!mx-auto !flex' primary giant>
               {t('project.resetFilters')}
             </Button>
           </div>
@@ -62,19 +49,6 @@ const NoEvents = ({
       </div>
     </div>
   )
-}
-
-NoEvents.propTypes = {
-  filters: PropTypes.arrayOf(PropTypes.shape({
-    column: PropTypes.string,
-    filter: PropTypes.string,
-    isExclusive: PropTypes.bool,
-  })),
-  resetFilters: PropTypes.func.isRequired,
-}
-
-NoEvents.defaultProps = {
-  filters: [],
 }
 
 export default memo(NoEvents)

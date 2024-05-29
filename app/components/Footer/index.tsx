@@ -1,15 +1,25 @@
 import React, { memo } from 'react'
-import { Link, useLocation } from '@remix-run/react'
+import { Link } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import _map from 'lodash/map'
-import _startsWith from 'lodash/startsWith'
 import Flag from 'react-flagkit'
-import PropTypes from 'prop-types'
 
 import {
-  isSelfhosted, DONATE_URL, FIREFOX_ADDON_URL, CHROME_EXTENSION_URL, GITHUB_URL,
-  LINKEDIN_URL, STATUSPAGE_URL, TWITTER_URL, BLOG_URL, UTM_GENERATOR_URL, SWETRIX_VS_GOOGLE,
-  SWETRIX_VS_CLOUDFLARE, DOCS_URL, SWETRIX_VS_SIMPLE_ANALYTICS, DISCORD_URL, CAPTCHA_URL,
+  isSelfhosted,
+  DONATE_URL,
+  FIREFOX_ADDON_URL,
+  CHROME_EXTENSION_URL,
+  GITHUB_URL,
+  LINKEDIN_URL,
+  STATUSPAGE_URL,
+  TWITTER_URL,
+  UTM_GENERATOR_URL,
+  SWETRIX_VS_GOOGLE,
+  SWETRIX_VS_CLOUDFLARE,
+  DOCS_URL,
+  SWETRIX_VS_SIMPLE_ANALYTICS,
+  DISCORD_URL,
+  CAPTCHA_URL,
 } from 'redux/constants'
 import routesPath from 'routesPath'
 
@@ -21,14 +31,19 @@ const navigation = {
     { key: 'press', href: routesPath.press, internal: true },
     { key: 'status', href: STATUSPAGE_URL },
     { key: 'donate', href: DONATE_URL },
-    { key: 'blog', href: BLOG_URL },
+    { key: 'blog', href: routesPath.blog, internal: true },
   ],
   legal: [
-    (authenticated: boolean | undefined): {
+    (
+      authenticated: boolean | undefined,
+    ): {
       key: string
       href: string
       internal: boolean
-    } => (authenticated ? { key: 'billing', href: routesPath.billing, internal: true } : { key: 'pricing', href: `${routesPath.main}#pricing`, internal: true }),
+    } =>
+      authenticated
+        ? { key: 'billing', href: routesPath.billing, internal: true }
+        : { key: 'pricing', href: `${routesPath.main}#pricing`, internal: true },
     (): {
       key: string
       href: string
@@ -54,6 +69,11 @@ const navigation = {
       href: string
       internal: boolean
     } => ({ key: 'cookie', href: routesPath.cookiePolicy, internal: true }),
+    (): {
+      key: string
+      href: string
+      internal: boolean
+    } => ({ key: 'imprint', href: routesPath.imprint, internal: true }),
   ],
   features: [
     { value: 'vs Google Analytics', href: SWETRIX_VS_GOOGLE },
@@ -102,14 +122,24 @@ const navigation = {
       name: 'LinkedIn',
       href: LINKEDIN_URL,
       icon: () => (
-        <img className='h-6 w-6 opacity-75 hover:opacity-90 bg-white rounded' aria-hidden='true' src='/assets/linkedin.svg' alt='LinkedIn' />
+        <img
+          className='h-6 w-6 rounded bg-white opacity-75 hover:opacity-90'
+          aria-hidden='true'
+          src='/assets/linkedin.svg'
+          alt='LinkedIn'
+        />
       ),
     },
     {
       name: 'Firefox Addon',
       href: FIREFOX_ADDON_URL,
       icon: () => (
-        <img className='h-6 w-6 opacity-75 hover:opacity-90' aria-hidden='true' src='/assets/firefox.svg' alt='Firefox' />
+        <img
+          className='h-6 w-6 opacity-75 hover:opacity-90'
+          aria-hidden='true'
+          src='/assets/firefox.svg'
+          alt='Firefox'
+        />
       ),
     },
     {
@@ -126,26 +156,44 @@ const SelfHostedFooter = () => {
   const { t } = useTranslation('common')
 
   return (
-    <footer className='bg-gray-50 dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800/50'>
-      <div className='max-w-7xl mx-auto py-8 px-4 overflow-hidden sm:px-6 lg:px-8'>
+    <footer className='border-t border-gray-200 bg-gray-50 dark:border-slate-800/50 dark:bg-slate-900'>
+      <div className='mx-auto max-w-7xl overflow-hidden px-4 py-8 sm:px-6 lg:px-8'>
         <nav className='-mx-5 -my-2 flex flex-wrap justify-center' aria-label='Footer'>
           <div className='px-5 py-2'>
-            <Link to={routesPath.contact} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white'>
+            <Link
+              to={routesPath.contact}
+              className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+            >
               {t('footer.contact')}
             </Link>
           </div>
           <div className='px-5 py-2'>
-            <a href={UTM_GENERATOR_URL} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white' target='_blank' rel='noopener noreferrer' aria-label={`${t('footer.status')} (opens in a new tab)`}>
+            <a
+              href={UTM_GENERATOR_URL}
+              className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label={`${t('footer.status')} (opens in a new tab)`}
+            >
               {t('footer.utm')}
             </a>
           </div>
           <div className='px-5 py-2'>
-            <a href={DONATE_URL} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white' target='_blank' rel='noopener noreferrer' aria-label={`${t('footer.status')} (opens in a new tab)`}>
+            <a
+              href={DONATE_URL}
+              className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label={`${t('footer.status')} (opens in a new tab)`}
+            >
               {t('footer.donate')}
             </a>
           </div>
           <div className='px-5 py-2'>
-            <Link to={routesPath.about} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white'>
+            <Link
+              to={routesPath.about}
+              className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+            >
               {t('footer.about')}
             </Link>
           </div>
@@ -155,13 +203,18 @@ const SelfHostedFooter = () => {
   )
 }
 
-const Footer = ({ minimal, authenticated }: {
+interface IFooter {
   minimal?: boolean
   authenticated?: boolean
-}): JSX.Element => {
-  const { t, i18n: { language } } = useTranslation('common')
+  showDBIPMessage?: boolean
+}
+
+const Footer = ({ minimal, authenticated, showDBIPMessage }: IFooter): JSX.Element => {
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation('common')
   const year = new Date().getFullYear()
-  const location = useLocation()
 
   if (isSelfhosted) {
     return <SelfHostedFooter />
@@ -169,37 +222,55 @@ const Footer = ({ minimal, authenticated }: {
 
   if (minimal) {
     return (
-      <footer className='bg-gray-50 dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800/50'>
-        <div className='max-w-7xl mx-auto py-8 px-4 overflow-hidden sm:px-6 lg:px-8'>
-          <nav className='-mx-5 -my-2 flex flex-wrap justify-center relative' aria-label='Footer'>
+      <footer className='border-t border-gray-200 bg-gray-50 dark:border-slate-800/50 dark:bg-slate-900'>
+        <div className='mx-auto max-w-7xl overflow-hidden px-4 py-8 sm:px-6 lg:px-8'>
+          <nav className='relative -mx-5 -my-2 flex flex-wrap justify-center' aria-label='Footer'>
             <div className='px-5 py-2'>
-              <Link to={routesPath.contact} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white'>
+              <Link
+                to={routesPath.contact}
+                className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+              >
                 {t('footer.contact')}
               </Link>
             </div>
             <div className='px-5 py-2'>
-              <Link to={routesPath.privacy} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white'>
+              <Link
+                to={routesPath.privacy}
+                className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+              >
                 {t('footer.pp')}
               </Link>
             </div>
             <div className='px-5 py-2'>
-              <Link to={routesPath.terms} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white'>
+              <Link
+                to={routesPath.terms}
+                className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+              >
                 {t('footer.tos')}
               </Link>
             </div>
             <div className='px-5 py-2'>
-              <Link to={routesPath.about} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white'>
+              <Link
+                to={routesPath.about}
+                className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+              >
                 {t('footer.about')}
               </Link>
             </div>
             <div className='px-5 py-2'>
-              <a href={STATUSPAGE_URL} className='leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white' target='_blank' rel='noopener noreferrer' aria-label={`${t('footer.status')} (opens in a new tab)`}>
+              <a
+                href={STATUSPAGE_URL}
+                className='leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
+                target='_blank'
+                rel='noopener noreferrer'
+                aria-label={`${t('footer.status')} (opens in a new tab)`}
+              >
                 {t('footer.status')}
               </a>
             </div>
-            {_startsWith(location.pathname, '/projects/') && (
+            {showDBIPMessage && (
               <a
-                className='absolute -bottom-5 leading-6 text-slate-900 dark:text-gray-300 hover:text-slate-700 dark:hover:text-white'
+                className='absolute -bottom-5 leading-6 text-slate-900 hover:text-slate-700 dark:text-gray-300 dark:hover:text-white'
                 target='_blank'
                 rel='noopener noreferrer'
                 href='https://db-ip.com'
@@ -219,29 +290,41 @@ const Footer = ({ minimal, authenticated }: {
       <h2 id='footer-heading' className='sr-only'>
         Footer
       </h2>
-      <div className='w-11/12 pt-8 pb-5 px-4 sm:px-6 lg:px-8'>
+      <div className='w-11/12 px-4 pb-5 pt-8 sm:px-6 lg:px-8'>
         <div className='xl:grid xl:grid-cols-2 xl:gap-8'>
           <div className='space-y-5 xl:col-span-1'>
-            <div className='flex gap-5 flex-wrap'>
-              <img className='h-7' height='28px' src='/assets/logo_white.png' loading='lazy' alt='Swetrix Analytics' />
+            <div className='flex flex-wrap gap-5'>
+              <img height='28px' width='126.35px' src='/assets/logo_white.png' loading='lazy' alt='Swetrix Analytics' />
             </div>
-            <p className='text-gray-300 text-base'>
+            <p className='text-base text-gray-300'>
               {t('footer.slogan')}
               <br />
               {t('footer.description')}
             </p>
             <div>
-              <p className='flex text-gray-300 text-base'>
+              <p className='flex text-base text-gray-300'>
                 {t('footer.madeIn')}
-                <a className='flex hover:underline hover:opacity-80 text-blue-400 ml-1' href={`https://${language}.wikipedia.org/wiki/Ukraine`} target='_blank' rel='noopener noreferrer' aria-label='Ukraine Wikipedia page (opens in a new tab)'>
+                <a
+                  className='ml-1 flex text-blue-400 hover:underline hover:opacity-80'
+                  href={`https://${language}.wikipedia.org/wiki/Ukraine`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  aria-label='Ukraine Wikipedia page (opens in a new tab)'
+                >
                   <Flag country='UA' size={18} alt='' aria-hidden='true' />
                   &nbsp;
                   {t('footer.ukraine')}
                 </a>
               </p>
-              <p className='flex text-gray-300 text-base'>
+              <p className='flex text-base text-gray-300'>
                 {t('footer.hostedIn')}
-                <a className='flex hover:underline hover:opacity-80 text-blue-400 ml-1' href={`https://${language}.wikipedia.org/wiki/European_Union`} target='_blank' rel='noopener noreferrer' aria-label='European Union Wikipedia page (opens in a new tab)'>
+                <a
+                  className='ml-1 flex text-blue-400 hover:underline hover:opacity-80'
+                  href={`https://${language}.wikipedia.org/wiki/European_Union`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  aria-label='European Union Wikipedia page (opens in a new tab)'
+                >
                   <Flag country='EU' size={18} alt='' aria-hidden='true' />
                   &nbsp;
                   {t('footer.eu')}
@@ -250,31 +333,31 @@ const Footer = ({ minimal, authenticated }: {
             </div>
             <div className='flex space-x-4'>
               {_map(navigation.social, (item) => (
-                <a key={item.name} href={item.href} title={item.name} target='_blank' rel='noopener noreferrer' className='text-gray-400 hover:text-gray-300' aria-label={`${item.name} (opens in a new tab)`}>
+                <a
+                  key={item.name}
+                  href={item.href}
+                  title={item.name}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-gray-400 hover:text-gray-300'
+                  aria-label={`${item.name} (opens in a new tab)`}
+                >
                   <span className='sr-only'>{item.name}</span>
                   <item.icon className='h-6 w-6' aria-hidden='true' />
                 </a>
               ))}
             </div>
-            <p className='text-base pt-10 text-gray-300'>
-              &copy;
-              {' '}
-              {year}
-              {' '}
-              {t('footer.copy')}
+            <p className='pt-10 text-base text-gray-300'>
+              &copy; {year} {t('footer.copy')}
             </p>
           </div>
           <div className='mt-12 xl:mt-0'>
-            <div className='grid grid-cols-2 md:grid-cols-3 gap-8'>
+            <div className='grid grid-cols-2 gap-8 md:grid-cols-3'>
               <div>
-                <h3 className='text-sm font-semibold text-white tracking-wider uppercase'>
-                  {t('footer.features')}
-                </h3>
+                <h3 className='text-sm font-semibold uppercase tracking-wider text-white'>{t('footer.features')}</h3>
                 <ul className='mt-4 space-y-4'>
                   {_map(navigation.features, (data) => {
-                    const {
-                      value, key, href, internal,
-                    } = data
+                    const { value, key, href, internal } = data
 
                     const displayValue = value || t(`footer.${key}`)
 
@@ -301,9 +384,7 @@ const Footer = ({ minimal, authenticated }: {
                 </ul>
               </div>
               <div>
-                <h3 className='text-sm font-semibold text-white tracking-wider uppercase'>
-                  {t('footer.company')}
-                </h3>
+                <h3 className='text-sm font-semibold uppercase tracking-wider text-white'>{t('footer.company')}</h3>
                 <ul className='mt-4 space-y-4'>
                   {_map(navigation.company, ({ key, href, internal }) => (
                     <li key={key}>
@@ -312,7 +393,13 @@ const Footer = ({ minimal, authenticated }: {
                           {t(`footer.${key}`)}
                         </Link>
                       ) : (
-                        <a href={href} className='text-base text-gray-300 hover:text-white' target='_blank' rel='noopener noreferrer' aria-label={`${t(`footer.${key}`)} (opens in a new tab)`}>
+                        <a
+                          href={href}
+                          className='text-base text-gray-300 hover:text-white'
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          aria-label={`${t(`footer.${key}`)} (opens in a new tab)`}
+                        >
                           {t(`footer.${key}`)}
                         </a>
                       )}
@@ -321,9 +408,7 @@ const Footer = ({ minimal, authenticated }: {
                 </ul>
               </div>
               <div className='mt-12 md:mt-0'>
-                <h3 className='text-sm font-semibold text-white tracking-wider uppercase'>
-                  {t('footer.legal')}
-                </h3>
+                <h3 className='text-sm font-semibold uppercase tracking-wider text-white'>{t('footer.legal')}</h3>
                 <ul className='mt-4 space-y-4'>
                   {_map(navigation.legal, (func) => {
                     const { key, href, internal } = func(authenticated)
@@ -335,7 +420,13 @@ const Footer = ({ minimal, authenticated }: {
                             {t(`footer.${key}`)}
                           </Link>
                         ) : (
-                          <a href={href} className='text-base text-gray-300 hover:text-white' target='_blank' rel='noopener noreferrer' aria-label={`${t(`footer.${key}`)} (opens in a new tab)`}>
+                          <a
+                            href={href}
+                            className='text-base text-gray-300 hover:text-white'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            aria-label={`${t(`footer.${key}`)} (opens in a new tab)`}
+                          >
                             {t(`footer.${key}`)}
                           </a>
                         )}
@@ -350,15 +441,6 @@ const Footer = ({ minimal, authenticated }: {
       </div>
     </footer>
   )
-}
-
-Footer.propTypes = {
-  authenticated: PropTypes.bool.isRequired,
-  minimal: PropTypes.bool,
-}
-
-Footer.defaultProps = {
-  minimal: false,
 }
 
 export default memo(Footer)

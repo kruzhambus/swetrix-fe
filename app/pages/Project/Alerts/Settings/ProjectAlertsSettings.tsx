@@ -1,11 +1,7 @@
-/* eslint-disable react/forbid-prop-types */
 import React, { useEffect, useMemo, useState } from 'react'
-import {
-  useNavigate, useParams, useLocation, Link,
-} from '@remix-run/react'
+import { useNavigate, useParams, useLocation, Link } from '@remix-run/react'
 import { useTranslation, Trans } from 'react-i18next'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import PropTypes from 'prop-types'
 
 import _isEmpty from 'lodash/isEmpty'
 import _size from 'lodash/size'
@@ -23,12 +19,8 @@ import Input from 'ui/Input'
 import Button from 'ui/Button'
 import Checkbox from 'ui/Checkbox'
 import Modal from 'ui/Modal'
-import {
-  PROJECT_TABS, QUERY_CONDITION, QUERY_METRIC, QUERY_TIME,
-} from 'redux/constants'
-import {
-  createAlert, updateAlert, deleteAlert, ICreateAlert,
-} from 'api'
+import { PROJECT_TABS, QUERY_CONDITION, QUERY_METRIC, QUERY_TIME } from 'redux/constants'
+import { createAlert, updateAlert, deleteAlert, ICreateAlert } from 'api'
 import { withAuthentication, auth } from 'hoc/protected'
 import routes from 'routesPath'
 import Select from 'ui/Select'
@@ -37,9 +29,7 @@ import { IUser } from 'redux/models/IUser'
 
 const INTEGRATIONS_LINK = `${routes.user_settings}#integrations`
 
-const ProjectAlertsSettings = ({
-  alerts, setProjectAlerts, showError, user, setProjectAlertsTotal, total, generateAlerts,
-}: {
+interface IProjectAlertsSettings {
   alerts: IAlerts[]
   setProjectAlerts: (item: IAlerts[]) => void
   showError: (message: string) => void
@@ -47,21 +37,25 @@ const ProjectAlertsSettings = ({
   setProjectAlertsTotal: (num: number) => void
   total: number
   generateAlerts: (message: string) => void
-}): JSX.Element => {
+  loading: boolean
+}
+
+const ProjectAlertsSettings = ({
+  alerts,
+  setProjectAlerts,
+  showError,
+  user,
+  setProjectAlertsTotal,
+  total,
+  generateAlerts,
+  loading,
+}: IProjectAlertsSettings): JSX.Element => {
   const navigate = useNavigate()
-  const { id, pid }: {
-    id?: string
-    pid?: string
-  } = useParams()
-  const { pathname }: {
-    pathname: string
-  } = useLocation()
-  const { t }: {
-    t: (key: string, options?: {
-      [key: string]: string | number | null | undefined
-    }) => string
-  } = useTranslation('common')
-  const isSettings: boolean = !_isEmpty(id) && (_replace(_replace(routes.alert_settings, ':id', id as string), ':pid', pid as string) === pathname)
+  const { id, pid } = useParams()
+  const { pathname } = useLocation()
+  const { t } = useTranslation('common')
+  const isSettings: boolean =
+    !_isEmpty(id) && _replace(_replace(routes.alert_settings, ':id', id as string), ':pid', pid as string) === pathname
   const alert = useMemo(() => _find(alerts, { id }), [alerts, id])
   const [form, setForm] = useState<Partial<IAlerts>>({
     pid,
@@ -88,27 +82,31 @@ const ProjectAlertsSettings = ({
   } = useMemo(() => {
     const values = _values(QUERY_TIME)
 
-    return _reduce(values, (prev, curr) => {
-      const [, amount, metric] = _split(curr, '_')
-      let translated
+    return _reduce(
+      values,
+      (prev, curr) => {
+        const [, amount, metric] = _split(curr, '_')
+        let translated
 
-      if (metric === 'minutes') {
-        translated = t('alert.xMinutes', { amount })
-      }
+        if (metric === 'minutes') {
+          translated = t('alert.xMinutes', { amount })
+        }
 
-      if (metric === 'hour') {
-        translated = t('alert.xHour', { amount })
-      }
+        if (metric === 'hour') {
+          translated = t('alert.xHour', { amount })
+        }
 
-      if (metric === 'hours') {
-        translated = t('alert.xHours', { amount })
-      }
+        if (metric === 'hours') {
+          translated = t('alert.xHours', { amount })
+        }
 
-      return {
-        ...prev,
-        [curr]: translated,
-      }
-    }, {})
+        return {
+          ...prev,
+          [curr]: translated,
+        }
+      },
+      {},
+    )
   }, [t])
 
   const queryConditionTMapping: {
@@ -116,10 +114,14 @@ const ProjectAlertsSettings = ({
   } = useMemo(() => {
     const values = _values(QUERY_CONDITION)
 
-    return _reduce(values, (prev, curr) => ({
-      ...prev,
-      [curr]: t(`alert.conditions.${curr}`),
-    }), {})
+    return _reduce(
+      values,
+      (prev, curr) => ({
+        ...prev,
+        [curr]: t(`alert.conditions.${curr}`),
+      }),
+      {},
+    )
   }, [t])
 
   const queryMetricTMapping: {
@@ -127,10 +129,14 @@ const ProjectAlertsSettings = ({
   } = useMemo(() => {
     const values = _values(QUERY_METRIC)
 
-    return _reduce(values, (prev, curr) => ({
-      ...prev,
-      [curr]: t(`alert.metrics.${curr}`),
-    }), {})
+    return _reduce(
+      values,
+      (prev, curr) => ({
+        ...prev,
+        [curr]: t(`alert.metrics.${curr}`),
+      }),
+      {},
+    )
   }, [t])
 
   useEffect(() => {
@@ -215,11 +221,10 @@ const ProjectAlertsSettings = ({
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event
-    const value = target.type === 'checkbox' ? target.checked : target.value
 
-    setForm(prevForm => ({
+    setForm((prevForm) => ({
       ...prevForm,
-      [target.name]: value,
+      [target.name]: target.value,
     }))
   }
 
@@ -233,38 +238,36 @@ const ProjectAlertsSettings = ({
     }
   }
 
-  const title = isSettings ? t('alert.settingsOf', {
-    name: form.name,
-  }) : t('alert.create')
+  const title = isSettings
+    ? t('alert.settingsOf', {
+        name: form.name,
+      })
+    : t('alert.create')
 
   return (
     <div
-      className={cx('min-h-min-footer bg-gray-50 dark:bg-slate-900 flex flex-col py-6 px-4 sm:px-6 lg:px-8', {
+      className={cx('flex min-h-min-footer flex-col bg-gray-50 px-4 py-6 dark:bg-slate-900 sm:px-6 lg:px-8', {
         'pb-40': isSettings,
       })}
     >
-      <form className='max-w-7xl w-full mx-auto' onSubmit={handleSubmit}>
-        <h2 className='mt-2 text-3xl font-bold text-gray-900 dark:text-gray-50'>
-          {title}
-        </h2>
-        {!isIntegrationLinked && (
-        <div className='flex items-center bg-blue-50 dark:text-gray-50 dark:bg-slate-800 rounded px-5 py-3 mt-2 whitespace-pre-wrap text-base'>
-          <ExclamationTriangleIcon className='w-5 h-5 mr-1' />
-          <Trans
-                // @ts-ignore
-            t={t}
-            i18nKey='alert.noIntegration'
-            components={{
-              // eslint-disable-next-line jsx-a11y/anchor-has-content
-              url: <Link to={INTEGRATIONS_LINK} className='hover:underline text-blue-600 dark:text-blue-500' />,
-            }}
-          />
-        </div>
+      <form className='mx-auto w-full max-w-7xl' onSubmit={handleSubmit}>
+        <h2 className='mt-2 text-3xl font-bold text-gray-900 dark:text-gray-50'>{title}</h2>
+        {!loading && !isIntegrationLinked && (
+          <div className='mt-2 flex items-center whitespace-pre-wrap rounded bg-blue-50 px-5 py-3 text-base dark:bg-slate-800 dark:text-gray-50'>
+            <ExclamationTriangleIcon className='mr-1 h-5 w-5' />
+            <Trans
+              // @ts-ignore
+              t={t}
+              i18nKey='alert.noIntegration'
+              components={{
+                // eslint-disable-next-line jsx-a11y/anchor-has-content
+                url: <Link to={INTEGRATIONS_LINK} className='text-blue-600 hover:underline dark:text-blue-500' />,
+              }}
+            />
+          </div>
         )}
         <Input
           name='name'
-          id='name'
-          type='text'
           label={t('alert.name')}
           value={form.name || ''}
           placeholder={t('alert.name')}
@@ -274,9 +277,13 @@ const ProjectAlertsSettings = ({
         />
         <Checkbox
           checked={Boolean(form.active)}
-          onChange={handleInput}
+          onChange={(checked) =>
+            setForm((prev) => ({
+              ...prev,
+              active: checked,
+            }))
+          }
           name='active'
-          id='active'
           className='mt-4'
           label={t('alert.enabled')}
           hint={t('alert.enabledHint')}
@@ -288,20 +295,19 @@ const ProjectAlertsSettings = ({
             items={_values(queryMetricTMapping)}
             title={form.queryMetric ? queryMetricTMapping[form.queryMetric] : ''}
             onSelect={(item) => {
-              const key = _findKey(queryMetricTMapping, predicate => predicate === item)
+              const key = _findKey(queryMetricTMapping, (predicate) => predicate === item)
 
-              setForm(prevForm => ({
+              setForm((prevForm) => ({
                 ...prevForm,
                 queryMetric: key,
               }))
             }}
+            capitalise
           />
         </div>
         {form.queryMetric === QUERY_METRIC.CUSTOM_EVENTS && (
           <Input
             name='queryCustomEvent'
-            id='queryCustomEvent'
-            type='text'
             label={t('alert.customEvent')}
             value={form.queryCustomEvent || ''}
             placeholder={t('alert.customEvent')}
@@ -317,19 +323,18 @@ const ProjectAlertsSettings = ({
             items={_values(queryConditionTMapping)}
             title={form.queryCondition ? queryConditionTMapping[form.queryCondition] : ''}
             onSelect={(item) => {
-              const key = _findKey(queryConditionTMapping, predicate => predicate === item)
+              const key = _findKey(queryConditionTMapping, (predicate) => predicate === item)
 
-              setForm(prevForm => ({
+              setForm((prevForm) => ({
                 ...prevForm,
                 queryCondition: key,
               }))
             }}
+            capitalise
           />
         </div>
         <Input
           name='queryValue'
-          id='queryValue'
-          type='text'
           label={t('alert.threshold')}
           value={form.queryValue || ''}
           placeholder='10'
@@ -344,25 +349,31 @@ const ProjectAlertsSettings = ({
             items={_values(queryTimeTMapping)}
             title={form.queryTime ? queryTimeTMapping[form.queryTime] : ''}
             onSelect={(item) => {
-              const key = _findKey(queryTimeTMapping, predicate => predicate === item)
+              const key = _findKey(queryTimeTMapping, (predicate) => predicate === item)
 
-              setForm(prevForm => ({
+              setForm((prevForm) => ({
                 ...prevForm,
                 queryTime: key,
               }))
             }}
+            capitalise
           />
         </div>
         {isSettings ? (
-          <div className='flex justify-between items-center mt-5'>
+          <div className='mt-5 flex items-center justify-between'>
             <Button onClick={() => setShowModal(true)} danger semiSmall>
               <>
-                <ExclamationTriangleIcon className='w-5 h-5 mr-1' />
+                <ExclamationTriangleIcon className='mr-1 h-5 w-5' />
                 {t('alert.delete')}
               </>
             </Button>
-            <div className='flex justify-between items-center'>
-              <Button className='mr-2 border-indigo-100 dark:text-gray-50 dark:border-slate-700/50 dark:bg-slate-800 dark:hover:bg-slate-700' onClick={onCancel} secondary regular>
+            <div className='flex items-center justify-between'>
+              <Button
+                className='mr-2 border-indigo-100 dark:border-slate-700/50 dark:bg-slate-800 dark:text-gray-50 dark:hover:bg-slate-700'
+                onClick={onCancel}
+                secondary
+                regular
+              >
                 {t('common.cancel')}
               </Button>
               <Button type='submit' primary regular>
@@ -371,8 +382,13 @@ const ProjectAlertsSettings = ({
             </div>
           </div>
         ) : (
-          <div className='mt-5 flex justify-between items-center'>
-            <Button className='mr-2 border-indigo-100 dark:text-gray-50 dark:border-slate-700/50 dark:bg-slate-800 dark:hover:bg-slate-700' onClick={onCancel} secondary regular>
+          <div className='mt-5 flex items-center justify-between'>
+            <Button
+              className='mr-2 border-indigo-100 dark:border-slate-700/50 dark:bg-slate-800 dark:text-gray-50 dark:hover:bg-slate-700'
+              onClick={onCancel}
+              secondary
+              regular
+            >
               {t('common.cancel')}
             </Button>
             <Button type='submit' primary regular>
@@ -394,13 +410,6 @@ const ProjectAlertsSettings = ({
       />
     </div>
   )
-}
-
-ProjectAlertsSettings.propTypes = {
-  alerts: PropTypes.array.isRequired,
-  setProjectAlerts: PropTypes.func.isRequired,
-  showError: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
 }
 
 export default withAuthentication(ProjectAlertsSettings, auth.authenticated)

@@ -10,21 +10,21 @@ import { setRefreshToken } from 'utils/refreshToken'
 import sagaActions from '../../actions/index'
 const { login } = require('api')
 
-export default function* singinWorker({ payload: { credentials, callback } }: {
+interface ISigninWorker {
   payload: {
     credentials: {
-      email: string,
-      password: string,
-      dontRemember: boolean,
-    },
-    callback: (isSuccess: boolean, isTwoFactorAuthenticationEnabled: boolean) => void,
-  },
-}) {
+      email: string
+      password: string
+      dontRemember: boolean
+    }
+    callback: (isSuccess: boolean, isTwoFactorAuthenticationEnabled: boolean) => void
+  }
+}
+
+export default function* singinWorker({ payload: { credentials, callback } }: ISigninWorker) {
   try {
     const { dontRemember } = credentials
-    const {
-      user, accessToken, refreshToken,
-    } = yield call(login, _omit(credentials, ['dontRemember']))
+    const { user, accessToken, refreshToken } = yield call(login, _omit(credentials, ['dontRemember']))
 
     yield put(authActions.setDontRemember(dontRemember))
 
@@ -42,14 +42,17 @@ export default function* singinWorker({ payload: { credentials, callback } }: {
     yield put(UIActions.setThemeType(user.theme))
     yield put(sagaActions.loadProjects())
     yield put(sagaActions.loadSharedProjects())
+    yield put(sagaActions.loadProjectsCaptcha())
     yield put(sagaActions.loadProjectAlerts())
     callback(true, false)
   } catch (error) {
     // @ts-ignore
     const err = _isObject(error) ? error.message : error
-    yield put(errorsActions.loginFailed({
-      message: err || 'apiNotifications.somethingWentWrong',
-    }))
+    yield put(
+      errorsActions.loginFailed({
+        message: err || 'apiNotifications.somethingWentWrong',
+      }),
+    )
     callback(false, false)
   } finally {
     yield put(authActions.finishLoading())

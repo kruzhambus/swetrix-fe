@@ -6,6 +6,115 @@ html.dark .bb-axis {
   fill: #f9fafb;
 }
 
+html.dark .bb-axis .domain {
+  stroke: #334155;
+}
+
+.bb-bar {
+  fill-opacity: 0.3;
+  stroke-width: 1 !important;
+}
+
+.bb-target-unique .bb-bar {
+  stroke: #2563eb !important;
+}
+
+.bb-target-results .bb-bar {
+  stroke: #2563eb !important;
+}
+
+.bb-target-total .bb-bar {
+  stroke: #d97706 !important;
+}
+
+.bb-target-sessionDuration .bb-bar {
+  stroke: #c945ed !important;
+}
+
+.bb-target-bounce .bb-bar {
+  stroke: #2ac4b3 !important;
+}
+
+.bb-target-viewsPerUnique .bb-bar {
+  stroke: #f87171 !important;
+}
+
+.bb-target-dns .bb-bar {
+  stroke: #ec4319 !important;
+}
+
+.bb-target-tls .bb-bar {
+  stroke: #f27059 !important;
+}
+
+.bb-target-conn .bb-bar {
+  stroke: #f7a265 !important;
+}
+
+.bb-target-response .bb-bar {
+  stroke: #f5d376 !important;
+}
+
+.bb-target-render .bb-bar {
+  stroke: #709775 !important;
+}
+
+.bb-target-dom_load .bb-bar {
+  stroke: #a5e6ab !important;
+}
+
+.bb-target-ttfb .bb-bar {
+  stroke: #00a8e8 !important;
+}
+
+.bb-target-frontend .bb-bar {
+  stroke: #709775 !important;
+}
+
+.bb-target-network .bb-bar {
+  stroke: #f7a265 !important;
+}
+
+.bb-target-backend .bb-bar {
+  stroke: #00a8e8 !important;
+}
+
+.bb-target-p50 .bb-bar {
+  stroke: #0ea5e9 !important;
+}
+
+.bb-target-p75 .bb-bar {
+  stroke: #eab308 !important;
+}
+
+.bb-target-p95 .bb-bar {
+  stroke: #ef4444 !important;
+}
+
+.bb-target-events .bb-bar {
+  stroke: #2563eb !important;
+}
+
+.bb-target-dropoff .bb-bar {
+  stroke: rgba(37, 99, 235, 0.4) !important;
+}
+
+.bb-target-Technical-Expences .bb-bar {
+  stroke: #ec4319 !important;
+}
+
+.bb-target-Business-Expences .bb-bar {
+  stroke: #f27059 !important;
+}
+
+.bb-target-MRR .bb-bar {
+  stroke: #709775 !important;
+}
+
+html.dark .bb-axis .tick line {
+  stroke: #334155;
+}
+
 @media (max-width: 640px) {
   .custom-space-x-style > :not([hidden]) ~ :not([hidden]) {
     --tw-space-x-reverse: 0 !important;

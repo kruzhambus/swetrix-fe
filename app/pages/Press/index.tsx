@@ -12,37 +12,35 @@ interface ILogoComponent {
   description: string
   logoPNG: string
   logoSVG?: string
+  textColor?: string
 }
 
-const LogoComponent = ({ description, logoSVG, logoPNG }: ILogoComponent): JSX.Element => (
+const LogoComponent = ({
+  description,
+  logoSVG,
+  logoPNG,
+  textColor = 'text-gray-900 dark:text-gray-50',
+}: ILogoComponent): JSX.Element => (
   <p>
-    <b className='font-bold text-gray-900 dark:text-gray-50 tracking-tight'>
-      {description}
-    </b>
-    <img
-      className='h-20 mt-5 mb-2'
-      src={logoSVG || logoPNG}
-      alt={description}
-    />
+    <b className={`font-bold tracking-tight ${textColor}`}>{description}</b>
+    <img className='mb-2 mt-5 h-16 sm:h-20' src={logoSVG || logoPNG} alt={description} />
     {logoSVG && (
       <a
         href={logoSVG}
         target='_blank'
         rel='noopener noreferrer'
-        className='hover:underline text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-500'
+        className='text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400 dark:hover:text-indigo-500'
       >
         SVG
       </a>
     )}
-    {logoSVG && logoPNG && (
-      <span className='text-gray-900 dark:text-gray-50'> | </span>
-    )}
+    {logoSVG && logoPNG && <span className='text-gray-900 dark:text-gray-50'> | </span>}
     {logoPNG && (
       <a
         href={logoPNG}
         target='_blank'
         rel='noopener noreferrer'
-        className='hover:underline text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-500'
+        className='text-indigo-400 hover:text-indigo-500 hover:underline dark:text-indigo-400 dark:hover:text-indigo-500'
       >
         PNG
       </a>
@@ -50,66 +48,62 @@ const LogoComponent = ({ description, logoSVG, logoPNG }: ILogoComponent): JSX.E
   </p>
 )
 
-LogoComponent.defaultProps = {
-  logoSVG: null,
-}
-
 const Press = (): JSX.Element => {
-  const { t }: {
-    t: (key: string) => string
-  } = useTranslation('common')
+  const { t } = useTranslation('common')
 
   return (
     <div className='min-h-min-footer bg-gray-50 dark:bg-slate-900'>
-      <div className='w-11/12 md:w-4/5 mx-auto pb-16 pt-12 px-4 sm:px-6 lg:px-8 whitespace-pre-line'>
-        <h1 className='text-4xl font-bold text-gray-900 dark:text-gray-50 tracking-tight'>
-          {t('titles.press')}
-        </h1>
-        <p className='mt-2 text-lg text-gray-900 dark:text-gray-50 tracking-tight'>
+      <div className='mx-auto w-11/12 whitespace-pre-line px-4 pb-16 pt-12 sm:px-6 md:w-4/5 lg:px-8'>
+        <h1 className='text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-50'>{t('titles.press')}</h1>
+        <p className='mt-2 text-lg tracking-tight text-gray-900 dark:text-gray-50'>
           <Trans
             i18nKey='press.description'
             components={{
-              url: <Link to={routes.contact} className='font-medium hover:underline text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-500' />,
+              url: (
+                <Link
+                  to={routes.contact}
+                  className='font-medium text-indigo-400 hover:text-indigo-500 hover:underline dark:text-indigo-400 dark:hover:text-indigo-500'
+                />
+              ),
             }}
           />
         </p>
 
         {/* Logos */}
-        <h2 className='text-2xl mt-2 font-bold text-gray-900 dark:text-gray-50 tracking-tight'>
-          {t('press.logos')}
-        </h2>
-        <div className='grid grid-cols-2 gap-4 mt-2'>
-          <LogoComponent
-            description={t('press.logo')}
-            logoPNG='/assets/logo_blue.png'
-          />
-          <LogoComponent
-            description={t('press.logoWhiteText')}
-            logoPNG='/assets/logo_white.png'
-          />
+        <h2 className='mt-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-50'>{t('press.logos')}</h2>
+        <div className='mt-2 grid grid-cols-none gap-4 sm:grid-cols-2'>
+          <div className='rounded-lg bg-gray-100 p-2 backdrop-blur-lg dark:bg-gray-100 '>
+            <LogoComponent description={t('press.logo')} logoPNG='/assets/logo_blue.png' textColor='text-black' />
+          </div>
+          <div className='rounded-lg bg-slate-800 p-2 backdrop-blur-lg dark:bg-slate-800'>
+            <LogoComponent
+              description={t('press.logoWhiteText')}
+              logoPNG='/assets/logo_white.png'
+              textColor='text-white'
+            />
+          </div>
         </div>
-        <div className='grid grid-cols-2 gap-4 mt-8'>
-          <LogoComponent
-            description={t('press.logoNoText')}
-            logoPNG='/logo512.png'
-          />
+        <div className='mt-8 grid grid-cols-2 gap-4'>
+          <LogoComponent description={t('press.logoNoText')} logoPNG='/logo512.png' />
         </div>
 
         {/* Font */}
-        <h2 className='text-2xl mt-8 font-bold text-gray-900 dark:text-gray-50 tracking-tight'>
+        <h2 className='mt-8 text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-50'>
           {t('press.font.title')}
         </h2>
-        <p className='mt-2 text-lg text-gray-900 dark:text-gray-50 tracking-tight'>
+        <p className='mt-2 text-lg tracking-tight text-gray-900 dark:text-gray-50'>
           <Trans
             i18nKey='press.font.description'
             components={{
-              url: <a
-                aria-label='Inter font website (opens in a new tab)'
-                href={FONT_INTER_URL}
-                className='font-medium hover:underline text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-500'
-                target='_blank'
-                rel='noopener noreferrer'
-              />,
+              url: (
+                <a
+                  aria-label='Inter font website (opens in a new tab)'
+                  href={FONT_INTER_URL}
+                  className='font-medium text-indigo-400 hover:text-indigo-500 hover:underline dark:text-indigo-400 dark:hover:text-indigo-500'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                />
+              ),
             }}
             values={{
               font: FONT_NAME,

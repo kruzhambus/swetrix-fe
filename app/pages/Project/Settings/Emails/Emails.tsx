@@ -1,11 +1,7 @@
-import React, {
-  useState, useEffect, useRef,
-} from 'react'
-import {
-  TrashIcon, InboxStackIcon, ChevronDownIcon, CheckIcon,
-} from '@heroicons/react/24/outline'
+import React, { useState, useEffect, useRef } from 'react'
+import type i18next from 'i18next'
+import { TrashIcon, InboxStackIcon, ChevronDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from 'react-i18next'
-import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
 import _keys from 'lodash/keys'
 import _isEmpty from 'lodash/isEmpty'
@@ -13,9 +9,7 @@ import _filter from 'lodash/filter'
 import _map from 'lodash/map'
 import _toLower from 'lodash/toLower'
 
-import {
-  addSubscriber, removeSubscriber, getSubscribers, updateSubscriber,
-} from 'api'
+import { addSubscriber, removeSubscriber, getSubscribers, updateSubscriber } from 'api'
 
 import { isValidEmail } from 'utils/validator'
 import useOnClickOutside from 'hooks/useOnClickOutside'
@@ -27,11 +21,16 @@ import Modal from 'ui/Modal'
 import Loader from 'ui/Loader'
 import Beta from 'ui/Beta'
 import cx from 'clsx'
-import { WarningPin } from 'ui/Pin'
+import { Badge } from 'ui/Badge'
 import { ISubscribers } from 'redux/models/ISubscribers'
 
 const ModalMessage = ({
-  project, handleInput, beenSubmitted, errors, form, t,
+  project,
+  handleInput,
+  beenSubmitted,
+  errors,
+  form,
+  t,
 }: {
   project: string
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -44,20 +43,15 @@ const ModalMessage = ({
     email: string
     reportFrequency: string
   }
-  t: (key: string, options?: {
-    [key: string]: string | number | boolean | undefined
-  }) => string
+  t: typeof i18next.t
 }): JSX.Element => (
   <div>
     <h2 className='text-xl font-bold text-gray-700 dark:text-gray-200'>
       {t('project.settings.inviteTo', { project })}
     </h2>
-    <p className='mt-2 text-base text-gray-700 dark:text-gray-200'>
-      {t('project.settings.inviteDesc')}
-    </p>
+    <p className='mt-2 text-base text-gray-700 dark:text-gray-200'>{t('project.settings.inviteDesc')}</p>
     <Input
       name='email'
-      id='email'
       type='email'
       label={t('auth.common.email')}
       value={form.email}
@@ -71,28 +65,39 @@ const ModalMessage = ({
       <label className='block text-sm font-medium text-gray-700 dark:text-gray-300' htmlFor='role'>
         {t('project.emails.reportFrequency')}
       </label>
-      <div className={cx('mt-1 bg-white rounded-md -space-y-px dark:bg-slate-900', { 'border-red-300 border': errors.reportFrequency })}>
+      <div
+        className={cx('mt-1 -space-y-px rounded-md bg-white dark:bg-slate-900', {
+          'border border-red-300': errors.reportFrequency,
+        })}
+      >
         {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         {_map(reportFrequencyForEmailsOptions, (item, index) => (
           <div key={item.value}>
             {/*  eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-            <label className={cx('dark:border-gray-500 relative border p-4 flex cursor-pointer border-gray-200', {
-              'bg-indigo-50 border-indigo-200 dark:bg-indigo-500 dark:border-indigo-800 z-10': item.value === form.reportFrequency,
-              'border-gray-200': form.reportFrequency !== item.value,
-              'rounded-tl-md rounded-tr-md': index === 0,
-              'rounded-bl-md rounded-br-md': index === reportFrequencyForEmailsOptions.length - 1,
-            })}
+            <label
+              className={cx('relative flex cursor-pointer border border-gray-200 p-4 dark:border-gray-500', {
+                'z-10 border-indigo-200 bg-indigo-50 dark:border-indigo-800 dark:bg-indigo-500':
+                  item.value === form.reportFrequency,
+                'border-gray-200': form.reportFrequency !== item.value,
+                'rounded-tl-md rounded-tr-md': index === 0,
+                'rounded-bl-md rounded-br-md': index === reportFrequencyForEmailsOptions.length - 1,
+              })}
             >
               <input
                 name='reportFrequency'
-                className='focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300'
+                className='h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500'
                 id='reportFrequency'
                 type='radio'
                 value={item.value}
                 onChange={handleInput}
               />
               <div className='ml-3 flex flex-col'>
-                <span className={cx('block text-sm font-medium', { 'text-indigo-900 dark:text-white': form.reportFrequency === item.value, 'text-gray-700 dark:text-gray-200': form.reportFrequency !== item.value })}>
+                <span
+                  className={cx('block text-sm font-medium', {
+                    'text-indigo-900 dark:text-white': form.reportFrequency === item.value,
+                    'text-gray-700 dark:text-gray-200': form.reportFrequency !== item.value,
+                  })}
+                >
                   {t(`profileSettings.${item.value}`)}
                 </span>
               </div>
@@ -102,14 +107,22 @@ const ModalMessage = ({
         {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       </div>
       {errors.reportFrequency && (
-        <p className='mt-2 text-sm text-red-600 dark:text-red-500' id='email-error'>{errors.reportFrequency}</p>
+        <p className='mt-2 text-sm text-red-600 dark:text-red-500' id='email-error'>
+          {errors.reportFrequency}
+        </p>
       )}
     </fieldset>
   </div>
 )
 
 const EmailList = ({
-  data, onRemove, t, setEmails, emailFailed, language, reportTypeNotifiction,
+  data,
+  onRemove,
+  t,
+  setEmails,
+  emailFailed,
+  language,
+  reportTypeNotifiction,
 }: {
   data: {
     id: string
@@ -120,10 +133,8 @@ const EmailList = ({
     reportFrequency: string
   }
   onRemove: (id: string) => void
-  t: (key: string, options?: {
-    [key: string]: string | number | boolean | undefined
-  }) => string
-  setEmails: (value: ISubscribers[] | ((prevVar: ISubscribers[]) => ISubscribers[])) => void;
+  t: typeof i18next.t
+  setEmails: (value: ISubscribers[] | ((prevVar: ISubscribers[]) => ISubscribers[])) => void
   emailFailed: (message: string) => void
   language: string
   reportTypeNotifiction: (message: string) => void
@@ -132,14 +143,9 @@ const EmailList = ({
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const openRef = useRef<HTMLDivElement>(null)
   useOnClickOutside(openRef, () => setOpen(false))
-  const {
-    id, addedAt, isConfirmed, projectId, email, reportFrequency,
-  } = data
+  const { id, addedAt, isConfirmed, projectId, email, reportFrequency } = data || {}
 
-  const changeRole = async (reportType: {
-    value: string
-    label: string
-  }) => {
+  const changeRole = async (reportType: { value: string; label: string }) => {
     try {
       const results = await updateSubscriber(projectId, id, { reportFrequency: reportType.value })
       setEmails((prev) => {
@@ -170,41 +176,46 @@ const EmailList = ({
           ? dayjs(addedAt).locale(language).format('MMMM D, YYYY')
           : dayjs(addedAt).locale(language).format('D MMMM, YYYY')}
       </td>
-      <td className='relative whitespace-nowrap py-4 text-right text-sm font-medium pr-2'>
+      <td className='relative whitespace-nowrap py-4 pr-2 text-right text-sm font-medium'>
         {isConfirmed ? (
           <div ref={openRef}>
             <button
               onClick={() => setOpen(!open)}
               type='button'
-              className='inline-flex items-center shadow-sm pl-2 pr-1 py-0.5 border border-gray-200 dark:border-gray-600 text-sm leading-5 font-medium rounded-full bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600'
+              className='inline-flex items-center rounded-full border border-gray-200 bg-white py-0.5 pl-2 pr-1 text-sm font-medium leading-5 text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-600 dark:bg-slate-800 dark:text-gray-200 dark:hover:bg-gray-600'
             >
               {t(`profileSettings.${_toLower(reportFrequency)}`)}
-              <ChevronDownIcon
-                style={{ transform: open ? 'rotate(180deg)' : '' }}
-                className='w-4 h-4 pt-px ml-0.5'
-              />
+              <ChevronDownIcon style={{ transform: open ? 'rotate(180deg)' : '' }} className='ml-0.5 h-4 w-4 pt-px' />
             </button>
             {open && (
-              <ul className='text-left origin-top-right absolute z-10 right-0 mt-2 w-72 rounded-md shadow-lg bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700 focus:outline-none'>
+              <ul className='absolute right-0 z-10 mt-2 w-72 origin-top-right divide-y divide-gray-200 rounded-md bg-white text-left shadow-lg focus:outline-none dark:divide-gray-700 dark:bg-slate-900'>
                 {_map(reportFrequencyForEmailsOptions, (item) => (
-                  <li onClick={() => changeRole(item)} className='p-4 hover:bg-indigo-600 group cursor-pointer flex justify-between items-center' key={item.value}>
+                  <li
+                    onClick={() => changeRole(item)}
+                    className='group flex cursor-pointer items-center justify-between p-4 hover:bg-indigo-600'
+                    key={item.value}
+                  >
                     <div>
-                      <p className='font-bold text-gray-700 dark:text-gray-200 group-hover:text-gray-200'>
+                      <p className='font-bold text-gray-700 group-hover:text-gray-200 dark:text-gray-200'>
                         {t(`profileSettings.${_toLower(item.label)}`)}
                       </p>
                     </div>
                     {reportFrequency === item.value && (
                       <span className='text-indigo-600 group-hover:text-gray-200'>
-                        <CheckIcon className='w-7 h-7 pt-px ml-1' />
+                        <CheckIcon className='ml-1 h-7 w-7 pt-px' />
                       </span>
                     )}
                   </li>
                 ))}
-                <li onClick={() => { setOpen(false); setShowDeleteModal(true) }} className='p-4 hover:bg-gray-200 dark:hover:bg-gray-700 group cursor-pointer flex justify-between items-center'>
+                <li
+                  onClick={() => {
+                    setOpen(false)
+                    setShowDeleteModal(true)
+                  }}
+                  className='group flex cursor-pointer items-center justify-between p-4 hover:bg-gray-200 dark:hover:bg-gray-700'
+                >
                   <div>
-                    <p className='font-bold text-red-600 dark:text-red-500'>
-                      {t('project.settings.removeMember')}
-                    </p>
+                    <p className='font-bold text-red-600 dark:text-red-500'>{t('project.settings.removeMember')}</p>
                   </div>
                 </li>
               </ul>
@@ -212,13 +223,10 @@ const EmailList = ({
           </div>
         ) : (
           <div className='flex items-center justify-end'>
-            <WarningPin
-              label={t('common.pending')}
-              className='inline-flex items-center shadow-sm px-2.5 py-0.5 mr-3'
-            />
+            <Badge colour='yellow' className='mr-3' label={t('common.pending')} />
             <Button
               type='button'
-              className='bg-white text-indigo-700 rounded-md text-base font-medium hover:bg-indigo-50 dark:text-gray-50 dark:border-gray-600 dark:bg-slate-800 dark:hover:bg-slate-700'
+              className='rounded-md bg-white text-base font-medium text-indigo-700 hover:bg-indigo-50 dark:border-gray-600 dark:bg-slate-800 dark:text-gray-50 dark:hover:bg-slate-700'
               small
               onClick={() => setShowDeleteModal(true)}
             >
@@ -248,34 +256,21 @@ const EmailList = ({
   )
 }
 
-EmailList.propTypes = {
-  data: PropTypes.shape({
-    created: PropTypes.string,
-    email: PropTypes.string,
-  }),
-  onRemove: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired,
-  language: PropTypes.string.isRequired,
-}
-
-EmailList.defaultProps = {
-  data: {},
-}
-
-const NoSubscribers = ({ t }: {
-  t: (string: string) => string,
-}): JSX.Element => (
+const NoSubscribers = ({ t }: { t: typeof i18next.t }): JSX.Element => (
   <div className='flex flex-col py-6 sm:px-6 lg:px-8'>
-    <div className='max-w-7xl w-full mx-auto text-gray-900 dark:text-gray-50'>
-      <h2 className='text-xl mb-8 text-center leading-snug px-4'>
-        {t('project.settings.noPeople')}
-      </h2>
+    <div className='mx-auto w-full max-w-7xl text-gray-900 dark:text-gray-50'>
+      <h2 className='mb-8 px-4 text-center text-xl leading-snug'>{t('project.settings.noPeople')}</h2>
     </div>
   </div>
 )
 
 const Emails = ({
-  emailFailed, addEmail, removeEmail, projectId, projectName, reportTypeNotifiction,
+  emailFailed,
+  addEmail,
+  removeEmail,
+  projectId,
+  projectName,
+  reportTypeNotifiction,
 }: {
   emailFailed: (message: string, type?: string) => void
   addEmail: (message: string, type?: string) => void
@@ -285,23 +280,21 @@ const Emails = ({
   reportTypeNotifiction: (message: string, type?: string) => void
 }): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false)
-  const { t, i18n: { language } }: {
-    t: (string: string, options?: {
-      [key: string]: string | number | boolean | undefined | null
-    }) => string,
-    i18n: { language: string },
+  const {
+    t,
+    i18n: { language },
   } = useTranslation('common')
   const [form, setForm] = useState<{
-    email: string,
-    reportFrequency: string,
+    email: string
+    reportFrequency: string
   }>({
     email: '',
     reportFrequency: reportFrequencyForEmailsOptions[3].value,
   })
   const [beenSubmitted, setBeenSubmitted] = useState<boolean>(false)
   const [errors, setErrors] = useState<{
-    email?: string,
-    reportFrequency?: string,
+    email?: string
+    reportFrequency?: string
   }>({})
   const [validated, setValidated] = useState<boolean>(false)
   const [emails, setEmails] = useState<ISubscribers[]>([])
@@ -315,7 +308,7 @@ const Emails = ({
   const getSubcribersAsync = async () => {
     try {
       const { subscribers, count } = await getSubscribers(projectId, paggination.page - 1, paggination.limit)
-      setPaggination(oldPaggination => ({
+      setPaggination((oldPaggination) => ({
         ...oldPaggination,
         count,
       }))
@@ -333,8 +326,8 @@ const Emails = ({
 
   const validate = () => {
     const allErrors: {
-      email?: string,
-      reportFrequency?: string,
+      email?: string
+      reportFrequency?: string
     } = {}
 
     if (!isValidEmail(form.email)) {
@@ -356,7 +349,7 @@ const Emails = ({
   const handleInput = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     const value = target.type === 'checkbox' ? target.checked : target.value
 
-    setForm(oldForm => ({
+    setForm((oldForm) => ({
       ...oldForm,
       [target.name]: value,
     }))
@@ -402,7 +395,7 @@ const Emails = ({
   const onRemove = async (email: string) => {
     try {
       await removeSubscriber(projectId, email)
-      const results = _filter(emails, s => s.id !== email)
+      const results = _filter(emails, (s) => s.id !== email)
       setEmails(results)
       removeEmail(t('apiNotifications.emailDelete'))
     } catch (e) {
@@ -412,45 +405,43 @@ const Emails = ({
   }
 
   return (
-    <div className='mt-6 mb-6'>
-      <div className='flex flex-col sm:flex-row gap-y-2 justify-between items-start sm:items-center mb-3'>
+    <div className='mb-6 mt-6'>
+      <div className='mb-3 flex flex-col items-start justify-between gap-y-2 sm:flex-row sm:items-center'>
         <div>
-          <h3 className='flex items-center mt-2 text-lg font-bold text-gray-900 dark:text-gray-50'>
+          <h3 className='mt-2 flex items-center text-lg font-bold text-gray-900 dark:text-gray-50'>
             {t('project.emails.title')}
             <div className='ml-5'>
               <Beta />
             </div>
           </h3>
-          <p className='text-sm text-gray-500 dark:text-gray-400'>
-            {t('project.emails.description')}
-          </p>
+          <p className='text-sm text-gray-500 dark:text-gray-400'>{t('project.emails.description')}</p>
         </div>
-        <Button
-          className='h-8 pl-2 whitespace-nowrap'
-          primary
-          regular
-          type='button'
-          onClick={() => setShowModal(true)}
-        >
+        <Button className='h-8 whitespace-nowrap pl-2' primary regular type='button' onClick={() => setShowModal(true)}>
           <>
-            <InboxStackIcon className='w-5 h-5 mr-1' />
+            <InboxStackIcon className='mr-1 h-5 w-5' />
             {t('project.emails.add')}
           </>
         </Button>
       </div>
       <div>
         <div className='mt-3 flex flex-col'>
-          <div className='-my-2 -mx-4 overflow-x-auto md:overflow-x-visible sm:-mx-6 lg:-mx-8'>
+          <div className='-mx-4 -my-2 overflow-x-auto sm:-mx-6 md:overflow-x-visible lg:-mx-8'>
             <div className='inline-block min-w-full py-2 md:px-6 lg:px-8'>
-              {(!loading && !_isEmpty(emails)) && (
+              {!loading && !_isEmpty(emails) && (
                 <div className='shadow ring-1 ring-black ring-opacity-5 md:rounded-lg'>
                   <table className='min-w-full divide-y divide-gray-300 dark:divide-gray-600'>
                     <thead>
                       <tr className='dark:bg-slate-800'>
-                        <th scope='col' className='py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 dark:text-white'>
+                        <th
+                          scope='col'
+                          className='py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-6'
+                        >
                           {t('auth.common.email')}
                         </th>
-                        <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white'>
+                        <th
+                          scope='col'
+                          className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white'
+                        >
                           {t('auth.common.addedOn')}
                         </th>
                         <th scope='col' />
@@ -458,7 +449,7 @@ const Emails = ({
                       </tr>
                     </thead>
                     <tbody className='divide-y divide-gray-300 dark:divide-gray-600'>
-                      {_map(emails, email => (
+                      {_map(emails, (email) => (
                         <EmailList
                           data={email}
                           key={email.id}
@@ -474,29 +465,25 @@ const Emails = ({
                   </table>
                 </div>
               )}
-              {_isEmpty(emails) && (
-                <NoSubscribers t={t} />
-              )}
-              {loading && (
-                <Loader />
-              )}
+              {_isEmpty(emails) && <NoSubscribers t={t} />}
+              {loading && <Loader />}
             </div>
           </div>
         </div>
       </div>
       <Modal
         onClose={closeModal}
-        customButtons={(
+        customButtons={
           <button
             type='button'
-            className='w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm bg-indigo-600 hover:bg-indigo-700'
+            className='inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm'
             onClick={handleSubmit}
           >
             {t('project.emails.add')}
           </button>
-        )}
+        }
         closeText={t('common.cancel')}
-        message={(
+        message={
           <ModalMessage
             t={t}
             project={projectName}
@@ -505,18 +492,11 @@ const Emails = ({
             errors={errors}
             beenSubmitted={beenSubmitted}
           />
-        )}
+        }
         isOpened={showModal}
       />
     </div>
   )
-}
-
-Emails.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  emailFailed: PropTypes.func.isRequired,
-  addEmail: PropTypes.func.isRequired,
-  removeEmail: PropTypes.func.isRequired,
 }
 
 export default Emails
